@@ -379,25 +379,10 @@
         }
 
         @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(6px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-</style>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-    const SUPABASE_URL = "https://mjptrjidrhwaphkmqoma.supabase.co";
-
-    const SUPABASE_PUBLISHABLE_KEY =
-        "sb_publishable_CwN4jvLvXRTEu5uimUsIzA_ob8h8DAS";
-
-    const supabase = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-    );
-</script>
-
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 
 <body>
@@ -530,7 +515,7 @@
                             </tr>
                         </thead>
                         <tbody id="recent-students-tbody">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
             </section>
@@ -549,7 +534,7 @@
                             </tr>
                         </thead>
                         <tbody id="pending-students-tbody">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
             </section>
@@ -569,7 +554,7 @@
                             </tr>
                         </thead>
                         <tbody id="all-students-tbody">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
             </section>
@@ -611,11 +596,10 @@
 
     <script>
         /* 1. Supabase Initialization */
-        // ضع هنا بيانات مشروعتك العامة من Supabase Dashboard
-        const SUPABASE_URL = "HTTPS://YOUR-SUPABASE-PROJECT.supabase.co"; 
-        const SUPABASE_ANON_KEY = "YOUR-SUPABASE-ANON-KEY";
+        const SUPABASE_URL = "https://mjptrjidrhwaphkmqoma.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_CwN4jvLvXRTEu5uimUsIzA_ob8h8DAS";
         
-        const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         /* 2. State Store */
         let state = {
@@ -659,16 +643,18 @@
                 .single();
 
             if (error || !profile || profile.role !== 'admin') {
-                document.getElementById('login-error-msg').innerText = "ليس لديك صلاحية للوصول إلى لوحة الإدارة.";
-                document.getElementById('login-error-msg').style.display = 'block';
+                const errDiv = document.getElementById('login-error-msg');
+                errDiv.innerText = "ليس لديك صلاحية للوصول إلى لوحة الإدارة.";
+                errDiv.style.display = 'block';
                 await db.auth.signOut();
                 return;
             }
 
             state.currentAdmin = profile;
-            document.getElementById('admin-login-overlay').style.opacity = '0';
+            const overlay = document.getElementById('admin-login-overlay');
+            overlay.style.opacity = '0';
             setTimeout(() => {
-                document.getElementById('admin-login-overlay').style.display = 'none';
+                overlay.style.display = 'none';
             }, 300);
 
             await fetchProfilesData();
