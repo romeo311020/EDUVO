@@ -9,9 +9,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         /* ==========================================================================
-           1. VARIABLES & THEMING
+           1. CSS VARIABLES & THEMES
            ========================================================================== */
         :root {
             --bg-main: #0a1128;
@@ -25,12 +27,13 @@
             --text-muted: #94a3b8;
             --border-color: rgba(255, 255, 255, 0.08);
             --border-highlight: rgba(0, 210, 255, 0.3);
-            --nav-bg: rgba(10, 17, 40, 0.85);
+            --nav-bg: rgba(10, 17, 40, 0.95);
             --radius-sm: 8px;
             --radius-md: 14px;
             --radius-lg: 20px;
             --radius-full: 9999px;
             --shadow-glow: 0 0 20px rgba(0, 210, 255, 0.15);
+            --sidebar-width: 260px;
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
@@ -46,12 +49,12 @@
             --text-muted: #64748b;
             --border-color: rgba(0, 0, 0, 0.08);
             --border-highlight: rgba(28, 114, 216, 0.3);
-            --nav-bg: rgba(240, 244, 249, 0.85);
+            --nav-bg: rgba(255, 255, 255, 0.95);
             --shadow-glow: 0 4px 20px rgba(0, 0, 0, 0.05);
         }
 
         /* ==========================================================================
-           2. RESET & BASE STYLES
+           2. BASE STYLES & LAYOUT (DESKTOP ADAPTIVE)
            ========================================================================== */
         * {
             box-sizing: border-box;
@@ -64,37 +67,62 @@
         body {
             background-color: var(--bg-main);
             color: var(--text-main);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
             direction: rtl;
         }
 
-        /* App Container mimicking Mobile Device */
-        #app-container {
-            width: 100%;
-            max-width: 480px;
+        #app-wrapper {
+            width: 100vw;
             height: 100vh;
-            max-height: 920px;
-            background-color: var(--bg-main);
-            position: relative;
             display: flex;
-            flex-direction: column;
+            position: relative;
+            background-color: var(--bg-main);
             overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            border-radius: 0px;
         }
 
-        @media (min-width: 500px) {
-            #app-container {
-                height: 95vh;
-                border-radius: 32px;
-                border: 1px solid var(--border-color);
+        /* Responsive Sidebar / Desktop Navigation */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100%;
+            background: var(--nav-bg);
+            border-left: 1px solid var(--border-color);
+            display: none; /* Hidden on Mobile/Tablet */
+            flex-direction: column;
+            padding: 24px 16px;
+            z-index: 90;
+        }
+
+        .main-content {
+            flex: 1;
+            height: 100%;
+            position: relative;
+            overflow-y: auto;
+            padding-bottom: 80px; /* Mobile spacing */
+        }
+
+        /* Media Queries for Responsive Breakpoints */
+        @media (min-width: 1024px) {
+            .sidebar {
+                display: flex;
+            }
+            .main-content {
+                padding-bottom: 20px; /* Remove mobile nav padding */
+            }
+            .bottom-nav {
+                display: none !important; /* Hide Bottom Nav on Desktop */
+            }
+            .grid-2 {
+                grid-template-columns: repeat(3, 1fr) !important;
             }
         }
 
+        /* ==========================================================================
+           3. UI COMPONENTS
+           ========================================================================== */
         .screen {
             position: absolute;
             top: 0;
@@ -109,8 +137,7 @@
             transform: scale(0.98);
             background-color: var(--bg-main);
             overflow-y: auto;
-            padding-bottom: 80px; /* Space for Bottom Nav */
-            z-index: 1;
+            padding: 20px;
         }
 
         .screen.active {
@@ -120,20 +147,13 @@
             z-index: 2;
         }
 
-        .no-nav {
-            padding-bottom: 0px;
-        }
-
-        /* ==========================================================================
-           3. UI COMPONENTS & UTILITIES
-           ========================================================================== */
         .glass-card {
             background: var(--bg-card);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 16px;
+            padding: 20px;
             margin-bottom: 16px;
             box-shadow: var(--shadow-glow);
         }
@@ -156,10 +176,7 @@
             transition: var(--transition);
         }
 
-        .btn-primary:active {
-            transform: scale(0.98);
-            box-shadow: 0 2px 8px rgba(0, 210, 255, 0.2);
-        }
+        .btn-primary:active { transform: scale(0.98); }
 
         .btn-secondary {
             background: transparent;
@@ -172,10 +189,6 @@
             width: 100%;
             cursor: pointer;
             transition: var(--transition);
-        }
-
-        .btn-secondary:active {
-            background: rgba(255, 255, 255, 0.05);
         }
 
         .input-group {
@@ -208,35 +221,12 @@
         }
 
         .header {
-            padding: 20px;
+            padding: 10px 0 20px 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--bg-main);
-            position: sticky;
-            top: 0;
-            z-index: 10;
         }
 
-        .header h2 {
-            font-size: 1.3rem;
-            font-weight: 700;
-        }
-
-        .icon-btn {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-full);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-main);
-            cursor: pointer;
-        }
-
-        /* SVG Icon styling */
         .svg-icon {
             width: 22px;
             height: 22px;
@@ -248,23 +238,21 @@
         }
 
         /* ==========================================================================
-           4. BOTTOM NAVIGATION
+           4. NAVIGATION COMPONENTS (MOBILE & DESKTOP)
            ========================================================================== */
         .bottom-nav {
-            position: absolute;
+            position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
             height: 70px;
             background: var(--nav-bg);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-around;
             align-items: center;
             z-index: 100;
-            padding-bottom: 5px;
         }
 
         .nav-item {
@@ -281,86 +269,32 @@
             width: 20%;
         }
 
-        .nav-item.active {
+        .nav-item.active { color: var(--accent-cyan); }
+        .nav-item.active .svg-icon { stroke: var(--accent-cyan); filter: drop-shadow(0 0 5px rgba(0,210,255,0.5)); }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 8px;
+            transition: var(--transition);
+        }
+
+        .sidebar-item:hover, .sidebar-item.active {
+            background: rgba(0, 210, 255, 0.1);
             color: var(--accent-cyan);
         }
 
-        .nav-item.active .svg-icon {
-            stroke: var(--accent-cyan);
-            filter: drop-shadow(0 0 5px rgba(0, 210, 255, 0.5));
-        }
-
-        /* ==========================================================================
-           5. SPECIFIC SCREENS STYLING
-           ========================================================================== */
-        
-        /* Splash Screen */
-        #splash-screen {
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            background: radial-gradient(circle at center, #102a56 0%, #0a1128 100%);
-        }
-
-        .logo-box {
-            position: relative;
-            margin-bottom: 20px;
-            animation: pulseGlow 2s infinite alternate;
-        }
-
-        .logo-icon {
-            width: 90px;
-            height: 90px;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
-            border-radius: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto;
-            box-shadow: 0 10px 30px rgba(0, 210, 255, 0.4);
-        }
-
-        /* Onboarding */
-        .onboarding-slider {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .onboard-icon {
-            width: 120px;
-            height: 120px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-highlight);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 30px;
-            color: var(--accent-cyan);
-        }
-
-        /* Dashboard */
-        .dash-content {
-            padding: 0 20px 20px 20px;
-        }
-
-        .progress-ring-card {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: linear-gradient(135deg, rgba(28, 114, 216, 0.2), rgba(0, 210, 255, 0.05));
-            border: 1px solid var(--border-highlight);
-        }
-
+        /* Grid utilities */
         .grid-2 {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
         }
 
         .subject-card {
@@ -370,7 +304,6 @@
             padding: 16px;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
             gap: 10px;
             cursor: pointer;
             transition: var(--transition);
@@ -381,95 +314,27 @@
             transform: translateY(-2px);
         }
 
-        .subject-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-sm);
-            background: rgba(0, 210, 255, 0.1);
-            color: var(--accent-cyan);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .progress-bar-bg {
-            width: 100%;
-            height: 6px;
-            background: var(--bg-input);
-            border-radius: var(--radius-full);
-            overflow: hidden;
-            margin-top: 4px;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
-            border-radius: var(--radius-full);
-        }
-
-        /* AI Assistant Interface */
+        /* Chat System */
         .chat-container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 0 16px;
             overflow-y: auto;
+            margin-bottom: 12px;
         }
 
         .chat-bubble {
-            max-width: 85%;
+            max-width: 80%;
             padding: 12px 16px;
             border-radius: var(--radius-md);
             margin-bottom: 12px;
             font-size: 0.9rem;
             line-height: 1.5;
-            animation: fadeIn 0.3s ease;
         }
 
-        .chat-ai {
-            background: var(--bg-card-solid);
-            border: 1px solid var(--border-color);
-            align-self: flex-start;
-            border-bottom-right-radius: 2px;
-            color: var(--text-main);
-        }
+        .chat-ai { background: var(--bg-card-solid); border: 1px solid var(--border-color); align-self: flex-start; }
+        .chat-user { background: var(--accent-blue); color: white; align-self: flex-end; }
 
-        .chat-user {
-            background: linear-gradient(135deg, var(--accent-blue), #1254a3);
-            color: white;
-            align-self: flex-end;
-            border-bottom-left-radius: 2px;
-        }
-
-        .quick-chips {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding: 10px 16px;
-            scrollbar-width: none;
-        }
-
-        .chip {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            padding: 6px 14px;
-            border-radius: var(--radius-full);
-            font-size: 0.8rem;
-            white-space: nowrap;
-            cursor: pointer;
-            color: var(--accent-cyan);
-        }
-
-        .chat-input-area {
-            padding: 12px 16px;
-            background: var(--bg-main);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        /* Quizzes */
         .quiz-opt {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -478,486 +343,220 @@
             margin-bottom: 10px;
             cursor: pointer;
             transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
         }
 
-        .quiz-opt.selected {
-            border-color: var(--accent-cyan);
-            background: rgba(0, 210, 255, 0.1);
-        }
-
-        /* Profile & Settings */
-        .profile-header {
-            text-align: center;
-            padding: 20px 0;
-        }
-
-        .avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-gold));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            font-weight: bold;
-            margin: 0 auto 12px auto;
-            color: white;
-            box-shadow: var(--shadow-glow);
-        }
-
-        .setting-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        /* Toggle Switch */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 44px;
-            height: 24px;
-        }
-
-        .switch input { opacity: 0; width: 0; height: 0; }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: var(--bg-input);
-            transition: .3s;
-            border-radius: 24px;
-            border: 1px solid var(--border-color);
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .3s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider { background-color: var(--accent-blue); }
-        input:checked + .slider:before { transform: translateX(20px); }
-
-        /* ==========================================================================
-           6. ANIMATIONS
-           ========================================================================== */
-        @keyframes pulseGlow {
-            0% { filter: drop-shadow(0 0 10px rgba(0, 210, 255, 0.3)); }
-            100% { filter: drop-shadow(0 0 25px rgba(0, 210, 255, 0.8)); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .fade-in { animation: fadeIn 0.4s ease forwards; }
-
-        /* Typing indicator animation */
-        .typing-dots span {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            background-color: var(--text-muted);
-            border-radius: 50%;
-            margin: 0 2px;
-            animation: dotFlashing 1s infinite alternate;
-        }
-        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes dotFlashing {
-            0% { opacity: 0.3; }
-            100% { opacity: 1; }
-        }
+        .quiz-opt.selected { border-color: var(--accent-cyan); background: rgba(0,210,255,0.1); }
     </style>
 </head>
 <body>
 
-    <div id="app-container">
+    <div id="app-wrapper">
 
-        <div id="screen-splash" class="screen active no-nav">
-            <div class="logo-box">
-                <div class="logo-icon">
-                    <svg class="svg-icon" style="width: 50px; height: 50px; stroke: #fff;" viewBox="0 0 24 24">
-                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                        <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-                    </svg>
+        <aside class="sidebar">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 32px;">
+                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white;">E</div>
+                <h2 style="font-size: 1.4rem; font-weight: 800;">EDUVO</h2>
+            </div>
+
+            <div class="sidebar-item active" onclick="switchTab('screen-dashboard')" id="side-screen-dashboard">
+                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                <span>الرئيسية</span>
+            </div>
+            <div class="sidebar-item" onclick="switchTab('screen-subjects')" id="side-screen-subjects">
+                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                <span>المواد الدراسية</span>
+            </div>
+            <div class="sidebar-item" onclick="switchTab('screen-ai')" id="side-screen-ai">
+                <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/></svg>
+                <span>المساعد الذكي</span>
+            </div>
+            <div class="sidebar-item" onclick="switchTab('screen-progress')" id="side-screen-progress">
+                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+                <span>التقدم الدراسي</span>
+            </div>
+            <div class="sidebar-item" onclick="switchTab('screen-profile')" id="side-screen-profile">
+                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>حسابي</span>
+            </div>
+        </aside>
+
+        <main class="main-content">
+
+            <div id="screen-splash" class="screen active" style="justify-content: center; align-items: center; text-align: center;">
+                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                    <svg class="svg-icon" style="width: 40px; height: 40px; stroke: #fff;" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                </div>
+                <h1 style="font-size: 2.2rem; font-weight: 800;">EDUVO</h1>
+                <p style="color: var(--accent-cyan); font-weight: 600; margin-top: 8px;">تعلّم بذكاء. حقّق أكثر.</p>
+            </div>
+
+            <div id="screen-onboarding" class="screen" style="justify-content: center; align-items: center; text-align: center;">
+                <div style="max-width: 400px; width: 100%;">
+                    <div style="font-size: 4rem; margin-bottom: 20px;">📚</div>
+                    <h2 style="font-size: 1.5rem; margin-bottom: 12px;">كل دراستك في مكان واحد</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 30px;">نظم جدولك واستفد من أحدث أدوات المذاكرة الذكية لمساعدتك في الثانوية العامة.</p>
+                    <button class="btn-primary" onclick="navigateTo('screen-setup')">ابدأ الآن</button>
                 </div>
             </div>
-            <h1 style="font-size: 2.2rem; font-weight: 800; letter-spacing: 1px; color: #fff;">EDUVO</h1>
-            <p style="color: var(--accent-cyan); font-weight: 600; margin-top: 8px;">تعلّم بذكاء. حقّق أكثر.</p>
-        </div>
 
-        <div id="screen-onboarding" class="screen no-nav">
-            <div class="onboarding-slider">
-                <div id="onboard-content" class="fade-in">
+            <div id="screen-setup" class="screen">
+                <div class="header"><h2>خلينا نعرفك أكتر 👋</h2></div>
+                <div style="max-width: 500px; width: 100%; margin: 0 auto;">
+                    <div class="input-group">
+                        <label>الصف الدراسي</label>
+                        <select id="setup-grade" class="input-control">
+                            <option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option>
+                            <option value="الصف الثاني الثانوي">الصف الثاني الثانوي</option>
+                            <option value="الصف الأول الثانوي">الصف الأول الثانوي</option>
+                        </select>
                     </div>
-            </div>
-            <div style="padding: 20px;">
-                <button class="btn-primary" onclick="nextOnboarding()">
-                    <span id="onboard-btn-text">التالي</span>
-                </button>
-            </div>
-        </div>
-
-        <div id="screen-setup" class="screen no-nav">
-            <div class="header">
-                <h2>خلينا نعرفك أكتر 👋</h2>
-            </div>
-            <div style="padding: 20px; flex: 1;">
-                <div class="input-group">
-                    <label>الصف الدراسي</label>
-                    <select id="setup-grade" class="input-control" onchange="handleGradeChange()">
-                        <option value="الصف الأول الثانوي">الصف الأول الثانوي</option>
-                        <option value="الصف الثاني الثانوي">الصف الثاني الثانوي</option>
-                        <option value="الصف الثالث الثانوي" selected>الصف الثالث الثانوي</option>
-                    </select>
-                </div>
-
-                <div class="input-group" id="branch-group">
-                    <label>الشعبة</label>
-                    <select id="setup-branch" class="input-control">
-                        <option value="علمي علوم">علمي علوم</option>
-                        <option value="علمي رياضة">علمي رياضة</option>
-                        <option value="أدبي">أدبي</option>
-                    </select>
-                </div>
-            </div>
-            <div style="padding: 20px;">
-                <button class="btn-primary" onclick="saveSetup()">متابعة</button>
-            </div>
-        </div>
-
-        <div id="screen-register" class="screen no-nav">
-            <div class="header">
-                <h2>إنشاء حساب جديد</h2>
-            </div>
-            <div style="padding: 20px; flex: 1; overflow-y: auto;">
-                <div class="input-group">
-                    <label>اسم الطالب</label>
-                    <input type="text" id="reg-name" class="input-control" placeholder="أحمد محمد">
-                </div>
-                <div class="input-group">
-                    <label>البريد الإلكتروني</label>
-                    <input type="email" id="reg-email" class="input-control" placeholder="student@eduvo.eg">
-                </div>
-                <div class="input-group">
-                    <label>كلمة المرور</label>
-                    <input type="password" id="reg-pass" class="input-control" placeholder="••••••••">
-                </div>
-                <button class="btn-primary" style="margin-top: 10px;" onclick="handleRegister()">إنشاء حساب</button>
-                <div style="text-align: center; margin-top: 20px;">
-                    <span style="color: var(--text-muted); font-size: 0.9rem;">لديك حساب بالفعل؟</span>
-                    <a href="#" style="color: var(--accent-cyan); text-decoration: none; font-weight: bold; margin-right: 5px;" onclick="navigateTo('screen-login')">تسجيل الدخول</a>
-                </div>
-            </div>
-        </div>
-
-        <div id="screen-login" class="screen no-nav">
-            <div class="header">
-                <h2>تسجيل الدخول</h2>
-            </div>
-            <div style="padding: 20px; flex: 1;">
-                <div class="input-group">
-                    <label>البريد الإلكتروني</label>
-                    <input type="email" id="login-email" class="input-control" placeholder="student@eduvo.eg">
-                </div>
-                <div class="input-group">
-                    <label>كلمة المرور</label>
-                    <input type="password" id="login-pass" class="input-control" placeholder="••••••••">
-                </div>
-                <button class="btn-primary" style="margin-top: 10px;" onclick="handleLogin()">دخول</button>
-                <div style="text-align: center; margin-top: 20px;">
-                    <span style="color: var(--text-muted); font-size: 0.9rem;">ليس لديك حساب؟</span>
-                    <a href="#" style="color: var(--accent-cyan); text-decoration: none; font-weight: bold; margin-right: 5px;" onclick="navigateTo('screen-register')">حساب جديد</a>
-                </div>
-            </div>
-        </div>
-
-        <div id="screen-dashboard" class="screen">
-            <div class="header">
-                <div>
-                    <span style="font-size: 0.85rem; color: var(--text-muted);" id="dash-welcome">صباح الخير 👋</span>
-                    <h2 id="dash-user-name">طالب EDUVO</h2>
-                </div>
-                <div class="icon-btn" onclick="navigateTo('screen-profile')">
-                    <svg class="svg-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <div class="input-group">
+                        <label>الشعبة</label>
+                        <select id="setup-branch" class="input-control">
+                            <option value="علمي علوم">علمي علوم</option>
+                            <option value="علمي رياضة">علمي رياضة</option>
+                            <option value="أدبي">أدبي</option>
+                        </select>
+                    </div>
+                    <button class="btn-primary" style="margin-top: 20px;" onclick="saveSetup()">متابعة</button>
                 </div>
             </div>
 
-            <div class="dash-content">
-                <div class="glass-card progress-ring-card">
+            <div id="screen-register" class="screen">
+                <div class="header"><h2>إنشاء حساب جديد</h2></div>
+                <div style="max-width: 450px; width: 100%; margin: 0 auto;">
+                    <div class="input-group">
+                        <label>اسم الطالب</label>
+                        <input type="text" id="reg-name" class="input-control" placeholder="أحمد محمد">
+                    </div>
+                    <div class="input-group">
+                        <label>البريد الإلكتروني</label>
+                        <input type="email" id="reg-email" class="input-control" placeholder="student@eduvo.eg">
+                    </div>
+                    <div class="input-group">
+                        <label>كلمة المرور</label>
+                        <input type="password" id="reg-pass" class="input-control" placeholder="••••••••">
+                    </div>
+                    <button class="btn-primary" onclick="handleAuth('register')">إنشاء الحساب</button>
+                    <p style="text-align: center; margin-top: 16px; color: var(--text-muted);">
+                        لديك حساب بالفعل؟ <a href="#" style="color: var(--accent-cyan);" onclick="navigateTo('screen-login')">تسجيل الدخول</a>
+                    </p>
+                </div>
+            </div>
+
+            <div id="screen-login" class="screen">
+                <div class="header"><h2>تسجيل الدخول</h2></div>
+                <div style="max-width: 450px; width: 100%; margin: 0 auto;">
+                    <div class="input-group">
+                        <label>البريد الإلكتروني</label>
+                        <input type="email" id="login-email" class="input-control" placeholder="student@eduvo.eg">
+                    </div>
+                    <div class="input-group">
+                        <label>كلمة المرور</label>
+                        <input type="password" id="login-pass" class="input-control" placeholder="••••••••">
+                    </div>
+                    <button class="btn-primary" onclick="handleAuth('login')">دخول</button>
+                    <p style="text-align: center; margin-top: 16px; color: var(--text-muted);">
+                        ليس لديك حساب؟ <a href="#" style="color: var(--accent-cyan);" onclick="navigateTo('screen-register')">حساب جديد</a>
+                    </p>
+                </div>
+            </div>
+
+            <div id="screen-dashboard" class="screen">
+                <div class="header">
+                    <div>
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">مرحباً بك 👋</span>
+                        <h2 id="dash-user-name">طالب EDUVO</h2>
+                    </div>
+                </div>
+
+                <div id="announcement-banner" class="glass-card" style="background: rgba(255, 183, 3, 0.1); border-color: rgba(255, 183, 3, 0.3); display: none;">
+                    <span style="color: var(--accent-gold); font-size: 0.85rem; font-weight: bold;" id="announcement-text"></span>
+                </div>
+
+                <div class="glass-card" style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <span style="font-size: 0.85rem; color: var(--text-muted);">المستوى العام</span>
-                        <h3 style="font-size: 1.5rem; color: #fff; margin: 4px 0;">تقدمك الدراسي</h3>
-                        <span style="font-size: 0.8rem; color: var(--accent-cyan);" id="dash-branch-badge">الثالث الثانوي - علمي علوم</span>
+                        <h3 style="font-size: 1.4rem;">تقدمك الدراسي</h3>
+                        <span style="font-size: 0.8rem; color: var(--accent-cyan);" id="dash-grade-badge">الثالث الثانوي</span>
                     </div>
-                    <div style="position: relative; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
-                        <svg width="64" height="64" viewBox="0 0 36 36">
-                            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="3.8" />
-                            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--accent-cyan)" stroke-dasharray="72, 100" stroke-width="3.8" stroke-linecap="round" />
-                        </svg>
-                        <span style="position: absolute; font-size: 0.85rem; font-weight: bold;">72%</span>
-                    </div>
+                    <div style="font-size: 1.8rem; font-weight: 800; color: var(--accent-cyan);">72%</div>
                 </div>
 
-                <div class="glass-card" style="background: linear-gradient(135deg, rgba(28,114,216,0.3), rgba(0,0,0,0.2)); border-color: var(--border-highlight); cursor: pointer;" onclick="switchTab('screen-ai')">
-                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                        <div style="background: var(--accent-blue); padding: 8px; border-radius: 10px;">
-                            <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4M8 16h.01M16 16h.01"/></svg>
-                        </div>
-                        <div>
-                            <h4 style="font-size: 1rem;">اسأل EDUVO AI</h4>
-                            <p style="font-size: 0.75rem; color: var(--text-muted);">مش فاهم نقطة؟ المساعد الذكي جاهز للشرح.</p>
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <input type="text" class="input-control" placeholder="اكتب سؤالك هنا..." style="font-size: 0.8rem; padding: 8px 12px;" onclick="event.stopPropagation(); switchTab('screen-ai');">
-                    </div>
+                <div class="glass-card" style="cursor: pointer;" onclick="switchTab('screen-ai')">
+                    <h4 style="margin-bottom: 4px;">🤖 اسأل EDUVO AI</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">مش فاهم جزئية معينة؟ المساعد الذكي يشرحها لك فوراً.</p>
                 </div>
 
-                <h3 style="font-size: 1.1rem; margin: 15px 0 10px 0;">خطة اليوم 📅</h3>
-                <div class="glass-card" style="padding: 12px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span style="font-size: 0.9rem; font-weight: 600;">📐 الرياضيات - التفاضل</span>
-                        <span style="font-size: 0.75rem; color: var(--accent-gold); background: rgba(255,183,3,0.1); padding: 2px 8px; border-radius: 4px;">25 دقيقة</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 0.9rem; font-weight: 600;">⚡ الفيزياء - قانون نيوتن</span>
-                        <span style="font-size: 0.75rem; color: var(--accent-gold); background: rgba(255,183,3,0.1); padding: 2px 8px; border-radius: 4px;">30 دقيقة</span>
-                    </div>
-                </div>
-
-                <div style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0 10px 0;">
-                    <h3 style="font-size: 1.1rem;">المواد الدراسية</h3>
-                    <span style="font-size: 0.8rem; color: var(--accent-cyan); cursor: pointer;" onclick="switchTab('screen-subjects')">عرض الكل</span>
-                </div>
+                <h3 style="margin: 15px 0 10px 0; font-size: 1.1rem;">المواد الدراسية</h3>
                 <div class="grid-2" id="dash-subjects-grid">
                     </div>
             </div>
-        </div>
 
-        <div id="screen-subjects" class="screen">
-            <div class="header">
-                <h2>المواد الدراسية 📚</h2>
-            </div>
-            <div style="padding: 0 20px 20px 20px;" id="subjects-list-container">
-                </div>
-        </div>
-
-        <div id="screen-subject-detail" class="screen">
-            <div class="header">
-                <div class="icon-btn" onclick="navigateTo('screen-subjects')">
-                    <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                </div>
-                <h2 id="subject-detail-title">تفاصيل المادة</h2>
-                <div style="width: 40px;"></div>
-            </div>
-            <div style="padding: 0 20px 20px 20px;" id="subject-units-container">
-                </div>
-        </div>
-
-        <div id="screen-ai" class="screen" style="padding-bottom: 70px;">
-            <div class="header" style="border-bottom: 1px solid var(--border-color);">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <div style="background: var(--accent-blue); padding: 6px; border-radius: 8px;">
-                        <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/></svg>
+            <div id="screen-subjects" class="screen">
+                <div class="header"><h2>المواد الدراسية 📚</h2></div>
+                <div id="subjects-list-container" class="grid-2">
                     </div>
-                    <div>
-                        <h2>EDUVO AI</h2>
-                        <span style="font-size: 0.75rem; color: var(--accent-cyan);">● متصل لمساعدتك</span>
+            </div>
+
+            <div id="screen-ai" class="screen">
+                <div class="header"><h2>المساعد الذكي 🤖</h2></div>
+                <div class="chat-container" id="chat-box">
+                    <div class="chat-bubble chat-ai">
+                        أهلاً بك! 👋 أنا EDUVO AI. يمكنك سؤالي عن أي مفهوم دراسي أو حل خطوة بخطوة.
                     </div>
                 </div>
-            </div>
-
-            <div class="quick-chips">
-                <div class="chip" onclick="sendQuickAi('اشرح لي درس التفاضل بطريقة بسيطة')">💡 اشرح لي درسًا</div>
-                <div class="chip" onclick="sendQuickAi('اعطني مسألة فيزياء واطلب مني حلها')">📝 اختبرني في الفيزياء</div>
-                <div class="chip" onclick="sendQuickAi('كيف أنظم وقت المذاكرة للثانوية العامة؟')">⏱️ تنظيم الوقت</div>
-            </div>
-
-            <div class="chat-container" id="chat-box">
-                <div class="chat-bubble chat-ai">
-                    أهلاً بك! 👋 أنا EDUVO AI، مساعدك الذكي. اسألني عن أي مفهوم دراسي، أو اطلب مني تبسيط أي درس معقد، ولنبدأ الفهم معاً!
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="ai-input" class="input-control" placeholder="اكتب سؤالك هنا..." style="flex: 1;" onkeypress="if(event.key==='Enter') sendAiMessage()">
+                    <button class="btn-primary" style="width: auto; padding: 0 20px;" onclick="sendAiMessage()">إرسال</button>
                 </div>
             </div>
 
-            <div class="chat-input-area">
-                <input type="text" id="ai-input" class="input-control" placeholder="اسأل عن أي مفهوم أو درس..." style="flex: 1;" onkeypress="if(event.key === 'Enter') sendAiMessage()">
-                <button class="icon-btn" style="background: var(--accent-blue); border: none;" onclick="sendAiMessage()">
-                    <svg class="svg-icon" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                </button>
-            </div>
-        </div>
-
-        <div id="screen-quizzes" class="screen">
-            <div class="header">
-                <h2>الاختبارات التفاعلية 📝</h2>
-            </div>
-            <div style="padding: 0 20px 20px 20px;">
-                <div class="glass-card" style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <h4 style="font-size: 1rem;">اختبار التفاضل والتكامل</h4>
-                        <span style="font-size: 0.8rem; color: var(--text-muted);">10 أسئلة • 15 دقيقة</span>
-                    </div>
-                    <button class="btn-primary" style="width: auto; padding: 8px 16px; font-size: 0.85rem;" onclick="startQuiz('الرياضيات')">ابدأ</button>
-                </div>
-                <div class="glass-card" style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <h4 style="font-size: 1rem;">اختبار قوانين الفيزياء</h4>
-                        <span style="font-size: 0.8rem; color: var(--text-muted);">5 أسئلة • 10 دقائق</span>
-                    </div>
-                    <button class="btn-primary" style="width: auto; padding: 8px 16px; font-size: 0.85rem;" onclick="startQuiz('الفيزياء')">ابدأ</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="screen-quiz-active" class="screen no-nav">
-            <div class="header">
-                <span id="quiz-progress-text" style="font-size: 0.9rem; color: var(--text-muted);">السؤال 1 من 3</span>
-                <div class="icon-btn" onclick="navigateTo('screen-quizzes')">✕</div>
-            </div>
-            <div style="padding: 0 20px; flex: 1; display: flex; flex-direction: column;">
-                <div class="progress-bar-bg" style="margin-bottom: 20px;">
-                    <div class="progress-bar-fill" id="quiz-progress-bar" style="width: 33%;"></div>
-                </div>
-                
-                <h3 id="quiz-question-text" style="font-size: 1.1rem; margin-bottom: 20px; line-height: 1.5;">عنوان السؤال يظهر هنا؟</h3>
-                
-                <div id="quiz-options-container" style="flex: 1;">
-                    </div>
-
-                <div style="padding: 20px 0;">
-                    <button class="btn-primary" id="quiz-next-btn" onclick="nextQuestion()">التالي</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="screen-quiz-result" class="screen no-nav">
-            <div style="padding: 40px 20px; text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: center;">
-                <div style="font-size: 3rem; margin-bottom: 10px;">🎉</div>
-                <h2 style="font-size: 1.8rem; margin-bottom: 8px;">أحسنت! أتممت الاختبار</h2>
-                <p style="color: var(--text-muted); margin-bottom: 24px;">إليك ملخص أداءك في هذا الاختبار</p>
-
-                <div class="glass-card" style="padding: 24px;">
-                    <div style="font-size: 2.5rem; font-weight: 800; color: var(--accent-cyan);" id="result-score">80%</div>
-                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 4px;" id="result-detail-text">أجبت على 4 أسئلة صحيحة من أصل 5</p>
-                </div>
-
-                <div class="glass-card" style="text-align: right; background: rgba(255, 183, 3, 0.05); border-color: rgba(255, 183, 3, 0.2);">
-                    <h4 style="color: var(--accent-gold); font-size: 0.95rem; margin-bottom: 6px;">💡 نقاط تحتاج إلى مراجعة:</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-main);" id="result-weakness">قواعد الاشتقاق للدوال المثلثية.</p>
-                </div>
-            </div>
-            <div style="padding: 20px;">
-                <button class="btn-primary" onclick="switchTab('screen-dashboard')">العودة للرئيسية</button>
-            </div>
-        </div>
-
-        <div id="screen-progress" class="screen">
-            <div class="header">
-                <h2>تقرير التقدم 📊</h2>
-            </div>
-            <div style="padding: 0 20px 20px 20px;">
-                <div class="grid-2" style="margin-bottom: 16px;">
-                    <div class="glass-card" style="text-align: center; margin-bottom: 0;">
-                        <span style="font-size: 0.75rem; color: var(--text-muted);">دروس مكتملة</span>
-                        <h3 style="font-size: 1.4rem; color: var(--accent-cyan); margin-top: 4px;">28 درس</h3>
-                    </div>
-                    <div class="glass-card" style="text-align: center; margin-bottom: 0;">
-                        <span style="font-size: 0.75rem; color: var(--text-muted);">اختبارات مجتازة</span>
-                        <h3 style="font-size: 1.4rem; color: var(--accent-gold); margin-top: 4px;">12 اختبار</h3>
-                    </div>
-                </div>
-
+            <div id="screen-progress" class="screen">
+                <div class="header"><h2>التقدم الدراسي 📊</h2></div>
                 <div class="glass-card">
-                    <h4 style="font-size: 0.95rem; margin-bottom: 16px;">تطور الأداء الأسبوعي</h4>
-                    <div style="display: flex; justify-content: space-between; align-items: flex-end; height: 120px; padding-top: 10px;">
-                        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; width: 12%;">
-                            <div style="width: 100%; background: var(--accent-blue); height: 40px; border-radius: 4px;"></div>
-                            <span style="font-size: 0.7rem; color: var(--text-muted);">س</span>
-                        </div>
-                        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; width: 12%;">
-                            <div style="width: 100%; background: var(--accent-blue); height: 65px; border-radius: 4px;"></div>
-                            <span style="font-size: 0.7rem; color: var(--text-muted);">أ</span>
-                        </div>
-                        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; width: 12%;">
-                            <div style="width: 100%; background: var(--accent-blue); height: 50px; border-radius: 4px;"></div>
-                            <span style="font-size: 0.7rem; color: var(--text-muted);">ث</span>
-                        </div>
-                        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; width: 12%;">
-                            <div style="width: 100%; background: var(--accent-cyan); height: 90px; border-radius: 4px;"></div>
-                            <span style="font-size: 0.7rem; color: var(--accent-cyan); font-weight: bold;">ع</span>
-                        </div>
-                        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; width: 12%;">
-                            <div style="width: 100%; background: var(--accent-blue); height: 70px; border-radius: 4px;"></div>
-                            <span style="font-size: 0.7rem; color: var(--text-muted);">خ</span>
-                        </div>
-                    </div>
+                    <h4>الدروس المكتملة</h4>
+                    <p style="font-size: 1.5rem; font-weight: bold; color: var(--accent-cyan);">28 / 40 درس</p>
                 </div>
-
                 <div class="glass-card">
-                    <h4 style="font-size: 0.95rem; margin-bottom: 10px; color: var(--accent-cyan);">💪 نقاط القوة</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-main);">اللغة الإنجليزية، الفيزياء (الحركة الموجية)</p>
-                </div>
-
-                <div class="glass-card">
-                    <h4 style="font-size: 0.95rem; margin-bottom: 10px; color: var(--accent-gold);">⚠️ تحتاج لمراجعة</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-main);">التفاضل والتكامل، الكيمياء العضوية</p>
+                    <h4>متوسط الدرجات في الاختبارات</h4>
+                    <p style="font-size: 1.5rem; font-weight: bold; color: var(--accent-gold);">85%</p>
                 </div>
             </div>
-        </div>
 
-        <div id="screen-profile" class="screen">
-            <div class="header">
-                <h2>حسابي 👤</h2>
-            </div>
-            <div style="padding: 0 20px 20px 20px;">
-                <div class="profile-header">
-                    <div class="avatar" id="profile-avatar-letter">أ</div>
-                    <h3 id="profile-name-display">أحمد محمد</h3>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);" id="profile-grade-display">الصف الثالث الثانوي - علمي علوم</p>
+            <div id="screen-profile" class="screen">
+                <div class="header"><h2>حسابي 👤</h2></div>
+                <div class="glass-card" style="text-align: center;">
+                    <div style="width: 70px; height: 70px; background: var(--accent-blue); border-radius: 50%; margin: 0 auto 10px auto; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold;" id="profile-avatar">ط</div>
+                    <h3 id="profile-name">طالب EDUVO</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);" id="profile-email">student@eduvo.eg</p>
                 </div>
 
-                <div class="glass-card">
-                    <div class="setting-row">
-                        <span style="font-size: 0.9rem;">الوضع الليلي</span>
-                        <label class="switch">
-                            <input type="checkbox" id="theme-toggle" checked onchange="toggleTheme()">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    <div class="setting-row">
-                        <span style="font-size: 0.9rem;">الإشعارات</span>
-                        <label class="switch">
-                            <input type="checkbox" checked>
-                            <span class="slider"></span>
-                        </label>
+                <div class="glass-card" style="cursor: pointer;" onclick="window.location.href='developer.html'">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>حول EDUVO (صفحة المطور)</span>
+                        <span>←</span>
                     </div>
                 </div>
 
                 <button class="btn-secondary" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);" onclick="handleLogout()">تسجيل الخروج</button>
             </div>
-        </div>
 
-        <nav class="bottom-nav" id="main-nav" style="display: none;">
+            <div id="screen-quiz-active" class="screen">
+                <div class="header">
+                    <h2 id="quiz-title">اختبار</h2>
+                    <span id="quiz-step-text" style="color: var(--text-muted);">السؤال 1</span>
+                </div>
+                <h3 id="quiz-question" style="margin-bottom: 20px;">عنوان السؤال؟</h3>
+                <div id="quiz-options"></div>
+                <button class="btn-primary" style="margin-top: 20px;" onclick="nextQuestion()">التالي</button>
+            </div>
+
+        </main>
+
+        <nav class="bottom-nav" id="mobile-nav">
             <div class="nav-item active" onclick="switchTab('screen-dashboard')" id="nav-screen-dashboard">
-                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
                 <span>الرئيسية</span>
             </div>
             <div class="nav-item" onclick="switchTab('screen-subjects')" id="nav-screen-subjects">
@@ -968,9 +567,9 @@
                 <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/></svg>
                 <span>المساعد</span>
             </div>
-            <div class="nav-item" onclick="switchTab('screen-quizzes')" id="nav-screen-quizzes">
-                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                <span>الاختبارات</span>
+            <div class="nav-item" onclick="switchTab('screen-progress')" id="nav-screen-progress">
+                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+                <span>التقدم</span>
             </div>
             <div class="nav-item" onclick="switchTab('screen-profile')" id="nav-screen-profile">
                 <svg class="svg-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -981,83 +580,58 @@
     </div>
 
     <script>
-        /* --------------------------------------------------------------------------
-           APP STATE & MOCK DATA
-           -------------------------------------------------------------------------- */
+        /* 1. App State */
         const state = {
             user: JSON.parse(localStorage.getItem('eduvo_user')) || null,
-            theme: localStorage.getItem('eduvo_theme') || 'dark',
-            onboardIndex: 0,
+            appData: null,
             currentQuiz: null,
-            quizStep: 0,
-            quizScore: 0
+            quizIdx: 0,
+            quizScore: 0,
+            selectedOpt: null
         };
 
-        const onboardingData = [
-            {
-                icon: `<svg class="svg-icon" style="width:60px;height:60px;" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
-                title: "كل دراستك في مكان واحد",
-                desc: "نظم دراستك وصل إلى المواد والاختبارات بسهولة ويسر."
-            },
-            {
-                icon: `<svg class="svg-icon" style="width:60px;height:60px;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/></svg>`,
-                title: "مساعدك الذكي EDUVO AI",
-                desc: "اسأل، افهم، وتعلم بطريقة تفاعلية تناسب أسلوبك الخاص."
-            },
-            {
-                icon: `<svg class="svg-icon" style="width:60px;height:60px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`,
-                title: "حقق هدفك الدراسي",
-                desc: "تابع تقدمك باستمرار واعرف نقاط قوتك وما يحتاج إلى مراجعة."
-            }
-        ];
-
-        const mockSubjects = [
-            { id: 'math', name: 'الرياضيات', icon: '📐', progress: 68, units: ['الدوال والتفاضل', 'التكامل', 'الهندسة الفراغية'] },
-            { id: 'physics', name: 'الفيزياء', icon: '⚡', progress: 80, units: ['الكهربية والحث', 'الفيزياء الحديثة'] },
-            { id: 'chemistry', name: 'الكيمياء', icon: '🧪', progress: 54, units: ['العناصر الانتقالية', 'الكيمياء العضوية'] },
-            { id: 'arabic', name: 'اللغة العربية', icon: '📖', progress: 90, units: ['النحو والصرف', 'البلاغة والأدب'] },
-            { id: 'english', name: 'اللغة الإنجليزية', icon: '🇬🇧', progress: 85, units: ['Grammar & Vocabulary', 'Translation'] }
-        ];
-
-        const mockQuizzes = {
-            'الرياضيات': [
-                { q: "ما هو مشتق الدالة f(x) = x² ؟", options: ["x", "2x", "x²", "2"], correct: 1 },
-                { q: "تكامل 2x بالنسبة لـ x هو:", options: ["x² + C", "2 + C", "x + C", "2x² + C"], correct: 0 },
-                { q: "معدل تغير الدالة يعبر عن:", options: ["التكامل", "المماس", "المشتقة الأولى", "المساحة"], correct: 2 }
-            ],
-            'الفيزياء': [
-                { q: "وحدة قياس القوة في النظام الدولي هي:", options: ["الجول", "النيوتن", "الوات", "الفولت"], correct: 1 },
-                { q: "قانون نيوتن الثاني ينص على F = ؟", options: ["m / a", "m * a", "m + a", "a / m"], correct: 1 }
-            ]
-        };
-
-        /* --------------------------------------------------------------------------
-           INITIALIZATION & NAVIGATION
-           -------------------------------------------------------------------------- */
-        window.addEventListener('DOMContentLoaded', () => {
-            applyTheme();
+        /* 2. Initialization */
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadAppData();
             
-            // Splash screen delay
             setTimeout(() => {
                 if (state.user) {
-                    initDashboard();
+                    initUserUI();
                     switchTab('screen-dashboard');
                 } else {
-                    renderOnboarding();
                     navigateTo('screen-onboarding');
                 }
-            }, 2000);
+            }, 1500);
         });
 
+        /* 3. Fetch data.json */
+        async function loadAppData() {
+            try {
+                const res = await fetch('data.json');
+                state.appData = await res.json();
+                
+                // Show announcement if present
+                if (state.appData.app && state.appData.app.announcement) {
+                    const banner = document.getElementById('announcement-banner');
+                    document.getElementById('announcement-text').innerText = state.appData.app.announcement;
+                    banner.style.display = 'block';
+                }
+
+                renderSubjects();
+            } catch (err) {
+                console.error("Failed to load data.json:", err);
+            }
+        }
+
+        /* 4. Navigation & Protection */
         function navigateTo(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             const target = document.getElementById(screenId);
             if (target) target.classList.add('active');
 
-            // Hide bottom nav on auth/setup/splash screens
-            const noNavScreens = ['screen-splash', 'screen-onboarding', 'screen-setup', 'screen-register', 'screen-login', 'screen-quiz-active', 'screen-quiz-result'];
-            const nav = document.getElementById('main-nav');
-            if (noNavScreens.includes(screenId)) {
+            const guestScreens = ['screen-splash', 'screen-onboarding', 'screen-setup', 'screen-register', 'screen-login', 'screen-quiz-active'];
+            const nav = document.getElementById('mobile-nav');
+            if (guestScreens.includes(screenId)) {
                 nav.style.display = 'none';
             } else {
                 nav.style.display = 'flex';
@@ -1067,104 +641,62 @@
         function switchTab(screenId) {
             navigateTo(screenId);
             
-            // Update active nav state
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            const activeNav = document.getElementById(`nav-${screenId}`);
-            if (activeNav) activeNav.classList.add('active');
+            // Sync Mobile Nav
+            document.querySelectorAll('.bottom-nav .nav-item').forEach(i => i.classList.remove('active'));
+            const mobileItem = document.getElementById(`nav-${screenId}`);
+            if (mobileItem) mobileItem.classList.add('active');
 
-            // View-specific initializations
-            if (screenId === 'screen-subjects') renderSubjectsList();
-            if (screenId === 'screen-profile') renderProfileView();
+            // Sync Desktop Sidebar Nav
+            document.querySelectorAll('.sidebar .sidebar-item').forEach(i => i.classList.remove('active'));
+            const sideItem = document.getElementById(`side-${screenId}`);
+            if (sideItem) sideItem.classList.add('active');
         }
 
-        /* --------------------------------------------------------------------------
-           ONBOARDING & SETUP FLOW
-           -------------------------------------------------------------------------- */
-        function renderOnboarding() {
-            const data = onboardingData[state.onboardIndex];
-            document.getElementById('onboard-content').innerHTML = `
-                <div class="onboard-icon">${data.icon}</div>
-                <h2 style="font-size: 1.5rem; margin-bottom: 12px; color: #fff;">${data.title}</h2>
-                <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">${data.desc}</p>
-            `;
-            
-            document.getElementById('onboard-btn-text').innerText = 
-                state.onboardIndex === onboardingData.length - 1 ? "ابدأ الآن" : "التالي";
+        /* 5. Dynamic Rendering from data.json */
+        function renderSubjects() {
+            if (!state.appData || !state.appData.subjects) return;
+
+            const dashGrid = document.getElementById('dash-subjects-grid');
+            const listGrid = document.getElementById('subjects-list-container');
+
+            const html = state.appData.subjects.map(sub => `
+                <div class="subject-card" onclick="startQuizForSubject('${sub.name}')">
+                    <div style="font-size: 1.5rem;">${sub.icon}</div>
+                    <span style="font-weight: bold;">${sub.name}</span>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">${sub.units.length} وحدات • ${sub.progress}% مكتمل</span>
+                </div>
+            `).join('');
+
+            dashGrid.innerHTML = html;
+            listGrid.innerHTML = html;
         }
 
-        function nextOnboarding() {
-            if (state.onboardIndex < onboardingData.length - 1) {
-                state.onboardIndex++;
-                renderOnboarding();
-            } else {
-                navigateTo('screen-setup');
-            }
-        }
-
-        function handleGradeChange() {
-            const grade = document.getElementById('setup-grade').value;
-            const branchGroup = document.getElementById('branch-group');
-            // Hide branch selection for 1st Secondary
-            if (grade === 'الصف الأول الثانوي') {
-                branchGroup.style.display = 'none';
-            } else {
-                branchGroup.style.display = 'flex';
-            }
-        }
-
+        /* 6. Auth Simulation (Connectable to Supabase Auth) */
         function saveSetup() {
-            const grade = document.getElementById('setup-grade').value;
-            const branch = grade === 'الصف الأول الثانوي' ? 'عام' : document.getElementById('setup-branch').value;
-            
-            state.tempSetup = { grade, branch };
+            state.tempGrade = document.getElementById('setup-grade').value;
+            state.tempBranch = document.getElementById('setup-branch').value;
             navigateTo('screen-register');
         }
 
-        /* --------------------------------------------------------------------------
-           AUTH LOGIC (LOCALSTORAGE)
-           -------------------------------------------------------------------------- */
-        function handleRegister() {
-            const name = document.getElementById('reg-name').value.trim();
-            const email = document.getElementById('reg-email').value.trim();
-            const pass = document.getElementById('reg-pass').value.trim();
+        function handleAuth(type) {
+            const email = document.getElementById(`${type}-email`).value.trim();
+            const name = type === 'register' ? document.getElementById('reg-name').value.trim() : 'طالب EDUVO';
 
-            if (!name || !email || !pass) {
-                alert('يرجى ملء جميع الحقول');
+            if (!email) {
+                alert('يرجى إدخال البريد الإلكتروني بشكل صحيح');
                 return;
             }
 
             const userData = {
-                name,
-                email,
-                grade: state.tempSetup?.grade || 'الصف الثالث الثانوي',
-                branch: state.tempSetup?.branch || 'علمي علوم'
-            };
-
-            localStorage.setItem('eduvo_user', JSON.stringify(userData));
-            state.user = userData;
-            
-            initDashboard();
-            switchTab('screen-dashboard');
-        }
-
-        function handleLogin() {
-            const email = document.getElementById('login-email').value.trim();
-            if (!email) {
-                alert('يرجى إدخال البريد الإلكتروني');
-                return;
-            }
-
-            const storedUser = JSON.parse(localStorage.getItem('eduvo_user')) || {
-                name: 'طالب EDUVO',
+                name: name || 'طالب EDUVO',
                 email: email,
-                grade: 'الصف الثالث الثانوي',
-                branch: 'علمي علوم'
+                grade: state.tempGrade || 'الصف الثالث الثانوي'
             };
 
-            state.user = storedUser;
-            localStorage.setItem('eduvo_user', JSON.stringify(storedUser));
+            state.user = userData;
+            localStorage.setItem('eduvo_user', JSON.stringify(userData));
             
-            initDashboard();
+            initUserUI();
             switchTab('screen-dashboard');
         }
 
@@ -1174,168 +706,48 @@
             navigateTo('screen-login');
         }
 
-        /* --------------------------------------------------------------------------
-           DASHBOARD & SUBJECTS LOGIC
-           -------------------------------------------------------------------------- */
-        function initDashboard() {
+        function initUserUI() {
             if (!state.user) return;
             document.getElementById('dash-user-name').innerText = state.user.name;
-            document.getElementById('dash-branch-badge').innerText = `${state.user.grade} - ${state.user.branch}`;
-
-            // Render top 4 subjects grid
-            const grid = document.getElementById('dash-subjects-grid');
-            grid.innerHTML = mockSubjects.slice(0, 4).map(sub => `
-                <div class="subject-card" onclick="openSubjectDetail('${sub.id}')">
-                    <div class="subject-icon">${sub.icon}</div>
-                    <span style="font-weight: 700; font-size: 0.95rem;">${sub.name}</span>
-                    <div class="progress-bar-bg">
-                        <div class="progress-bar-fill" style="width: ${sub.progress}%;"></div>
-                    </div>
-                    <span style="font-size: 0.75rem; color: var(--text-muted);">${sub.progress}% مكتمل</span>
-                </div>
-            `).join('');
+            document.getElementById('profile-name').innerText = state.user.name;
+            document.getElementById('profile-email').innerText = state.user.email;
+            document.getElementById('profile-avatar').innerText = state.user.name.charAt(0);
         }
 
-        function renderSubjectsList() {
-            const container = document.getElementById('subjects-list-container');
-            container.innerHTML = mockSubjects.map(sub => `
-                <div class="glass-card" style="display: flex; align-items: center; gap: 16px; cursor: pointer;" onclick="openSubjectDetail('${sub.id}')">
-                    <div class="subject-icon" style="width: 50px; height: 50px; font-size: 1.4rem;">${sub.icon}</div>
-                    <div style="flex: 1;">
-                        <h4 style="font-size: 1rem;">${sub.name}</h4>
-                        <div class="progress-bar-bg" style="margin: 6px 0;">
-                            <div class="progress-bar-fill" style="width: ${sub.progress}%;"></div>
-                        </div>
-                        <span style="font-size: 0.75rem; color: var(--text-muted);">${sub.units.length} وحدات • ${sub.progress}% إنجاز</span>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function openSubjectDetail(subjectId) {
-            const sub = mockSubjects.find(s => s.id === subjectId);
-            if (!sub) return;
-
-            document.getElementById('subject-detail-title').innerText = sub.name;
-            const container = document.getElementById('subject-units-container');
+        /* 7. Quiz Engine from data.json */
+        function startQuizForSubject(subjectName) {
+            if (!state.appData || !state.appData.quizzes) return;
+            const quiz = state.appData.quizzes.find(q => q.subject === subjectName);
             
-            container.innerHTML = sub.units.map((unit, index) => `
-                <div class="glass-card">
-                    <h4 style="font-size: 0.95rem; color: var(--accent-cyan); margin-bottom: 10px;">الوحدة ${index + 1}: ${unit}</h4>
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-top: 1px solid var(--border-color);">
-                        <div>
-                            <p style="font-size: 0.85rem; font-weight: 600;">الدرس الأول: مقدمة ونظريات</p>
-                            <span style="font-size: 0.75rem; color: var(--text-muted);">⏱️ 20 دقيقة</span>
-                        </div>
-                        <button class="btn-primary" style="width: auto; padding: 6px 12px; font-size: 0.8rem;">ابدأ</button>
-                    </div>
-                </div>
-            `).join('');
-
-            navigateTo('screen-subject-detail');
-        }
-
-        /* --------------------------------------------------------------------------
-           AI ASSISTANT CHAT LOGIC
-           -------------------------------------------------------------------------- */
-        function sendAiMessage() {
-            const input = document.getElementById('ai-input');
-            const query = input.value.trim();
-            if (!query) return;
-
-            // Append User Message
-            appendChat(query, 'user');
-            input.value = '';
-
-            // Show Typing Indicator
-            const typingId = appendTyping();
-
-            // Simulate Smart Response
-            setTimeout(() => {
-                removeTyping(typingId);
-                const response = getAiMockResponse(query);
-                appendChat(response, 'ai');
-            }, 1200);
-        }
-
-        function sendQuickAi(text) {
-            document.getElementById('ai-input').value = text;
-            sendAiMessage();
-        }
-
-        function appendChat(text, sender) {
-            const box = document.getElementById('chat-box');
-            const bubble = document.createElement('div');
-            bubble.className = `chat-bubble chat-${sender}`;
-            bubble.innerText = text;
-            box.appendChild(bubble);
-            box.scrollTop = box.scrollHeight;
-        }
-
-        function appendTyping() {
-            const box = document.getElementById('chat-box');
-            const bubble = document.createElement('div');
-            const id = 'typing-' + Date.now();
-            bubble.id = id;
-            bubble.className = 'chat-bubble chat-ai typing-dots';
-            bubble.innerHTML = '<span></span><span></span><span></span>';
-            box.appendChild(bubble);
-            box.scrollTop = box.scrollHeight;
-            return id;
-        }
-
-        function removeTyping(id) {
-            const el = document.getElementById(id);
-            if (el) el.remove();
-        }
-
-        function getAiMockResponse(q) {
-            if (q.includes('تفاضل') || q.includes('رياضيات')) {
-                return "التفاضل يعبر عن 'معدل التغير اللحظي'. تخيل أنك تسوق سيارة: السرعة في عداد السيارة في لحظة معينة هي المشتقة (التفاضل) للمسافة بالنسبة للزمن! هل تحب أن نحل مسألة معاً؟";
+            if (!quiz) {
+                alert('لا يوجد اختبار متاح حالياً لهذه المادة.');
+                return;
             }
-            if (q.includes('فيزياء') || q.includes('حل')) {
-                return "ممتاز! إليك مسألة سريعة: جسم كتلته 5 كجم يتحرك بعجلة 2 م/ث²، احسب القوة المؤثرة عليه باستخدام قانون نيوتن الثاني (F = m × a)؟ جرب أن تحسبها وأخبرني بالناتج!";
-            }
-            if (q.includes('وقت') || q.includes('نظم')) {
-                return "لتنظيم وقتك لشهادة الثانوية العامة: اعتمد تقنية البومودورو (25 دقيقة مذاكرة تركيز + 5 دقائق راحة). ابدأ بالمادة الأقسى عليك صباحاً عندما يكون ذهنك في أعلى مستويات النشاط.";
-            }
-            return `فهمت سؤالك حول "${q}". للتبسيط: ابدأ بتفكيك المفاهيم الكبيرة إلى نقاط صغيرة. هل تريد مني شرح جزئية معينة بتمارين تفاعلية؟`;
-        }
 
-        /* --------------------------------------------------------------------------
-           QUIZ SYSTEM LOGIC
-           -------------------------------------------------------------------------- */
-        function startQuiz(subject) {
-            const questions = mockQuizzes[subject] || mockQuizzes['الرياضيات'];
-            state.currentQuiz = questions;
-            state.quizStep = 0;
+            state.currentQuiz = quiz;
+            state.quizIdx = 0;
             state.quizScore = 0;
-            
+
             renderQuizQuestion();
             navigateTo('screen-quiz-active');
         }
 
         function renderQuizQuestion() {
-            const qData = state.currentQuiz[state.quizStep];
-            const total = state.currentQuiz.length;
+            const q = state.currentQuiz.questions[state.quizIdx];
+            document.getElementById('quiz-title').innerText = state.currentQuiz.title;
+            document.getElementById('quiz-step-text').innerText = `السؤال ${state.quizIdx + 1} من ${state.currentQuiz.questions.length}`;
+            document.getElementById('quiz-question').innerText = q.question;
 
-            document.getElementById('quiz-progress-text').innerText = `السؤال ${state.quizStep + 1} من ${total}`;
-            document.getElementById('quiz-progress-bar').style.width = `${((state.quizStep + 1) / total) * 100}%`;
-            document.getElementById('quiz-question-text').innerText = qData.q;
-
-            const container = document.getElementById('quiz-options-container');
-            container.innerHTML = qData.options.map((opt, idx) => `
-                <div class="quiz-opt" id="opt-${idx}" onclick="selectOption(${idx})">
-                    <span>${opt}</span>
-                    <div style="width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--border-color);" id="opt-circle-${idx}"></div>
-                </div>
+            const container = document.getElementById('quiz-options');
+            container.innerHTML = q.options.map((opt, i) => `
+                <div class="quiz-opt" id="opt-${i}" onclick="selectOpt(${i})">${opt}</div>
             `).join('');
 
             state.selectedOpt = null;
         }
 
-        function selectOption(idx) {
-            document.querySelectorAll('.quiz-opt').forEach(el => el.classList.remove('selected'));
+        function selectOpt(idx) {
+            document.querySelectorAll('.quiz-opt').forEach(o => o.classList.remove('selected'));
             document.getElementById(`opt-${idx}`).classList.add('selected');
             state.selectedOpt = idx;
         }
@@ -1346,51 +758,43 @@
                 return;
             }
 
-            if (state.selectedOpt === state.currentQuiz[state.quizStep].correct) {
+            if (state.selectedOpt === state.currentQuiz.questions[state.quizIdx].correctIndex) {
                 state.quizScore++;
             }
 
-            state.quizStep++;
-            if (state.quizStep < state.currentQuiz.length) {
+            state.quizIdx++;
+            if (state.quizIdx < state.currentQuiz.questions.length) {
                 renderQuizQuestion();
             } else {
-                finishQuiz();
+                alert(`أحسنت! أنهيت الاختبار بنتيجة: ${state.quizScore} / ${state.currentQuiz.questions.length}`);
+                switchTab('screen-dashboard');
             }
         }
 
-        function finishQuiz() {
-            const total = state.currentQuiz.length;
-            const percentage = Math.round((state.quizScore / total) * 100);
+        /* 8. AI Chat Handler */
+        function sendAiMessage() {
+            const input = document.getElementById('ai-input');
+            const msg = input.value.trim();
+            if (!msg) return;
 
-            document.getElementById('result-score').innerText = `${percentage}%`;
-            document.getElementById('result-detail-text').innerText = `أجبت على ${state.quizScore} أسئلة صحيحة من أصل ${total}`;
+            const chatBox = document.getElementById('chat-box');
             
-            navigateTo('screen-quiz-result');
-        }
+            // User Message
+            const userB = document.createElement('div');
+            userB.className = 'chat-bubble chat-user';
+            userB.innerText = msg;
+            chatBox.appendChild(userB);
 
-        /* --------------------------------------------------------------------------
-           PROFILE & THEME MANAGEMENT
-           -------------------------------------------------------------------------- */
-        function renderProfileView() {
-            if (!state.user) return;
-            document.getElementById('profile-name-display').innerText = state.user.name;
-            document.getElementById('profile-grade-display').innerText = `${state.user.grade} - ${state.user.branch}`;
-            document.getElementById('profile-avatar-letter').innerText = state.user.name.charAt(0);
-        }
+            input.value = '';
 
-        function toggleTheme() {
-            const isChecked = document.getElementById('theme-toggle').checked;
-            state.theme = isChecked ? 'dark' : 'light';
-            localStorage.setItem('eduvo_theme', state.theme);
-            applyTheme();
-        }
-
-        function applyTheme() {
-            if (state.theme === 'light') {
-                document.body.classList.add('light-theme');
-            } else {
-                document.body.classList.remove('light-theme');
-            }
+            // AI Answer Simulation
+            setTimeout(() => {
+                const aiB = document.createElement('div');
+                aiB.className = 'chat-bubble chat-ai';
+                aiB.innerText = `سؤال ممتاز حول "${msg}". يقوم المساعد الذكي بتقسيم المفاهيم إلى خطوات بسيطة لمساعدتك على الفهم والتحصيل العلمي بطريقة ممتازة!`;
+                chatBox.appendChild(aiB);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 800);
         }
     </script>
 </body>
