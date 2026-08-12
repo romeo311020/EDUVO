@@ -599,7 +599,23 @@
         const SUPABASE_URL = "https://mjptrjidrhwaphkmqoma.supabase.co";
         const SUPABASE_KEY = "sb_publishable_CwN4jvLvXRTEu5uimUsIzA_ob8h8DAS";
         
-        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // تتبع حالة الاتصال
+        let db = null;
+        let isConnected = false;
+
+        // محاولة الاتصال بـ Supabase
+        try {
+            if (window.supabase && window.supabase.createClient) {
+                db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                isConnected = true;
+                console.log('✅ تم الاتصال بـ Supabase بنجاح');
+            } else {
+                throw new Error('مكتبة Supabase لم تُحمّل بعد');
+            }
+        } catch (err) {
+            console.error('❌ خطأ في الاتصال بـ Supabase:', err);
+            isConnected = false;
+        }
 
         /* 2. State Store */
         let state = {
@@ -609,13 +625,22 @@
 
         /* 3. Startup Auth Check */
         window.addEventListener('DOMContentLoaded', async () => {
-            const { data: { session } } = await db.auth.getSession();
-            if (session) {
-                await verifyAdminRole(session.user);
+            if (!isConnected) {
+                showAlert('❌ فشل الاتصال بقاعدة البيانات. قد تكون الخدمة معطلة.', 'error');
+                return;
+            }
+
+            try {
+                const { data: { session } } = await db.auth.getSession();
+                if (session) {
+                    await verifyAdminRole(session.user);
+                }
+            } catch (err) {
+                showAlert('⚠️ خطأ في التحقق من الجلسة: ' + err.message, 'warning');
             }
         });
 
-        /* 4. Admin Auth Handler */
+        /* 4. Admin Auth Handler with Enhanced Error Handling */
         async function handleAdminLogin(e) {
             e.preventDefault();
             const email = document.getElementById('admin-email').value.trim();
@@ -623,58 +648,149 @@
             const errDiv = document.getElementById('login-error-msg');
             errDiv.style.display = 'none';
 
-            try {
-                const { data, error } = await db.auth.signInWithPassword({ email, password });
-                if (error) throw error;
-
-                await verifyAdminRole(data.user);
-            } catch (err) {
-                errDiv.innerText = err.message || "فشل تسجيل الدخول. تحقق من البيانات.";
-                errDiv.style.display = 'block';
+            // التحقق من صحة المدخلات
+            if (!email) {
+                showLoginError('يرجى إدخال البريد الإلكتروني', errDiv);
+                return;
             }
-        }
-
-        async function verifyAdminRole(user) {
-            // Check Profile Table for Role
-            const { data: profile, error } = await db
-                .from('profiles')
-                .select('*')
-                .eq('id', user.id)
-                .single();
-
-            if (error || !profile || profile.role !== 'admin') {
-                const errDiv = document.getElementById('login-error-msg');
-                errDiv.innerText = "ليس لديك صلاحية للوصول إلى لوحة الإدارة.";
-                errDiv.style.display = 'block';
-                await db.auth.signOut();
+            if (!password) {
+                showLoginError('يرجى إدخال كلمة المرور', errDiv);
                 return;
             }
 
-            state.currentAdmin = profile;
-            const overlay = document.getElementById('admin-login-overlay');
-            overlay.style.opacity = '0';
-            setTimeout(() => {
-                overlay.style.display = 'none';
-            }, 300);
+            if (!isConnected) {
+                showLoginError('❌ لا يوجد اتصال بقاعدة البيانات. تحقق من الاتصال بالإنترنت.', errDiv);
+                return;
+            }
 
-            await fetchProfilesData();
+            try {
+                const { data, error } = await db.auth.signInWithPassword({ email, password });
+                if (error) throw new Error(error.message || 'فشل تسجيل الدخول');
+
+                if (!data.user) throw new Error('لم يتم استقبال بيانات المستخدم');
+
+                await verifyAdminRole(data.user);
+            } catch (err) {
+                const msg = err.message.includes('Invalid') ? 'البريد أو كلمة المرور غير صحيحة' : 
+                           err.message.includes('not confirm') ? 'يرجى تأكيد البريد الإلكتروني' :
+                           err.message;
+                showLoginError(`❌ ${msg}`, errDiv);
+            }
+        }
+
+        function showLoginError(msg, errDiv) {
+            errDiv.innerText = msg;
+            errDiv.style.display = 'block';
+            console.error('Login Error:', msg);
+        }
+
+        async function verifyAdminRole(user) {
+            try {
+                // التحقق من وجود جدول profiles
+                const { data: profile, error } = await db
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+
+                const errDiv = document.getElementById('login-error-msg');
+
+                if (error && error.code === 'PGRST116') {
+                    // الجدول غير موجود
+                    showLoginError('⚠️ جدول المستخدمين غير موجود في قاعدة البيانات. يرجى تهيئة النظام.', errDiv);
+                    return;
+                }
+
+                if (error || !profile) {
+                    showLoginError('⚠️ لم يتم العثور على ملف شخصي للإدارة.', errDiv);
+                    await db.auth.signOut();
+                    return;
+                }
+
+                if (profile.role !== 'admin') {
+                    showLoginError('❌ ليس لديك صلاحيات الإدارة. تواصل مع المسؤول.', errDiv);
+                    await db.auth.signOut();
+                    return;
+                }
+
+                state.currentAdmin = profile;
+                const overlay = document.getElementById('admin-login-overlay');
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 300);
+
+                showAlert('✅ مرحباً ' + profile.name, 'success');
+                await fetchProfilesData();
+
+            } catch (err) {
+                console.error('Verify Admin Role Error:', err);
+                const errDiv = document.getElementById('login-error-msg');
+                showLoginError('❌ خطأ: ' + err.message, errDiv);
+            }
         }
 
         async function handleAdminLogout() {
-            await db.auth.signOut();
-            window.location.reload();
+            try {
+                await db.auth.signOut();
+                showAlert('✅ تم تسجيل الخروج بنجاح', 'success');
+                setTimeout(() => window.location.reload(), 500);
+            } catch (err) {
+                showAlert('❌ خطأ في تسجيل الخروج: ' + err.message, 'error');
+            }
+        }
+
+        function showAlert(message, type = 'info') {
+            const alertDiv = document.createElement('div');
+            alertDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 16px 24px;
+                background: ${type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : type === 'warning' ? '#f59e0b' : '#3b82f6'};
+                color: white;
+                border-radius: 8px;
+                z-index: 10000;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                font-weight: 600;
+                max-width: 400px;
+                word-wrap: break-word;
+            `;
+            alertDiv.innerText = message;
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => alertDiv.remove(), 5000);
         }
 
         /* 5. Fetch & Render Profiles Data */
         async function fetchProfilesData() {
-            const { data: profiles, error } = await db
-                .from('profiles')
-                .select('*')
-                .order('created_at', { ascending: false });
+            if (!isConnected) {
+                showAlert('❌ لا يوجد اتصال بقاعدة البيانات', 'error');
+                return;
+            }
 
-            if (!error && profiles) {
-                state.profiles = profiles;
+            try {
+                const { data: profiles, error } = await db
+                    .from('profiles')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    if (error.code === 'PGRST116') {
+                        showAlert('⚠️ جدول المستخدمين غير موجود. يرجى إنشاء الجدول في Supabase', 'warning');
+                    } else {
+                        showAlert('❌ خطأ في جلب البيانات: ' + error.message, 'error');
+                    }
+                    state.profiles = [];
+                } else if (profiles) {
+                    state.profiles = profiles;
+                    showAlert(`✅ تم تحميل ${profiles.length} سجل طالب`, 'success');
+                }
+
                 renderDashboard();
+            } catch (err) {
+                showAlert('❌ خطأ غير متوقع: ' + err.message, 'error');
+                console.error('Fetch Error:', err);
             }
         }
 
@@ -755,15 +871,31 @@
 
         /* 6. Database Update Actions */
         async function updateStudentStatus(userId, newStatus) {
-            const { error } = await db
-                .from('profiles')
-                .update({ status: newStatus })
-                .eq('id', userId);
+            if (!isConnected) {
+                showAlert('❌ لا يوجد اتصال بقاعدة البيانات', 'error');
+                return;
+            }
 
-            if (!error) {
-                await fetchProfilesData();
-            } else {
-                alert('حدث خطأ أثناء تحديث الحالة: ' + error.message);
+            try {
+                const { error } = await db
+                    .from('profiles')
+                    .update({ status: newStatus })
+                    .eq('id', userId);
+
+                if (error) {
+                    showAlert('❌ خطأ في التحديث: ' + error.message, 'error');
+                } else {
+                    const statusText = {
+                        'active': '✅ تم تفعيل الطالب',
+                        'suspended': '⛔ تم إيقاف الطالب',
+                        'pending': '⏳ تم تعليق الطالب',
+                        'rejected': '❌ تم رفض الطالب'
+                    };
+                    showAlert(statusText[newStatus] || 'تم التحديث بنجاح', 'success');
+                    await fetchProfilesData();
+                }
+            } catch (err) {
+                showAlert('❌ خطأ غير متوقع: ' + err.message, 'error');
             }
         }
 

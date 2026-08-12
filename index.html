@@ -671,39 +671,128 @@
             listGrid.innerHTML = html;
         }
 
-        /* 6. Auth Simulation (Connectable to Supabase Auth) */
+        /* ====== SUPABASE INTEGRATION ====== */
+        const SUPABASE_URL = "https://mjptrjidrhwaphkmqoma.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_CwN4jvLvXRTEu5uimUsIzA_ob8h8DAS";
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Check for existing session on load
+        window.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await db.auth.getSession();
+            if (session && session.user) {
+                state.user = {
+                    id: session.user.id,
+                    email: session.user.email,
+                    name: session.user.user_metadata?.name || session.user.email.split('@')[0]
+                };
+                initUserUI();
+                switchTab('screen-dashboard');
+            }
+        });
+
+        /* 6. Auth with Supabase */
         function saveSetup() {
             state.tempGrade = document.getElementById('setup-grade').value;
             state.tempBranch = document.getElementById('setup-branch').value;
             navigateTo('screen-register');
         }
 
-        function handleAuth(type) {
+        async function handleAuth(type) {
             const email = document.getElementById(`${type}-email`).value.trim();
-            const name = type === 'register' ? document.getElementById('reg-name').value.trim() : 'طالب EDUVO';
+            const password = document.getElementById(`${type}-password`)?.value?.trim() || 'password123';
+            const name = type === 'register' ? document.getElementById('reg-name').value.trim() : '';
 
             if (!email) {
-                alert('يرجى إدخال البريد الإلكتروني بشكل صحيح');
+                showAlert('❌ يرجى إدخال البريد الإلكتروني بشكل صحيح', 'error');
                 return;
             }
 
-            const userData = {
-                name: name || 'طالب EDUVO',
-                email: email,
-                grade: state.tempGrade || 'الصف الثالث الثانوي'
-            };
+            try {
+                let user;
+                
+                if (type === 'register') {
+                    if (!name) {
+                        showAlert('❌ يرجى إدخال الاسم', 'error');
+                        return;
+                    }
+                    
+                    const { data, error } = await db.auth.signUp({
+                        email: email,
+                        password: password,
+                        options: {
+                            data: {
+                                name: name,
+                                grade: state.tempGrade || 'الصف الثالث الثانوي'
+                            }
+                        }
+                    });
+                    
+                    if (error) throw error;
+                    user = data.user;
+                    showAlert('✅ تم التسجيل بنجاح! يرجى التحقق من بريدك الإلكتروني', 'success');
+                } else {
+                    const { data, error } = await db.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+                    
+                    if (error) throw error;
+                    user = data.user;
+                    showAlert('✅ تم الدخول بنجاح!', 'success');
+                }
 
-            state.user = userData;
-            localStorage.setItem('eduvo_user', JSON.stringify(userData));
-            
-            initUserUI();
-            switchTab('screen-dashboard');
+                state.user = {
+                    id: user.id,
+                    email: user.email,
+                    name: user.user_metadata?.name || name || email.split('@')[0]
+                };
+                
+                // Save to localStorage as fallback
+                localStorage.setItem('eduvo_user', JSON.stringify(state.user));
+                
+                setTimeout(() => {
+                    initUserUI();
+                    switchTab('screen-dashboard');
+                }, 1000);
+
+            } catch (err) {
+                showAlert(`❌ ${err.message || 'حدث خطأ في المصادقة'}`, 'error');
+            }
         }
 
-        function handleLogout() {
-            localStorage.removeItem('eduvo_user');
-            state.user = null;
-            navigateTo('screen-login');
+        function showAlert(message, type = 'info') {
+            const alertDiv = document.createElement('div');
+            alertDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 16px 24px;
+                background: ${type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#3b82f6'};
+                color: white;
+                border-radius: 8px;
+                z-index: 10000;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                animation: slideIn 0.3s ease;
+            `;
+            alertDiv.innerText = message;
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => alertDiv.remove(), 300);
+            }, 4000);
+        }
+
+        async function handleLogout() {
+            try {
+                await db.auth.signOut();
+                localStorage.removeItem('eduvo_user');
+                state.user = null;
+                showAlert('✅ تم تسجيل الخروج بنجاح', 'success');
+                setTimeout(() => navigateTo('screen-login'), 500);
+            } catch (err) {
+                showAlert(`❌ ${err.message}`, 'error');
+            }
         }
 
         function initUserUI() {
