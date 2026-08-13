@@ -686,29 +686,28 @@
 
         async function verifyAdminRole(user) {
             try {
-                // التحقق من وجود جدول profiles
+                const errDiv = document.getElementById('login-error-msg');
+
+                // البحث عن البريد بدلاً من ID
                 const { data: profile, error } = await db
                     .from('profiles')
                     .select('*')
-                    .eq('id', user.id)
+                    .eq('email', user.email)
                     .single();
 
-                const errDiv = document.getElementById('login-error-msg');
-
                 if (error && error.code === 'PGRST116') {
-                    // الجدول غير موجود
-                    showLoginError('⚠️ جدول المستخدمين غير موجود في قاعدة البيانات. يرجى تهيئة النظام.', errDiv);
+                    showLoginError('⚠️ جدول المستخدمين غير موجود. اتبع التعليمات في SQL_SETUP.md', errDiv);
                     return;
                 }
 
                 if (error || !profile) {
-                    showLoginError('⚠️ لم يتم العثور على ملف شخصي للإدارة.', errDiv);
+                    showLoginError('⚠️ لم يتم العثور على بيانات المستخدم في قاعدة البيانات. تحقق من SQL_SETUP.md', errDiv);
                     await db.auth.signOut();
                     return;
                 }
 
                 if (profile.role !== 'admin') {
-                    showLoginError('❌ ليس لديك صلاحيات الإدارة. تواصل مع المسؤول.', errDiv);
+                    showLoginError(`❌ أنت ${profile.role}، لا تملك صلاحيات Admin`, errDiv);
                     await db.auth.signOut();
                     return;
                 }
@@ -720,13 +719,13 @@
                     overlay.style.display = 'none';
                 }, 300);
 
-                showAlert('✅ مرحباً ' + profile.name, 'success');
+                showAlert('✅ مرحباً ' + (profile.name || 'Admin'), 'success');
                 await fetchProfilesData();
 
             } catch (err) {
-                console.error('Verify Admin Role Error:', err);
+                console.error('Verify Admin Error:', err);
                 const errDiv = document.getElementById('login-error-msg');
-                showLoginError('❌ خطأ: ' + err.message, errDiv);
+                showLoginError('❌ ' + (err.message || 'حدث خطأ غير متوقع'), errDiv);
             }
         }
 

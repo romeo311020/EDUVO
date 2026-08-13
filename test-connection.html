@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>اختبار الاتصال - EDUVO</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Cairo, sans-serif;
+            background: #060b19;
+            color: #fff;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            border-radius: 14px;
+            padding: 30px;
+        }
+        h1 { margin-bottom: 20px; text-align: center; }
+        .test-item {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid;
+            background: rgba(255,255,255,0.05);
+        }
+        .pending { border-left-color: #f59e0b; }
+        .success { border-left-color: #10b981; background: rgba(16, 185, 129, 0.1); }
+        .error { border-left-color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+        .label { font-weight: bold; }
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background: linear-gradient(135deg, #1c72d8, #00d2ff);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        button:hover { opacity: 0.9; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 اختبار الاتصال بـ Supabase</h1>
+        
+        <div id="tests"></div>
+        
+        <button onclick="runAllTests()">🔄 اختبر الاتصال</button>
+    </div>
+
+    <script>
+        const SUPABASE_URL = "https://mjptrjidrhwaphkmqoma.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_CwN4jvLvXRTEu5uimUsIzA_ob8h8DAS";
+        
+        let db = null;
+        const results = {};
+
+        async function runAllTests() {
+            const testsDiv = document.getElementById('tests');
+            testsDiv.innerHTML = '';
+            results = {};
+
+            // Test 1: مكتبة Supabase
+            addTest('1️⃣ تحميل مكتبة Supabase', 'pending');
+            try {
+                if (window.supabase) {
+                    addTest('1️⃣ تحميل مكتبة Supabase', 'success');
+                    results.supabaseLoaded = true;
+                } else {
+                    addTest('1️⃣ تحميل مكتبة Supabase', 'error');
+                    results.supabaseLoaded = false;
+                }
+            } catch (e) {
+                addTest('1️⃣ تحميل مكتبة Supabase', 'error', e.message);
+            }
+
+            // Test 2: الاتصال بـ Supabase
+            addTest('2️⃣ الاتصال بـ Supabase', 'pending');
+            try {
+                db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                addTest('2️⃣ الاتصال بـ Supabase', 'success');
+                results.dbConnected = true;
+            } catch (e) {
+                addTest('2️⃣ الاتصال بـ Supabase', 'error', e.message);
+                results.dbConnected = false;
+                return;
+            }
+
+            // Test 3: جدول Profiles
+            addTest('3️⃣ وجود جدول Profiles', 'pending');
+            try {
+                const { data, error } = await db.from('profiles').select('count');
+                if (error) {
+                    addTest('3️⃣ وجود جدول Profiles', 'error', error.message);
+                    results.tableExists = false;
+                } else {
+                    addTest('3️⃣ وجود جدول Profiles', 'success', `✅ الجدول موجود`);
+                    results.tableExists = true;
+                }
+            } catch (e) {
+                addTest('3️⃣ وجود جدول Profiles', 'error', e.message);
+                results.tableExists = false;
+            }
+
+            // Test 4: وجود حساب Admin
+            addTest('4️⃣ حساب Admin في Auth', 'pending');
+            try {
+                const { data, error } = await db.auth.admin.listUsers();
+                if (error) {
+                    addTest('4️⃣ حساب Admin في Auth', 'error', 'خطأ في الوصول للمستخدمين');
+                    results.adminExists = false;
+                } else {
+                    const admin = data.users.find(u => u.email === 'admin@eduvo.eg');
+                    if (admin) {
+                        addTest('4️⃣ حساب Admin في Auth', 'success', `✅ admin@eduvo.eg موجود`);
+                        results.adminExists = true;
+                        results.adminId = admin.id;
+                    } else {
+                        addTest('4️⃣ حساب Admin في Auth', 'error', '❌ admin@eduvo.eg غير موجود');
+                        results.adminExists = false;
+                    }
+                }
+            } catch (e) {
+                addTest('4️⃣ حساب Admin في Auth', 'error', 'ليس لديك صلاحيات (حاول الدخول)');
+                results.adminExists = false;
+            }
+
+            // Test 5: بيانات Admin في Profiles
+            addTest('5️⃣ بيانات Admin في جدول Profiles', 'pending');
+            try {
+                const { data, error } = await db
+                    .from('profiles')
+                    .select('*')
+                    .eq('email', 'admin@eduvo.eg')
+                    .single();
+                
+                if (error || !data) {
+                    addTest('5️⃣ بيانات Admin في جدول Profiles', 'error', '❌ لا توجد بيانات Admin');
+                    results.adminInProfiles = false;
+                } else {
+                    addTest('5️⃣ بيانات Admin في جدول Profiles', 'success', `✅ البيانات موجودة - الدور: ${data.role}`);
+                    results.adminInProfiles = true;
+                }
+            } catch (e) {
+                addTest('5️⃣ بيانات Admin في جدول Profiles', 'error', e.message);
+                results.adminInProfiles = false;
+            }
+
+            // ملخص النتائج
+            setTimeout(() => {
+                console.log('نتائج الاختبار:', results);
+                if (results.tableExists && results.adminExists && results.adminInProfiles) {
+                    addTest('✅ كل شيء تمام!', 'success', 'يمكنك الآن استخدام admin.html');
+                } else {
+                    addTest('⚠️ هناك مشاكل', 'error', 'اتبع الخطوات أدناه لإصلاح المشاكل');
+                }
+            }, 500);
+        }
+
+        function addTest(label, status, message = '') {
+            const testsDiv = document.getElementById('tests');
+            const div = document.createElement('div');
+            div.className = `test-item ${status}`;
+            
+            let icon = '⏳';
+            if (status === 'success') icon = '✅';
+            if (status === 'error') icon = '❌';
+            
+            div.innerHTML = `<span class="label">${icon} ${label}</span>`;
+            if (message) div.innerHTML += `<br><small>${message}</small>`;
+            
+            testsDiv.appendChild(div);
+            testsDiv.scrollTop = testsDiv.scrollHeight;
+        }
+
+        // Run tests on load
+        window.addEventListener('DOMContentLoaded', runAllTests);
+    </script>
+</body>
+</html>
