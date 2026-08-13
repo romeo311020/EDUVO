@@ -9,8 +9,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <style>
         /* ==========================================================================
            1. CSS VARIABLES & THEMES
@@ -242,35 +240,51 @@
            ========================================================================== */
         .bottom-nav {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 70px;
-            background: var(--nav-bg);
-            backdrop-filter: blur(16px);
-            border-top: 1px solid var(--border-color);
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 18px);
+            max-width: 520px;
+            height: 72px;
+            background: rgba(10, 17, 40, 0.38);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             display: flex;
             justify-content: space-around;
             align-items: center;
             z-index: 100;
+            overflow: hidden;
         }
 
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             gap: 4px;
-            color: var(--text-muted);
+            color: rgba(255,255,255,0.75);
             text-decoration: none;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
             width: 20%;
+            height: 100%;
+            border-radius: 14px;
         }
 
-        .nav-item.active { color: var(--accent-cyan); }
-        .nav-item.active .svg-icon { stroke: var(--accent-cyan); filter: drop-shadow(0 0 5px rgba(0,210,255,0.5)); }
+        .nav-item.active {
+            color: var(--accent-cyan);
+            background: rgba(0, 210, 255, 0.12);
+        }
+
+        .nav-item.active .svg-icon {
+            stroke: var(--accent-cyan);
+            filter: drop-shadow(0 0 5px rgba(0,210,255,0.5));
+        }
 
         .sidebar-item {
             display: flex;
@@ -314,6 +328,163 @@
             transform: translateY(-2px);
         }
 
+        .subject-details-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-top: 10px;
+        }
+
+        .subject-feature {
+            display: flex;
+            gap: 14px;
+            background: rgba(28, 114, 216, 0.08);
+            border: 1px solid rgba(0, 210, 255, 0.2);
+            border-radius: var(--radius-md);
+            padding: 18px;
+        }
+
+        .subject-feature-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.7rem;
+            flex-shrink: 0;
+        }
+
+        .subject-feature h3 {
+            margin: 4px 0 6px;
+            font-size: 1.4rem;
+        }
+
+        .subject-feature p,
+        .teacher-card p,
+        .lesson-item span,
+        .unit-card p {
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        .teacher-section,
+        .units-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 18px;
+        }
+
+        .teacher-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .teacher-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .teacher-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .teacher-photo {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(0, 210, 255, 0.3);
+            box-shadow: 0 8px 24px rgba(0, 210, 255, 0.2);
+            flex-shrink: 0;
+        }
+
+        .teacher-name {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .teacher-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .teacher-cta {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            color: #fff;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            margin-top: 4px;
+        }
+
+        .unit-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 12px;
+        }
+
+        .unit-card h5 {
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .lesson-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .lesson-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 210, 255, 0.04);
+            border: 1px solid rgba(0, 210, 255, 0.15);
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+
+        .subject-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .mini-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 12px;
+            padding: 10px 16px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
         /* Chat System */
         .chat-container {
             flex: 1;
@@ -346,6 +517,47 @@
         }
 
         .quiz-opt.selected { border-color: var(--accent-cyan); background: rgba(0,210,255,0.1); }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                padding: 14px 12px 110px !important;
+            }
+
+            .screen {
+                padding: 14px 8px 100px !important;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr !important;
+            }
+
+            .bottom-nav {
+                display: flex !important;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .header h2,
+            .header h1 {
+                font-size: 1.3rem !important;
+            }
+
+            .login-card,
+            .glass-card,
+            .subject-card,
+            .quiz-opt {
+                border-radius: 14px !important;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100% !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -495,8 +707,8 @@
 
             <div id="screen-subjects" class="screen">
                 <div class="header"><h2>المواد الدراسية 📚</h2></div>
-                <div id="subjects-list-container" class="grid-2">
-                    </div>
+                <div id="subjects-list-container" class="grid-2"></div>
+                <div id="subject-details" class="subject-details-panel"></div>
             </div>
 
             <div id="screen-ai" class="screen">
@@ -580,184 +792,39 @@
     </div>
 
     <script>
-        /* 1. App State */
+        const USERS_KEY = 'eduvo_users_v2';
+        const SESSION_KEY = 'eduvo_session_v2';
+        const APP_KEY = 'eduvo_app_data_v2';
+        const AI_KEY = 'pollo_nD5NfMqd7boxSefrAtsvHVdKoUIU8AVKcnFlvnM6agMK';
+
         const state = {
-            user: JSON.parse(localStorage.getItem('eduvo_user')) || null,
+            user: null,
             appData: null,
             currentQuiz: null,
             quizIdx: 0,
             quizScore: 0,
-            selectedOpt: null
+            selectedOpt: null,
+            aiMessages: []
         };
 
-        /* 2. Initialization */
-        window.addEventListener('DOMContentLoaded', async () => {
-            await loadAppData();
-            
-            setTimeout(() => {
-                if (state.user) {
-                    initUserUI();
-                    switchTab('screen-dashboard');
-                } else {
-                    navigateTo('screen-onboarding');
-                }
-            }, 1500);
-        });
-
-        /* 3. Fetch data.json */
-        async function loadAppData() {
+        function loadUsers() {
             try {
-                const res = await fetch('data.json');
-                state.appData = await res.json();
-                
-                // Show announcement if present
-                if (state.appData.app && state.appData.app.announcement) {
-                    const banner = document.getElementById('announcement-banner');
-                    document.getElementById('announcement-text').innerText = state.appData.app.announcement;
-                    banner.style.display = 'block';
-                }
-
-                renderSubjects();
+                return JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
             } catch (err) {
-                console.error("Failed to load data.json:", err);
+                return [];
             }
         }
 
-        /* 4. Navigation & Protection */
-        function navigateTo(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            const target = document.getElementById(screenId);
-            if (target) target.classList.add('active');
-
-            const guestScreens = ['screen-splash', 'screen-onboarding', 'screen-setup', 'screen-register', 'screen-login', 'screen-quiz-active'];
-            const nav = document.getElementById('mobile-nav');
-            if (guestScreens.includes(screenId)) {
-                nav.style.display = 'none';
-            } else {
-                nav.style.display = 'flex';
-            }
+        function saveUsers(list) {
+            localStorage.setItem(USERS_KEY, JSON.stringify(list));
         }
 
-        function switchTab(screenId) {
-            navigateTo(screenId);
-            
-            // Sync Mobile Nav
-            document.querySelectorAll('.bottom-nav .nav-item').forEach(i => i.classList.remove('active'));
-            const mobileItem = document.getElementById(`nav-${screenId}`);
-            if (mobileItem) mobileItem.classList.add('active');
-
-            // Sync Desktop Sidebar Nav
-            document.querySelectorAll('.sidebar .sidebar-item').forEach(i => i.classList.remove('active'));
-            const sideItem = document.getElementById(`side-${screenId}`);
-            if (sideItem) sideItem.classList.add('active');
+        function saveSession(user) {
+            localStorage.setItem(SESSION_KEY, JSON.stringify(user));
         }
 
-        /* 5. Dynamic Rendering from data.json */
-        function renderSubjects() {
-            if (!state.appData || !state.appData.subjects) return;
-
-            const dashGrid = document.getElementById('dash-subjects-grid');
-            const listGrid = document.getElementById('subjects-list-container');
-
-            const html = state.appData.subjects.map(sub => `
-                <div class="subject-card" onclick="startQuizForSubject('${sub.name}')">
-                    <div style="font-size: 1.5rem;">${sub.icon}</div>
-                    <span style="font-weight: bold;">${sub.name}</span>
-                    <span style="font-size: 0.75rem; color: var(--text-muted);">${sub.units.length} وحدات • ${sub.progress}% مكتمل</span>
-                </div>
-            `).join('');
-
-            dashGrid.innerHTML = html;
-            listGrid.innerHTML = html;
-        }
-
-        /* ====== SUPABASE INTEGRATION ====== */
-        const SUPABASE_URL = "https://mjptrjidrhwaphkmqoma.supabase.co";
-        const SUPABASE_KEY = "sb_publishable_CwN4jvLvXRTEu5uimUsIzA_ob8h8DAS";
-        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        // Check for existing session on load
-        window.addEventListener('DOMContentLoaded', async () => {
-            const { data: { session } } = await db.auth.getSession();
-            if (session && session.user) {
-                state.user = {
-                    id: session.user.id,
-                    email: session.user.email,
-                    name: session.user.user_metadata?.name || session.user.email.split('@')[0]
-                };
-                initUserUI();
-                switchTab('screen-dashboard');
-            }
-        });
-
-        /* 6. Auth with Supabase */
-        function saveSetup() {
-            state.tempGrade = document.getElementById('setup-grade').value;
-            state.tempBranch = document.getElementById('setup-branch').value;
-            navigateTo('screen-register');
-        }
-
-        async function handleAuth(type) {
-            const email = document.getElementById(`${type}-email`).value.trim();
-            const password = document.getElementById(`${type}-password`)?.value?.trim() || 'password123';
-            const name = type === 'register' ? document.getElementById('reg-name').value.trim() : '';
-
-            if (!email) {
-                showAlert('❌ يرجى إدخال البريد الإلكتروني بشكل صحيح', 'error');
-                return;
-            }
-
-            try {
-                let user;
-                
-                if (type === 'register') {
-                    if (!name) {
-                        showAlert('❌ يرجى إدخال الاسم', 'error');
-                        return;
-                    }
-                    
-                    const { data, error } = await db.auth.signUp({
-                        email: email,
-                        password: password,
-                        options: {
-                            data: {
-                                name: name,
-                                grade: state.tempGrade || 'الصف الثالث الثانوي'
-                            }
-                        }
-                    });
-                    
-                    if (error) throw error;
-                    user = data.user;
-                    showAlert('✅ تم التسجيل بنجاح! يرجى التحقق من بريدك الإلكتروني', 'success');
-                } else {
-                    const { data, error } = await db.auth.signInWithPassword({
-                        email: email,
-                        password: password
-                    });
-                    
-                    if (error) throw error;
-                    user = data.user;
-                    showAlert('✅ تم الدخول بنجاح!', 'success');
-                }
-
-                state.user = {
-                    id: user.id,
-                    email: user.email,
-                    name: user.user_metadata?.name || name || email.split('@')[0]
-                };
-                
-                // Save to localStorage as fallback
-                localStorage.setItem('eduvo_user', JSON.stringify(state.user));
-                
-                setTimeout(() => {
-                    initUserUI();
-                    switchTab('screen-dashboard');
-                }, 1000);
-
-            } catch (err) {
-                showAlert(`❌ ${err.message || 'حدث خطأ في المصادقة'}`, 'error');
-            }
+        function clearSession() {
+            localStorage.removeItem(SESSION_KEY);
         }
 
         function showAlert(message, type = 'info') {
@@ -767,47 +834,241 @@
                 top: 20px;
                 right: 20px;
                 padding: 16px 24px;
-                background: ${type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#3b82f6'};
+                background: ${type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : type === 'warning' ? '#f59e0b' : '#3b82f6'};
                 color: white;
                 border-radius: 8px;
                 z-index: 10000;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                animation: slideIn 0.3s ease;
+                font-weight: 600;
+                max-width: 420px;
+                word-wrap: break-word;
             `;
             alertDiv.innerText = message;
             document.body.appendChild(alertDiv);
-            
-            setTimeout(() => {
-                alertDiv.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => alertDiv.remove(), 300);
-            }, 4000);
+            setTimeout(() => alertDiv.remove(), 4500);
+        }
+
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function buildUserObject(name, email, password) {
+            return {
+                id: crypto.randomUUID ? crypto.randomUUID() : `user_${Date.now()}_${Math.random().toString(16).slice(2)}`,
+                name,
+                email: email.toLowerCase(),
+                password,
+                grade: document.getElementById('setup-grade')?.value || 'الصف الثالث الثانوي',
+                branch: document.getElementById('setup-branch')?.value || 'علمي علوم',
+                createdAt: new Date().toISOString()
+            };
+        }
+
+        function saveSetup() {
+            state.tempGrade = document.getElementById('setup-grade').value;
+            state.tempBranch = document.getElementById('setup-branch').value;
+            navigateTo('screen-register');
+        }
+
+        function handleAuth(type) {
+            const isRegister = type === 'register';
+            const emailField = document.getElementById(isRegister ? 'reg-email' : 'login-email');
+            const passwordField = document.getElementById(isRegister ? 'reg-pass' : 'login-pass');
+            const nameField = document.getElementById('reg-name');
+
+            const email = (emailField?.value || '').trim();
+            const password = (passwordField?.value || '').trim();
+            const name = (nameField?.value || '').trim();
+
+            if (!email || !validateEmail(email)) {
+                showAlert('❌ البريد الإلكتروني غير صحيح', 'error');
+                return;
+            }
+
+            const users = loadUsers();
+
+            if (type === 'register') {
+                if (!name || name.length < 2) {
+                    showAlert('❌ الاسم يجب ألا يقل عن حرفين', 'error');
+                    return;
+                }
+                if (password.length < 6) {
+                    showAlert('❌ كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error');
+                    return;
+                }
+                if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+                    showAlert('❌ هذا البريد مسجل بالفعل', 'error');
+                    return;
+                }
+
+                const newUser = buildUserObject(name, email, password);
+                users.push(newUser);
+                saveUsers(users);
+                state.user = newUser;
+                saveSession(newUser);
+                showAlert('✅ تم إنشاء الحساب بنجاح', 'success');
+                initUserUI();
+                setTimeout(() => switchTab('screen-dashboard'), 600);
+                return;
+            }
+
+            const matched = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+            if (!matched) {
+                showAlert('❌ البريد غير موجود أو الحساب غير مسجل', 'error');
+                return;
+            }
+            if (!password || matched.password !== password) {
+                showAlert('❌ كلمة المرور غير صحيحة', 'error');
+                return;
+            }
+
+            state.user = matched;
+            saveSession(matched);
+            showAlert('✅ تم تسجيل الدخول بنجاح', 'success');
+            initUserUI();
+            setTimeout(() => switchTab('screen-dashboard'), 600);
         }
 
         async function handleLogout() {
-            try {
-                await db.auth.signOut();
-                localStorage.removeItem('eduvo_user');
-                state.user = null;
-                showAlert('✅ تم تسجيل الخروج بنجاح', 'success');
-                setTimeout(() => navigateTo('screen-login'), 500);
-            } catch (err) {
-                showAlert(`❌ ${err.message}`, 'error');
-            }
+            state.user = null;
+            clearSession();
+            showAlert('✅ تم تسجيل الخروج بنجاح', 'success');
+            setTimeout(() => navigateTo('screen-login'), 500);
         }
 
         function initUserUI() {
             if (!state.user) return;
-            document.getElementById('dash-user-name').innerText = state.user.name;
-            document.getElementById('profile-name').innerText = state.user.name;
+            const name = state.user.name || 'طالب EDUVO';
+            document.getElementById('dash-user-name').innerText = name;
+            document.getElementById('profile-name').innerText = name;
             document.getElementById('profile-email').innerText = state.user.email;
-            document.getElementById('profile-avatar').innerText = state.user.name.charAt(0);
+            document.getElementById('profile-avatar').innerText = name.charAt(0);
+            document.getElementById('dash-grade-badge').innerText = state.user.grade || 'الصف الثالث الثانوي';
         }
 
-        /* 7. Quiz Engine from data.json */
+        function navigateTo(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById(screenId);
+            if (target) target.classList.add('active');
+
+            const guestScreens = ['screen-splash', 'screen-onboarding', 'screen-setup', 'screen-register', 'screen-login', 'screen-quiz-active'];
+            const nav = document.getElementById('mobile-nav');
+            if (nav) {
+                if (guestScreens.includes(screenId)) nav.style.display = 'none';
+                else nav.style.display = 'flex';
+            }
+        }
+
+        function switchTab(screenId) {
+            navigateTo(screenId);
+
+            document.querySelectorAll('.bottom-nav .nav-item').forEach(i => i.classList.remove('active'));
+            const mobileItem = document.getElementById(`nav-${screenId}`);
+            if (mobileItem) mobileItem.classList.add('active');
+
+            document.querySelectorAll('.sidebar .sidebar-item').forEach(i => i.classList.remove('active'));
+            const sideItem = document.getElementById(`side-${screenId}`);
+            if (sideItem) sideItem.classList.add('active');
+        }
+
+        async function loadAppData() {
+            try {
+                const stored = localStorage.getItem(APP_KEY);
+                if (stored) {
+                    state.appData = JSON.parse(stored);
+                } else {
+                    const res = await fetch('data.json');
+                    state.appData = await res.json();
+                    localStorage.setItem(APP_KEY, JSON.stringify(state.appData));
+                }
+
+                if (state.appData.app && state.appData.app.announcement) {
+                    const banner = document.getElementById('announcement-banner');
+                    const text = document.getElementById('announcement-text');
+                    text.innerText = state.appData.app.announcement;
+                    banner.style.display = 'block';
+                }
+
+                renderSubjects();
+            } catch (err) {
+                console.error('Failed to load data.json:', err);
+                state.appData = {
+                    app: { name: 'EDUVO', version: '1.0.0', announcement: 'مرحباً بكم في EDUVO' },
+                    subjects: [],
+                    quizzes: []
+                };
+                renderSubjects();
+            }
+        }
+
+        function renderSubjects() {
+            if (!state.appData || !state.appData.subjects) return;
+            const dashGrid = document.getElementById('dash-subjects-grid');
+            const listGrid = document.getElementById('subjects-list-container');
+
+            const html = state.appData.subjects.map(sub => `
+                <div class="subject-card" onclick="showSubjectDetails('${sub.id}')">
+                    <div style="font-size: 1.5rem;">${sub.icon}</div>
+                    <span style="font-weight: bold;">${sub.name}</span>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">${sub.units?.length || 0} وحدات • ${sub.progress || 0}% مكتمل</span>
+                </div>
+            `).join('');
+
+            dashGrid.innerHTML = html;
+            listGrid.innerHTML = html;
+
+            if (state.appData.subjects[0]) {
+                showSubjectDetails(state.appData.subjects[0].id);
+            }
+        }
+
+        function showSubjectDetails(subjectId) {
+            if (!state.appData || !state.appData.subjects) return;
+            const subject = state.appData.subjects.find(sub => sub.id === subjectId);
+            if (!subject) return;
+
+            const detailBox = document.getElementById('subject-details');
+            const teachersHtml = (subject.teachers || []).map(teacher => `
+                <div class="teacher-card">
+                    <div class="teacher-head">
+                        <img class="teacher-photo" src="${teacher.image || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=500&q=80'}" alt="${teacher.name}">
+                        <div>
+                            <div class="teacher-name">${teacher.name}</div>
+                            <div class="teacher-meta">
+                                <span>⭐ ${teacher.rating}</span>
+                                <span>${teacher.students} طالب</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p><strong>${teacher.specialty}</strong></p>
+                    <p>${teacher.style}</p>
+                    <p>${teacher.nextLesson}</p>
+                    <a class="teacher-cta" href="${teacher.website || '#'}" target="_blank" rel="noreferrer">زيارة موقع الأستاذ</a>
+                </div>
+            `).join('');
+
+            detailBox.innerHTML = `
+                <div class="subject-feature">
+                    <div class="subject-feature-icon">${subject.icon}</div>
+                    <div>
+                        <span style="color: var(--accent-cyan); font-size: 0.8rem; font-weight: 700;">المادة</span>
+                        <h3>${subject.name}</h3>
+                        <p>${subject.description || 'مادة تعليمية متكاملة مع شرح، تمارين، ومراجعات.'}</p>
+                    </div>
+                </div>
+
+                <div class="teacher-section">
+                    <h4>أفضل المدرسين في ${subject.name}</h4>
+                    <div class="teacher-grid">
+                        ${teachersHtml || '<p>لا يوجد مدرسون متاحون حالياً لهذه المادة.</p>'}
+                    </div>
+                </div>
+            `;
+        }
+
         function startQuizForSubject(subjectName) {
             if (!state.appData || !state.appData.quizzes) return;
             const quiz = state.appData.quizzes.find(q => q.subject === subjectName);
-            
             if (!quiz) {
                 alert('لا يوجد اختبار متاح حالياً لهذه المادة.');
                 return;
@@ -816,7 +1077,6 @@
             state.currentQuiz = quiz;
             state.quizIdx = 0;
             state.quizScore = 0;
-
             renderQuizQuestion();
             navigateTo('screen-quiz-active');
         }
@@ -860,31 +1120,127 @@
             }
         }
 
-        /* 8. AI Chat Handler */
-        function sendAiMessage() {
+        async function callPolloAI(prompt) {
+            const payload = {
+                model: 'openai/gpt-4o-mini',
+                messages: [
+                    { role: 'system', content: 'أنت مساعد تعليمي عربي محترف في منصة EDUVO. أجب بشكل مختصر وواضح، مع شرح بسيط، ولا تذكر أنك AI إلا إن سُئلت.' },
+                    { role: 'user', content: prompt }
+                ],
+                temperature: 0.7,
+                max_tokens: 500
+            };
+
+            const endpointCandidates = [
+                'https://api.pollo.ai/v1/chat/completions',
+                'https://api.pollo.ai/chat/completions',
+                'https://api.pollo.ai/v1/responses',
+                'https://api.openai.com/v1/chat/completions'
+            ];
+
+            const headerVariants = [
+                { Authorization: `Bearer ${AI_KEY}` },
+                { 'api-key': AI_KEY },
+                { 'x-api-key': AI_KEY },
+                { Authorization: `Bearer ${AI_KEY}`, 'api-key': AI_KEY },
+                { Authorization: `Bearer ${AI_KEY}`, 'x-api-key': AI_KEY }
+            ];
+
+            let lastError = null;
+            for (const url of endpointCandidates) {
+                for (const headers of headerVariants) {
+                    try {
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                Accept: 'application/json',
+                                ...headers
+                            },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            const text = await response.text();
+                            lastError = new Error(`${url} => ${response.status}: ${text || 'AI request failed'}`);
+                            continue;
+                        }
+
+                        const data = await response.json();
+                        const message = data?.choices?.[0]?.message?.content || data?.message?.content || data?.output_text || '';
+                        if (message) return message.trim();
+                    } catch (err) {
+                        lastError = err;
+                    }
+                }
+            }
+
+            throw lastError || new Error('فشل الاتصال بخدمة الذكاء الاصطناعي');
+        }
+
+        async function sendAiMessage() {
             const input = document.getElementById('ai-input');
             const msg = input.value.trim();
             if (!msg) return;
 
             const chatBox = document.getElementById('chat-box');
-            
-            // User Message
             const userB = document.createElement('div');
             userB.className = 'chat-bubble chat-user';
             userB.innerText = msg;
             chatBox.appendChild(userB);
 
             input.value = '';
+            input.disabled = true;
 
-            // AI Answer Simulation
-            setTimeout(() => {
+            const loading = document.createElement('div');
+            loading.className = 'chat-bubble chat-ai';
+            loading.innerText = 'جاري تجهيز الإجابة...';
+            chatBox.appendChild(loading);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const answer = await callPolloAI(msg);
+                chatBox.removeChild(loading);
+
                 const aiB = document.createElement('div');
                 aiB.className = 'chat-bubble chat-ai';
-                aiB.innerText = `سؤال ممتاز حول "${msg}". يقوم المساعد الذكي بتقسيم المفاهيم إلى خطوات بسيطة لمساعدتك على الفهم والتحصيل العلمي بطريقة ممتازة!`;
+                aiB.innerText = answer;
                 chatBox.appendChild(aiB);
                 chatBox.scrollTop = chatBox.scrollHeight;
-            }, 800);
+            } catch (err) {
+                chatBox.removeChild(loading);
+                const aiB = document.createElement('div');
+                aiB.className = 'chat-bubble chat-ai';
+                aiB.innerText = 'تعذر الاتصال بخدمة الذكاء الاصطناعي الآن. يمكنك إعادة المحاولة بعد قليل.';
+                chatBox.appendChild(aiB);
+                console.error(err);
+            } finally {
+                input.disabled = false;
+                input.focus();
+            }
         }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadAppData();
+
+            const savedUser = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+            if (savedUser) {
+                const users = loadUsers();
+                const match = users.find(u => u.email?.toLowerCase() === savedUser.email?.toLowerCase());
+                if (match) {
+                    state.user = match;
+                }
+            }
+
+            setTimeout(() => {
+                if (state.user) {
+                    initUserUI();
+                    switchTab('screen-dashboard');
+                } else {
+                    navigateTo('screen-onboarding');
+                }
+            }, 1200);
+        });
     </script>
 </body>
 </html>

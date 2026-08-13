@@ -789,15 +789,30 @@
 
         function saveGithubSettings() {
             const settings = getGithubSettings();
-            if (!settings.token || !settings.owner || !settings.repo) {
-                setGithubStatus('أدخل GitHub Token واسم المستخدم والمستودع أولاً.', 'error');
+            if (!settings.owner || !settings.repo) {
+                setGithubStatus('أدخل اسم المستخدم/المالك والمستودع أولاً.', 'error');
                 return null;
             }
 
-            state.githubConfig = settings;
-            localStorage.setItem(GITHUB_STORAGE_KEY, JSON.stringify(settings));
-            setGithubStatus('تم حفظ إعدادات GitHub بنجاح ✅', 'success');
-            return settings;
+            state.githubConfig = {
+                ...state.githubConfig,
+                owner: settings.owner,
+                repo: settings.repo,
+                branch: settings.branch || 'main',
+                filePath: settings.filePath || 'data.json',
+                token: settings.token || state.githubConfig.token || ''
+            };
+
+            const persisted = {
+                owner: state.githubConfig.owner,
+                repo: state.githubConfig.repo,
+                branch: state.githubConfig.branch,
+                filePath: state.githubConfig.filePath
+            };
+
+            localStorage.setItem(GITHUB_STORAGE_KEY, JSON.stringify(persisted));
+            setGithubStatus('تم حفظ إعدادات المستودع بنجاح ✅', 'success');
+            return state.githubConfig;
         }
 
         function loadGithubSettings() {
@@ -806,24 +821,27 @@
                 if (!saved) return;
 
                 const settings = JSON.parse(saved);
-                state.githubConfig = { ...state.githubConfig, ...settings };
+                state.githubConfig = {
+                    ...state.githubConfig,
+                    owner: settings.owner || '',
+                    repo: settings.repo || '',
+                    branch: settings.branch || 'main',
+                    filePath: settings.filePath || 'data.json',
+                    token: ''
+                };
 
-                const tokenInput = document.getElementById('github-token');
                 const ownerInput = document.getElementById('github-owner');
                 const repoInput = document.getElementById('github-repo');
                 const branchInput = document.getElementById('github-branch');
                 const filePathInput = document.getElementById('github-file-path');
 
-                if (tokenInput) tokenInput.value = settings.token || '';
                 if (ownerInput) ownerInput.value = settings.owner || '';
                 if (repoInput) repoInput.value = settings.repo || '';
                 if (branchInput) branchInput.value = settings.branch || 'main';
                 if (filePathInput) filePathInput.value = settings.filePath || 'data.json';
 
-                const loginToken = document.getElementById('github-token-login');
                 const loginOwner = document.getElementById('github-owner-login');
                 const loginRepo = document.getElementById('github-repo-login');
-                if (loginToken) loginToken.value = settings.token || '';
                 if (loginOwner) loginOwner.value = settings.owner || '';
                 if (loginRepo) loginRepo.value = settings.repo || '';
             } catch (err) {
@@ -832,9 +850,13 @@
         }
 
         function githubHeaders(token) {
+            if (!token) {
+                throw new Error('لم يتم إدخال GitHub Token.');
+            }
+
             return {
                 'Accept': 'application/vnd.github+json',
-                'Authorization': `token ${token}`,
+                'Authorization': `Bearer ${token}`,
                 'X-GitHub-Api-Version': '2022-11-28'
             };
         }
@@ -845,68 +867,152 @@
                 const normalized = rawContent.replace(/\n/g, '');
                 return decodeURIComponent(escape(atob(normalized)));
             } catch (err) {
-                return atob(rawContent.replace(/\n/g, ''));
+                try {
+                    return atob(rawContent.replace(/\n/g, ''));
+                } catch (innerErr) {
+                    return rawContent;
+                }
+            }
+        }
+
+        function parseGitHubError(response, payload, fallback = 'GitHub request failed') {
+            const message = payload && payload.message ? payload.message : fallback;
+
+            if (response && response.status === 401) return 'Bad credentials: التوكن غير صالح أو منتهي.';
+            if (response && response.status === 403) {
+                if (/rate limit|rate_limit/i.test(message)) return 'GitHub API rate limit exceeded: تم تجاوز الحد اليومي.';
+                return 'Token لا يمتلك الصلاحيات المطلوبة على هذا المستودع.';
+            }
+            if (response && response.status === 404) return 'Repository not found أو الملف المطلوب غير موجود.';
+            if (response && response.status >= 500) return 'Network error: خادم GitHub غير متاح حالياً.';
+            return message || fallback;
+        }
+
+        async function githubRequest(url, token, options = {}) {
+            const headers = {
+                ...githubHeaders(token),
+                ...(options.headers || {})
+            };
+
+            const response = await fetch(url, {
+                ...options,
+                headers
+            });
+
+            if (!response.ok) {
+                let payload = {};
+                try {
+                    payload = await response.json();
+                } catch (err) {
+                    payload = {};
+                }
+
+                const friendly = parseGitHubError(response, payload, 'GitHub request failed');
+                throw Object.assign(new Error(friendly), {
+                    status: response.status,
+                    payload
+                });
+            }
+
+            return response;
+        }
+
+        async function loadRepoDataFromGitHub(token, owner, repo, branch, filePath) {
+            if (!token || !owner || !repo) return null;
+
+            const url = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(filePath)}?ref=${encodeURIComponent(branch)}`;
+
+            try {
+                const response = await fetch(url, { headers: githubHeaders(token) });
+                if (response.status === 404) {
+                    return null;
+                }
+
+                if (!response.ok) {
+                    const payload = await response.json().catch(() => ({}));
+                    throw new Error(parseGitHubError(response, payload, 'تعذر تحميل data.json'));
+                }
+
+                const fileInfo = await response.json();
+                const content = fileInfo && fileInfo.content ? decodeGitHubFileContent(fileInfo.content) : '';
+                if (!content) return null;
+
+                try {
+                    return normalizeGithubData(JSON.parse(content));
+                } catch (err) {
+                    console.warn('GitHub JSON parse error, using default app data.', err);
+                    return null;
+                }
+            } catch (err) {
+                console.warn('loadRepoDataFromGitHub failed:', err);
+                return null;
             }
         }
 
         async function handleGitHubLogin(e) {
             e.preventDefault();
             const errDiv = document.getElementById('login-error-msg');
-            errDiv.style.display = 'none';
+            if (errDiv) errDiv.style.display = 'none';
 
-            const token = document.getElementById('github-token-login').value.trim();
-            const owner = document.getElementById('github-owner-login').value.trim();
-            const repo = document.getElementById('github-repo-login').value.trim();
+            const token = document.getElementById('github-token-login')?.value.trim() || '';
+            const owner = document.getElementById('github-owner-login')?.value.trim() || '';
+            const repo = document.getElementById('github-repo-login')?.value.trim() || '';
 
             if (!token || !owner || !repo) {
                 showLoginError('أدخل GitHub Token واسم المستخدم والمستودع', errDiv);
                 return;
             }
 
-            const settings = { token, owner, repo, branch: 'main', filePath: 'data.json' };
-            state.githubConfig = settings;
-            localStorage.setItem(GITHUB_STORAGE_KEY, JSON.stringify(settings));
-
             try {
                 const repoUrl = `https://api.github.com/repos/${owner}/${repo}`;
-                const repoResponse = await fetch(repoUrl, { headers: githubHeaders(token) });
-                if (!repoResponse.ok) {
-                    const repoErr = await repoResponse.json().catch(() => ({}));
-                    throw new Error(repoErr.message || 'تعذر الوصول إلى المستودع');
-                }
+                const repoResponse = await githubRequest(repoUrl, token, { method: 'GET' });
+                const repoInfo = await repoResponse.json();
+                const defaultBranch = repoInfo && repoInfo.default_branch ? repoInfo.default_branch : 'main';
 
-                const fileUrl = `https://api.github.com/repos/${owner}/${repo}/contents/data.json?ref=main`;
-                const fileResponse = await fetch(fileUrl, { headers: githubHeaders(token) });
-
-                let data = {
-                    app: { name: 'EDUVO', version: '1.0.0', announcement: 'مرحباً بكم في EDUVO' },
-                    subjects: [],
-                    quizzes: [],
-                    profiles: []
+                state.githubConfig = {
+                    token,
+                    owner,
+                    repo,
+                    branch: defaultBranch,
+                    filePath: 'data.json'
                 };
 
-                if (fileResponse.ok) {
-                    const fileInfo = await fileResponse.json();
-                    const text = decodeGitHubFileContent(fileInfo.content || '');
-                    if (text) {
-                        try {
-                            data = normalizeGithubData(JSON.parse(text));
-                        } catch (parseErr) {
-                            console.warn('Invalid JSON in repo, using default structure', parseErr);
-                        }
-                    }
+                const persisted = {
+                    owner,
+                    repo,
+                    branch: defaultBranch,
+                    filePath: 'data.json'
+                };
+                localStorage.setItem(GITHUB_STORAGE_KEY, JSON.stringify(persisted));
+
+                document.getElementById('github-owner').value = owner;
+                document.getElementById('github-repo').value = repo;
+                document.getElementById('github-branch').value = defaultBranch;
+                document.getElementById('github-file-path').value = 'data.json';
+
+                const repoData = await loadRepoDataFromGitHub(token, owner, repo, defaultBranch, 'data.json');
+                if (repoData) {
+                    state.data = normalizeGithubData(repoData);
+                    setGithubStatus('تم تحميل بيانات المستودع بنجاح ✅', 'success');
+                } else {
+                    state.data = normalizeGithubData(state.data);
+                    setGithubStatus('Repository موصول بنجاح، لكن ملف data.json غير موجود؛ تم استخدام البيانات الافتراضية ✅', 'warning');
                 }
 
-                state.data = data;
                 const overlay = document.getElementById('admin-login-overlay');
-                overlay.style.opacity = '0';
-                setTimeout(() => overlay.style.display = 'none', 300);
+                if (overlay) {
+                    overlay.style.opacity = '0';
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                    }, 300);
+                }
 
                 renderDashboard();
-                showAlert('✅ تم الدخول بنجاح باستخدام GitHub', 'success');
+                showAlert('✅ تم الدخول بنجاح إلى لوحة الإدارة', 'success');
             } catch (err) {
-                console.error(err);
-                showLoginError(`❌ ${err.message || 'فشل تسجيل الدخول باستخدام GitHub'}`, errDiv);
+                console.error('GitHub login error:', err);
+                const message = err && err.message ? err.message : 'فشل تسجيل الدخول باستخدام GitHub';
+                showLoginError(`❌ ${message}`, errDiv);
             }
         }
 
@@ -1230,15 +1336,16 @@
             loadGithubSettings();
             const saved = localStorage.getItem(GITHUB_STORAGE_KEY);
             if (saved) {
-                const parsed = JSON.parse(saved);
-                if (parsed.token && parsed.owner && parsed.repo) {
-                    document.getElementById('github-token-login').value = parsed.token || '';
-                    document.getElementById('github-owner-login').value = parsed.owner || '';
-                    document.getElementById('github-repo-login').value = parsed.repo || '';
-                    state.githubConfig = { ...state.githubConfig, ...parsed };
-                    setTimeout(() => {
-                        handleGitHubLogin({ preventDefault: () => {} });
-                    }, 300);
+                try {
+                    const parsed = JSON.parse(saved);
+                    if (parsed.owner && parsed.repo) {
+                        document.getElementById('github-owner').value = parsed.owner || '';
+                        document.getElementById('github-repo').value = parsed.repo || '';
+                        document.getElementById('github-branch').value = parsed.branch || 'main';
+                        document.getElementById('github-file-path').value = parsed.filePath || 'data.json';
+                    }
+                } catch (err) {
+                    console.error('GitHub saved settings parse error:', err);
                 }
             }
         });
