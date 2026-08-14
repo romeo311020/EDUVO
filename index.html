@@ -559,7 +559,14 @@
           <h2>المواد الدراسية 📚</h2>
         </div>
         <div id="subjects-grid" class="grid-2"></div>
-        <div id="subject-details" class="subject-details-panel" style="margin-top: 20px;"></div>
+      </section>
+
+      <section id="screen-subject-detail" class="screen">
+        <div class="header">
+          <h2 id="subject-detail-title">المادة</h2>
+        </div>
+        <div id="subject-detail-content" class="subject-details-panel"></div>
+        <button type="button" class="btn-secondary" id="back-to-subjects" style="margin-top: 18px;">رجوع إلى المواد</button>
       </section>
 
       <section id="screen-ai" class="screen">
@@ -797,15 +804,15 @@
       document.querySelectorAll('.subject-card').forEach(card => {
         card.addEventListener('click', () => showSubjectDetails(card.dataset.subjectId));
       });
-
-      if (subjects[0]) showSubjectDetails(subjects[0].id);
     }
 
     function showSubjectDetails(subjectId) {
       const subject = subjects.find(item => item.id === subjectId);
-      const container = document.getElementById('subject-details');
-      if (!subject || !container) return;
+      const container = document.getElementById('subject-detail-content');
+      const title = document.getElementById('subject-detail-title');
+      if (!subject || !container || !title) return;
 
+      title.textContent = subject.name;
       container.innerHTML = `
         <div class="subject-feature">
           <div class="subject-feature-icon">${subject.icon}</div>
@@ -833,12 +840,14 @@
                 <p><strong>${teacher.specialty}</strong></p>
                 <p>${teacher.style}</p>
                 <p>${teacher.nextLesson}</p>
-                <a href="#" class="teacher-cta">اختيار هذا المعلم</a>
+                <a href="https://www.teacher-${teacher.name.replace(/\s+/g, '-').toLowerCase()}.com" target="_blank" class="teacher-cta">زيارة موقع المدرس</a>
               </div>
             `).join('')}
           </div>
         </div>
       `;
+
+      setActiveScreen('screen-subject-detail');
     }
 
     function setActiveScreen(screenId) {
@@ -954,6 +963,7 @@
       document.getElementById('login-btn').addEventListener('click', handleLogin);
       document.getElementById('signup-btn').addEventListener('click', handleSignup);
       document.getElementById('logout-btn').addEventListener('click', handleLogout);
+      document.getElementById('back-to-subjects').addEventListener('click', () => setActiveScreen('screen-subjects'));
       document.getElementById('send-ai').addEventListener('click', sendAiMessage);
       document.getElementById('ai-input').addEventListener('keydown', (event) => {
         if (event.key === 'Enter') sendAiMessage();
