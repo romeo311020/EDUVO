@@ -3,56 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EDUVO - تعلم بذكاء. حقق أكثر.</title>
+    <title>EDUVO - المنصة التعليمية والتوجيهية لطلاب الثانوية العامة</title>
     
+    <!-- الخطوط والأيقونات -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
         /* ==========================================================================
-           1. CSS VARIABLES & THEMES
+           1. نظام المتغيرات والألوان (Dark Glassmorphism UI)
            ========================================================================== */
         :root {
-            --bg-main: #0a1128;
-            --bg-card: rgba(22, 32, 59, 0.7);
-            --bg-card-solid: #16203b;
-            --bg-input: #101a36;
-            --accent-blue: #1c72d8;
-            --accent-cyan: #00d2ff;
-            --accent-gold: #ffb703;
-            --text-main: #f4f7fc;
+            --bg-main: #090d16;
+            --bg-card: rgba(18, 26, 45, 0.65);
+            --bg-card-solid: #121a2d;
+            --bg-input: rgba(10, 16, 30, 0.8);
+            --accent-blue: #2563eb;
+            --accent-cyan: #06b6d4;
+            --accent-gold: #f59e0b;
+            --accent-green: #10b981;
+            --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: rgba(255, 255, 255, 0.08);
-            --border-highlight: rgba(0, 210, 255, 0.3);
-            --nav-bg: rgba(10, 17, 40, 0.95);
-            --radius-sm: 8px;
-            --radius-md: 14px;
-            --radius-lg: 20px;
-            --radius-full: 9999px;
-            --shadow-glow: 0 0 20px rgba(0, 210, 255, 0.15);
-            --sidebar-width: 260px;
-            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --border-highlight: rgba(6, 182, 212, 0.3);
+            --nav-bg: rgba(9, 13, 22, 0.85);
+            --radius-sm: 10px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --shadow-glow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* أبعاد تكييف العرض */
+            --app-max-width: 100%;
         }
 
         .light-theme {
-            --bg-main: #f0f4f9;
-            --bg-card: rgba(255, 255, 255, 0.85);
+            --bg-main: #f1f5f9;
+            --bg-card: rgba(255, 255, 255, 0.8);
             --bg-card-solid: #ffffff;
             --bg-input: #e2e8f0;
-            --accent-blue: #1c72d8;
-            --accent-cyan: #0084ff;
+            --accent-blue: #2563eb;
+            --accent-cyan: #0284c7;
             --accent-gold: #d97706;
             --text-main: #0f172a;
             --text-muted: #64748b;
             --border-color: rgba(0, 0, 0, 0.08);
-            --border-highlight: rgba(28, 114, 216, 0.3);
-            --nav-bg: rgba(255, 255, 255, 0.95);
-            --shadow-glow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --border-highlight: rgba(37, 99, 235, 0.3);
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --shadow-glow: 0 4px 20px rgba(0, 0, 0, 0.06);
         }
 
         /* ==========================================================================
-           2. BASE STYLES & LAYOUT (DESKTOP ADAPTIVE)
+           2. التنسيقات الأساسية
            ========================================================================== */
         * {
             box-sizing: border-box;
@@ -71,56 +74,47 @@
             align-items: center;
             overflow-x: hidden;
             direction: rtl;
+            transition: background-color 0.3s ease;
         }
 
-        #app-wrapper {
-            width: 100vw;
+        /* حاوية التطبيق الرئيسية الداعمة لتكييف العرض */
+        #app-viewport {
+            width: 100%;
             height: 100vh;
+            max-width: var(--app-max-width);
             display: flex;
             position: relative;
             background-color: var(--bg-main);
             overflow: hidden;
-        }
-
-        /* Responsive Sidebar / Desktop Navigation */
-        .sidebar {
-            width: var(--sidebar-width);
-            height: 100%;
-            background: var(--nav-bg);
-            border-left: 1px solid var(--border-color);
-            display: none; /* Hidden on Mobile/Tablet */
-            flex-direction: column;
-            padding: 24px 16px;
-            z-index: 90;
-        }
-
-        .main-content {
-            flex: 1;
-            height: 100%;
-            position: relative;
-            overflow-y: auto;
-            padding-bottom: 80px; /* Mobile spacing */
-        }
-
-        /* Media Queries for Responsive Breakpoints */
-        @media (min-width: 1024px) {
-            .sidebar {
-                display: flex;
-            }
-            .main-content {
-                padding-bottom: 20px; /* Remove mobile nav padding */
-            }
-            .bottom-nav {
-                display: none !important; /* Hide Bottom Nav on Desktop */
-            }
-            .grid-2 {
-                grid-template-columns: repeat(3, 1fr) !important;
-            }
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            transition: max-width 0.3s ease;
         }
 
         /* ==========================================================================
-           3. UI COMPONENTS
+           3. القوائم والتنقل (Sidebar & Bottom Nav)
            ========================================================================== */
+        .sidebar {
+            width: 280px;
+            height: 100%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(16px);
+            border-left: 1px solid var(--border-color);
+            display: none;
+            flex-direction: column;
+            padding: 28px 20px;
+            z-index: 90;
+            flex-shrink: 0;
+        }
+
+        .main-wrapper {
+            flex: 1;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
         .screen {
             position: absolute;
             top: 0;
@@ -132,28 +126,117 @@
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease, transform 0.3s ease;
-            transform: scale(0.98);
+            transform: translateY(10px);
             background-color: var(--bg-main);
             overflow-y: auto;
-            padding: 20px;
+            padding: 24px;
+            padding-bottom: 100px; /* للموبايل */
         }
 
         .screen.active {
             opacity: 1;
             pointer-events: auto;
-            transform: scale(1);
+            transform: translateY(0);
             z-index: 2;
         }
 
+        /* الشريط السفلي للهواتف */
+        .bottom-nav {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 32px);
+            max-width: 500px;
+            height: 68px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-full);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+            padding: 0 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 22%;
+            height: 80%;
+            border-radius: var(--radius-md);
+        }
+
+        .nav-item.active {
+            color: var(--accent-cyan);
+            background: rgba(6, 182, 212, 0.1);
+        }
+
+        .nav-item .svg-icon {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            color: var(--text-muted);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 8px;
+            transition: var(--transition);
+        }
+
+        .sidebar-item:hover, .sidebar-item.active {
+            background: rgba(6, 182, 212, 0.12);
+            color: var(--accent-cyan);
+        }
+
+        .sidebar-item .svg-icon {
+            width: 22px;
+            height: 22px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* ==========================================================================
+           4. العناصر البصرية والتصميم (Components)
+           ========================================================================== */
         .glass-card {
             background: var(--bg-card);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 20px;
-            margin-bottom: 16px;
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 20px;
             box-shadow: var(--shadow-glow);
+            transition: var(--transition);
+        }
+
+        .glass-card:hover {
+            border-color: var(--border-highlight);
         }
 
         .btn-primary {
@@ -169,15 +252,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.25);
             transition: var(--transition);
         }
 
         .btn-primary:active { transform: scale(0.98); }
 
         .btn-secondary {
-            background: transparent;
+            background: rgba(255, 255, 255, 0.05);
             color: var(--text-main);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
@@ -189,11 +272,15 @@
             transition: var(--transition);
         }
 
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
         .input-group {
-            margin-bottom: 16px;
+            margin-bottom: 18px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
 
         .input-group label {
@@ -205,8 +292,8 @@
         .input-control {
             background: var(--bg-input);
             border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            padding: 14px 18px;
             color: var(--text-main);
             font-size: 0.95rem;
             outline: none;
@@ -215,359 +302,185 @@
 
         .input-control:focus {
             border-color: var(--accent-cyan);
-            box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
         }
 
         .header {
-            padding: 10px 0 20px 0;
+            margin-bottom: 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .svg-icon {
-            width: 22px;
-            height: 22px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
+        .header h1, .header h2 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
 
-        /* ==========================================================================
-           4. NAVIGATION COMPONENTS (MOBILE & DESKTOP)
-           ========================================================================== */
-        .bottom-nav {
-            position: fixed;
-            bottom: 12px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: calc(100% - 18px);
-            max-width: 520px;
-            height: 72px;
-            background: rgba(10, 17, 40, 0.38);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 100;
-            overflow: hidden;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            color: rgba(255,255,255,0.75);
-            text-decoration: none;
-            font-size: 0.72rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            width: 20%;
-            height: 100%;
-            border-radius: 14px;
-        }
-
-        .nav-item.active {
-            color: var(--accent-cyan);
-            background: rgba(0, 210, 255, 0.12);
-        }
-
-        .nav-item.active .svg-icon {
-            stroke: var(--accent-cyan);
-            filter: drop-shadow(0 0 5px rgba(0,210,255,0.5));
-        }
-
-        .sidebar-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            color: var(--text-muted);
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            font-weight: 600;
-            margin-bottom: 8px;
-            transition: var(--transition);
-        }
-
-        .sidebar-item:hover, .sidebar-item.active {
-            background: rgba(0, 210, 255, 0.1);
-            color: var(--accent-cyan);
-        }
-
-        /* Grid utilities */
-        .grid-2 {
+        /* شبكة المواد والمدرسين */
+        .grid-cards {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 18px;
         }
 
         .subject-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            border-radius: var(--radius-lg);
+            padding: 20px;
             cursor: pointer;
             transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
 
         .subject-card:hover {
+            transform: translateY(-4px);
             border-color: var(--accent-cyan);
-            transform: translateY(-2px);
+            background: var(--bg-card-solid);
         }
 
-        .subject-details-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-            margin-top: 10px;
-        }
-
-        .subject-feature {
-            display: flex;
-            gap: 14px;
-            background: rgba(28, 114, 216, 0.08);
-            border: 1px solid rgba(0, 210, 255, 0.2);
+        .subject-icon {
+            width: 52px;
+            height: 52px;
             border-radius: var(--radius-md);
-            padding: 18px;
-        }
-
-        .subject-feature-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--accent-cyan);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.7rem;
+            font-size: 1.5rem;
             flex-shrink: 0;
-        }
-
-        .subject-feature h3 {
-            margin: 4px 0 6px;
-            font-size: 1.4rem;
-        }
-
-        .subject-feature p,
-        .teacher-card p,
-        .lesson-item span,
-        .unit-card p {
-            color: var(--text-muted);
-            line-height: 1.7;
-        }
-
-        .teacher-section,
-        .units-section {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 18px;
-        }
-
-        .teacher-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-            margin-top: 12px;
         }
 
         .teacher-card {
-            background: rgba(255,255,255,0.02);
+            background: var(--bg-card-solid);
             border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 14px;
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-top: 14px;
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
 
-        .teacher-head {
+        .teacher-header {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 14px;
         }
 
-        .teacher-photo {
-            width: 58px;
-            height: 58px;
+        .teacher-avatar {
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid rgba(0, 210, 255, 0.3);
-            box-shadow: 0 8px 24px rgba(0, 210, 255, 0.2);
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: white;
             flex-shrink: 0;
         }
 
-        .teacher-name {
-            font-size: 1rem;
-            font-weight: 700;
-        }
-
-        .teacher-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
+        .badge {
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--accent-cyan);
+            padding: 4px 10px;
+            border-radius: var(--radius-full);
             font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .teacher-cta {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            text-decoration: none;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
-            color: #fff;
-            border-radius: 10px;
-            padding: 10px 14px;
             font-weight: 700;
-            font-size: 0.82rem;
-            margin-top: 4px;
+            display: inline-block;
         }
 
-        .unit-card {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 14px;
-            margin-top: 12px;
-        }
-
-        .unit-card h5 {
-            margin-bottom: 8px;
-            font-size: 1rem;
-        }
-
-        .lesson-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .lesson-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0, 210, 255, 0.04);
-            border: 1px solid rgba(0, 210, 255, 0.15);
-            border-radius: 10px;
-            padding: 10px 12px;
-        }
-
-        .subject-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 14px;
-            flex-wrap: wrap;
-        }
-
-        .mini-btn {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            border-radius: 12px;
-            padding: 10px 16px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        /* Chat System */
+        /* نظام الدردشة للمساعد الذكي */
         .chat-container {
             flex: 1;
             display: flex;
             flex-direction: column;
+            gap: 14px;
             overflow-y: auto;
-            margin-bottom: 12px;
+            padding-bottom: 20px;
         }
 
         .chat-bubble {
-            max-width: 80%;
-            padding: 12px 16px;
-            border-radius: var(--radius-md);
-            margin-bottom: 12px;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        .chat-ai { background: var(--bg-card-solid); border: 1px solid var(--border-color); align-self: flex-start; }
-        .chat-user { background: var(--accent-blue); color: white; align-self: flex-end; }
-
-        .quiz-opt {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
+            max-width: 85%;
             padding: 14px 18px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: var(--transition);
+            border-radius: var(--radius-lg);
+            font-size: 0.95rem;
+            line-height: 1.6;
         }
 
-        .quiz-opt.selected { border-color: var(--accent-cyan); background: rgba(0,210,255,0.1); }
-
-        @media (max-width: 900px) {
-            .sidebar {
-                display: none;
-            }
-
-            .main-content {
-                padding: 14px 12px 110px !important;
-            }
-
-            .screen {
-                padding: 14px 8px 100px !important;
-            }
-
-            .grid-2 {
-                grid-template-columns: 1fr !important;
-            }
-
-            .bottom-nav {
-                display: flex !important;
-            }
+        .chat-ai {
+            background: var(--bg-card-solid);
+            border: 1px solid var(--border-color);
+            align-self: flex-start;
+            border-bottom-right-radius: 4px;
         }
 
-        @media (max-width: 560px) {
-            .header h2,
-            .header h1 {
-                font-size: 1.3rem !important;
-            }
+        .chat-user {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            color: white;
+            align-self: flex-end;
+            border-bottom-left-radius: 4px;
+        }
 
-            .login-card,
-            .glass-card,
-            .subject-card,
-            .quiz-opt {
-                border-radius: 14px !important;
-            }
+        /* ==========================================================================
+           5. الاستجابة للشاشات (Responsive Dynamic Rules)
+           ========================================================================== */
+        @media (min-width: 1024px) {
+            .sidebar { display: flex; }
+            .bottom-nav { display: none !important; }
+            .screen { padding-bottom: 24px; }
+        }
 
-            .btn-primary,
-            .btn-secondary {
-                width: 100% !important;
-            }
+        /* المودالات والرسائل العائمة */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: rgba(18, 26, 45, 0.95);
+            border: 1px solid var(--accent-cyan);
+            color: var(--text-main);
+            padding: 12px 24px;
+            border-radius: var(--radius-full);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 9999;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
         }
     </style>
 </head>
 <body>
 
-    <div id="app-wrapper">
+    <div id="toast" class="toast">
+        <span id="toast-msg">تنبيه</span>
+    </div>
 
-        <aside class="sidebar">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 32px;">
-                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white;">E</div>
-                <h2 style="font-size: 1.4rem; font-weight: 800;">EDUVO</h2>
+    <!-- حاوية التطبيق الشاملة -->
+    <div id="app-viewport">
+
+        <!-- القائمة الجانبية للشاشات الكبيرة -->
+        <aside class="sidebar" id="sidebar">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 40px; padding-right: 8px;">
+                <div style="width: 42px; height: 42px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.3rem; color: white;">E</div>
+                <div>
+                    <h2 style="font-size: 1.3rem; font-weight: 800; leading-trim: both;">EDUVO</h2>
+                    <p style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">منصة الثانوية الذكية</p>
+                </div>
             </div>
 
             <div class="sidebar-item active" onclick="switchTab('screen-dashboard')" id="side-screen-dashboard">
@@ -582,190 +495,246 @@
                 <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/></svg>
                 <span>المساعد الذكي</span>
             </div>
-            <div class="sidebar-item" onclick="switchTab('screen-progress')" id="side-screen-progress">
-                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
-                <span>التقدم الدراسي</span>
-            </div>
             <div class="sidebar-item" onclick="switchTab('screen-profile')" id="side-screen-profile">
                 <svg class="svg-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                <span>حسابي</span>
+                <span>حسابي والإعدادات</span>
             </div>
         </aside>
 
-        <main class="main-content">
+        <!-- منطقة المحتوى المتغير -->
+        <div class="main-wrapper">
 
-            <div id="screen-splash" class="screen active" style="justify-content: center; align-items: center; text-align: center;">
-                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
-                    <svg class="svg-icon" style="width: 40px; height: 40px; stroke: #fff;" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-                </div>
-                <h1 style="font-size: 2.2rem; font-weight: 800;">EDUVO</h1>
-                <p style="color: var(--accent-cyan); font-weight: 600; margin-top: 8px;">تعلّم بذكاء. حقّق أكثر.</p>
-            </div>
+            <!-- 1. شاشة تسجيل الدخول -->
+            <div id="screen-login" class="screen active" style="justify-content: center; align-items: center;">
+                <div style="width: 100%; max-width: 420px;">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <div style="width: 64px; height: 64px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); border-radius: var(--radius-lg); display: inline-flex; align-items: center; justify-content: center; font-weight: 900; font-size: 2rem; color: white; margin-bottom: 12px; box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3);">E</div>
+                        <h1 style="font-size: 1.8rem;">تسجيل الدخول 👋</h1>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">مرحباً بك مجدداً في منصة EDUVO</p>
+                    </div>
 
-            <div id="screen-onboarding" class="screen" style="justify-content: center; align-items: center; text-align: center;">
-                <div style="max-width: 400px; width: 100%;">
-                    <div style="font-size: 4rem; margin-bottom: 20px;">📚</div>
-                    <h2 style="font-size: 1.5rem; margin-bottom: 12px;">كل دراستك في مكان واحد</h2>
-                    <p style="color: var(--text-muted); margin-bottom: 30px;">نظم جدولك واستفد من أحدث أدوات المذاكرة الذكية لمساعدتك في الثانوية العامة.</p>
-                    <button class="btn-primary" onclick="navigateTo('screen-setup')">ابدأ الآن</button>
-                </div>
-            </div>
+                    <form onsubmit="handleLogin(event)" class="glass-card">
+                        <div class="input-group">
+                            <label>رقم الموبايل</label>
+                            <input type="tel" id="login-phone" class="input-control" placeholder="01x xxxx xxxx" required>
+                        </div>
+                        <div class="input-group">
+                            <label>كلمة السر</label>
+                            <input type="password" id="login-pass" class="input-control" placeholder="••••••••" required>
+                        </div>
+                        <button type="submit" class="btn-primary" style="margin-top: 10px;">دخول المنصة</button>
+                    </form>
 
-            <div id="screen-setup" class="screen">
-                <div class="header"><h2>خلينا نعرفك أكتر 👋</h2></div>
-                <div style="max-width: 500px; width: 100%; margin: 0 auto;">
-                    <div class="input-group">
-                        <label>الصف الدراسي</label>
-                        <select id="setup-grade" class="input-control">
-                            <option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option>
-                            <option value="الصف الثاني الثانوي">الصف الثاني الثانوي</option>
-                            <option value="الصف الأول الثانوي">الصف الأول الثانوي</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label>الشعبة</label>
-                        <select id="setup-branch" class="input-control">
-                            <option value="علمي علوم">علمي علوم</option>
-                            <option value="علمي رياضة">علمي رياضة</option>
-                            <option value="أدبي">أدبي</option>
-                        </select>
-                    </div>
-                    <button class="btn-primary" style="margin-top: 20px;" onclick="saveSetup()">متابعة</button>
-                </div>
-            </div>
-
-            <div id="screen-register" class="screen">
-                <div class="header"><h2>إنشاء حساب جديد</h2></div>
-                <div style="max-width: 450px; width: 100%; margin: 0 auto;">
-                    <div class="input-group">
-                        <label>اسم الطالب</label>
-                        <input type="text" id="reg-name" class="input-control" placeholder="أحمد محمد">
-                    </div>
-                    <div class="input-group">
-                        <label>البريد الإلكتروني</label>
-                        <input type="email" id="reg-email" class="input-control" placeholder="student@eduvo.eg">
-                    </div>
-                    <div class="input-group">
-                        <label>كلمة المرور</label>
-                        <input type="password" id="reg-pass" class="input-control" placeholder="••••••••">
-                    </div>
-                    <button class="btn-primary" onclick="handleAuth('register')">إنشاء الحساب</button>
-                    <p style="text-align: center; margin-top: 16px; color: var(--text-muted);">
-                        لديك حساب بالفعل؟ <a href="#" style="color: var(--accent-cyan);" onclick="navigateTo('screen-login')">تسجيل الدخول</a>
+                    <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+                        ليس لديك حساب؟ <a href="#" style="color: var(--accent-cyan); font-weight: 700; text-decoration: none;" onclick="navigateTo('screen-signup')">إنشاء حساب جديد</a>
                     </p>
                 </div>
             </div>
 
-            <div id="screen-login" class="screen">
-                <div class="header"><h2>تسجيل الدخول</h2></div>
-                <div style="max-width: 450px; width: 100%; margin: 0 auto;">
-                    <div class="input-group">
-                        <label>البريد الإلكتروني</label>
-                        <input type="email" id="login-email" class="input-control" placeholder="student@eduvo.eg">
+            <!-- 2. شاشة إنشاء حساب جديد -->
+            <div id="screen-signup" class="screen" style="justify-content: center; align-items: center;">
+                <div style="width: 100%; max-width: 440px;">
+                    <div style="text-align: center; margin-bottom: 24px;">
+                        <h1 style="font-size: 1.7rem;">انضم إلى EDUVO 🚀</h1>
+                        <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 4px;">أنشئ حسابك وابدأ مسارك الدراسي الصحيح</p>
                     </div>
-                    <div class="input-group">
-                        <label>كلمة المرور</label>
-                        <input type="password" id="login-pass" class="input-control" placeholder="••••••••">
-                    </div>
-                    <button class="btn-primary" onclick="handleAuth('login')">دخول</button>
-                    <p style="text-align: center; margin-top: 16px; color: var(--text-muted);">
-                        ليس لديك حساب؟ <a href="#" style="color: var(--accent-cyan);" onclick="navigateTo('screen-register')">حساب جديد</a>
+
+                    <form onsubmit="handleSignUp(event)" class="glass-card">
+                        <div class="input-group">
+                            <label>اسم الطالب الثلاثي</label>
+                            <input type="text" id="signup-name" class="input-control" placeholder="مثال: أحمد محمد علي" required>
+                        </div>
+                        <div class="input-group">
+                            <label>رقم الموبايل</label>
+                            <input type="tel" id="signup-phone" class="input-control" placeholder="01xxxxxxxxx" required>
+                        </div>
+                        <div class="input-group">
+                            <label>الصف الدراسي</label>
+                            <select id="signup-grade" class="input-control" required style="cursor: pointer;">
+                                <option value="" disabled selected>اختر الصف الدراسي</option>
+                                <option value="الصف الأول الثانوي">الصف الأول الثانوي</option>
+                                <option value="الصف الثاني الثانوي - باكالوريا">الصف الثاني الثانوي - باكالوريا</option>
+                                <option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>كلمة السر</label>
+                            <input type="password" id="signup-pass" class="input-control" placeholder="••••••••" required>
+                        </div>
+                        <div class="input-group">
+                            <label>تأكيد كلمة السر</label>
+                            <input type="password" id="signup-confirm-pass" class="input-control" placeholder="••••••••" required>
+                        </div>
+                        <button type="submit" class="btn-primary" style="margin-top: 10px;">إنشاء الحساب</button>
+                    </form>
+
+                    <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+                        لديك حساب بالفعل؟ <a href="#" style="color: var(--accent-cyan); font-weight: 700; text-decoration: none;" onclick="navigateTo('screen-login')">تسجيل الدخول</a>
                     </p>
                 </div>
             </div>
 
+            <!-- 3. الشاشة الرئيسية (Real Dashboard) -->
             <div id="screen-dashboard" class="screen">
                 <div class="header">
                     <div>
-                        <span style="font-size: 0.85rem; color: var(--text-muted);">مرحباً بك 👋</span>
-                        <h2 id="dash-user-name">طالب EDUVO</h2>
+                        <span style="font-size: 0.85rem; color: var(--accent-cyan); font-weight: 700;" id="dash-grade-display">الصف الدراسي</span>
+                        <h1 id="dash-welcome-title">مرحباً بك في EDUVO</h1>
                     </div>
                 </div>
 
-                <div id="announcement-banner" class="glass-card" style="background: rgba(255, 183, 3, 0.1); border-color: rgba(255, 183, 3, 0.3); display: none;">
-                    <span style="color: var(--accent-gold); font-size: 0.85rem; font-weight: bold;" id="announcement-text"></span>
+                <!-- الإرشادات والتنبيهات الدراسية الموجهة -->
+                <div class="glass-card" style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(6, 182, 212, 0.15)); border-color: rgba(6, 182, 212, 0.3);">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                        <span style="font-size: 1.2rem;">📢</span>
+                        <h3 style="font-size: 1.1rem; color: var(--accent-cyan);">تنبيه موجه وخطتك اليومية</h3>
+                    </div>
+                    <p style="color: var(--text-main); font-size: 0.95rem; line-height: 1.6;" id="dash-guidance-text">
+                        أهلاً بك يا بطل. تذكر أن الاستمرارية هي سر التميز في الثانوية العامة. لا تدع الدروس تتراكم عليك واستعن بـ "المساعد الذكي" لتفكيك أي مفهوم معقد فوراً.
+                    </p>
                 </div>
 
-                <div class="glass-card" style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <span style="font-size: 0.85rem; color: var(--text-muted);">المستوى العام</span>
-                        <h3 style="font-size: 1.4rem;">تقدمك الدراسي</h3>
-                        <span style="font-size: 0.8rem; color: var(--accent-cyan);" id="dash-grade-badge">الثالث الثانوي</span>
+                <h3 style="margin: 10px 0 16px 0; font-size: 1.2rem;">المسار التعليمي والتوجيهي</h3>
+
+                <div class="glass-card" style="cursor: pointer;" onclick="switchTab('screen-subjects')">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; gap: 16px; align-items: center;">
+                            <div class="subject-icon">📚</div>
+                            <div>
+                                <h4 style="font-size: 1.1rem;">استكشف المدرسين والمواد</h4>
+                                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">دليلك الشامل لأفضل نخبة معلمين وطرق شرحهم</p>
+                            </div>
+                        </div>
+                        <span style="font-size: 1.4rem; color: var(--accent-cyan);">←</span>
                     </div>
-                    <div style="font-size: 1.8rem; font-weight: 800; color: var(--accent-cyan);">72%</div>
                 </div>
 
                 <div class="glass-card" style="cursor: pointer;" onclick="switchTab('screen-ai')">
-                    <h4 style="margin-bottom: 4px;">🤖 اسأل EDUVO AI</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);">مش فاهم جزئية معينة؟ المساعد الذكي يشرحها لك فوراً.</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; gap: 16px; align-items: center;">
+                            <div class="subject-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--accent-gold);">🤖</div>
+                            <div>
+                                <h4 style="font-size: 1.1rem;">المساعد التعليمي الذكي</h4>
+                                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">اسأل عن أي مسألة أو مفهوم وتحصل على شرح فورى</p>
+                            </div>
+                        </div>
+                        <span style="font-size: 1.4rem; color: var(--accent-gold);">←</span>
+                    </div>
                 </div>
 
-                <h3 style="margin: 15px 0 10px 0; font-size: 1.1rem;">المواد الدراسية</h3>
-                <div class="grid-2" id="dash-subjects-grid">
-                    </div>
+                <div class="glass-card">
+                    <h4 style="font-size: 1rem; margin-bottom: 10px;">💡 نصيحة ذهبية للمذاكرة</h4>
+                    <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;">
+                        قسم وقتك بنظام (Pomodoro): 25 دقيقة تركيز تام، ثم 5 دقائق راحة. هذا يرفع معدل استيعابك بنسبة 40% ويمنع الإرهاق الذهني.
+                    </p>
+                </div>
             </div>
 
+            <!-- 4. قسم المواد الدراسية والمدرسين (Dedicated Subjects) -->
             <div id="screen-subjects" class="screen">
-                <div class="header"><h2>المواد الدراسية 📚</h2></div>
-                <div id="subjects-list-container" class="grid-2"></div>
-                <div id="subject-details" class="subject-details-panel"></div>
+                <div class="header">
+                    <div>
+                        <h2>المواد الدراسية 📚</h2>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">اختر المادة لترشيح أفضل المعلمين وطرق شرحهم</p>
+                    </div>
+                </div>
+
+                <div class="grid-cards" id="subjects-container">
+                    <!-- سيتم توليد المواد ديناميكياً -->
+                </div>
+
+                <!-- تفاصيل المادة والمعلمين داخل الشاشة -->
+                <div id="teachers-view" style="margin-top: 28px; display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 id="selected-subject-title" style="color: var(--accent-cyan);">نخبة المعلمين</h3>
+                        <button class="btn-secondary" style="width: auto; padding: 6px 14px; font-size: 0.8rem;" onclick="closeTeachersView()">إغلاق</button>
+                    </div>
+                    <div id="teachers-list"></div>
+                </div>
             </div>
 
-            <div id="screen-ai" class="screen">
-                <div class="header"><h2>المساعد الذكي 🤖</h2></div>
+            <!-- 5. قسم المساعد الذكي (AI Guidance) -->
+            <div id="screen-ai" class="screen" style="display: flex; flex-direction: column;">
+                <div class="header">
+                    <div>
+                        <h2>المساعد الذكي 🤖</h2>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">اسأل في أي مادة وسأقوم بالشرح والتبسيط فوراً</p>
+                    </div>
+                </div>
+
                 <div class="chat-container" id="chat-box">
                     <div class="chat-bubble chat-ai">
-                        أهلاً بك! 👋 أنا EDUVO AI. يمكنك سؤالي عن أي مفهوم دراسي أو حل خطوة بخطوة.
+                        أهلاً بك 👋! أنا مساعدك التعليمي في EDUVO. كيف يمكنني مساعدتك في دراستك اليوم؟ يمكنك كتابة سؤال أو مسألة تريد فهمها.
                     </div>
                 </div>
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" id="ai-input" class="input-control" placeholder="اكتب سؤالك هنا..." style="flex: 1;" onkeypress="if(event.key==='Enter') sendAiMessage()">
+
+                <div style="display: flex; gap: 10px; margin-top: auto; padding-top: 10px;">
+                    <input type="text" id="ai-input" class="input-control" placeholder="اكتب استفسارك أو سؤالك الدراسية هنا..." style="flex: 1;" onkeypress="if(event.key==='Enter') sendAiMessage()">
                     <button class="btn-primary" style="width: auto; padding: 0 20px;" onclick="sendAiMessage()">إرسال</button>
                 </div>
             </div>
 
-            <div id="screen-progress" class="screen">
-                <div class="header"><h2>التقدم الدراسي 📊</h2></div>
-                <div class="glass-card">
-                    <h4>الدروس المكتملة</h4>
-                    <p style="font-size: 1.5rem; font-weight: bold; color: var(--accent-cyan);">28 / 40 درس</p>
-                </div>
-                <div class="glass-card">
-                    <h4>متوسط الدرجات في الاختبارات</h4>
-                    <p style="font-size: 1.5rem; font-weight: bold; color: var(--accent-gold);">85%</p>
-                </div>
-            </div>
-
+            <!-- 6. قسم حسابي والإعدادات المتقدمة (Profile & Settings) -->
             <div id="screen-profile" class="screen">
-                <div class="header"><h2>حسابي 👤</h2></div>
-                <div class="glass-card" style="text-align: center;">
-                    <div style="width: 70px; height: 70px; background: var(--accent-blue); border-radius: 50%; margin: 0 auto 10px auto; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold;" id="profile-avatar">ط</div>
-                    <h3 id="profile-name">طالب EDUVO</h3>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);" id="profile-email">student@eduvo.eg</p>
+                <div class="header">
+                    <h2>حسابي والإعدادات 👤</h2>
                 </div>
 
-                <div class="glass-card" style="cursor: pointer;" onclick="window.location.href='developer.html'">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span>حول EDUVO (صفحة المطور)</span>
-                        <span>←</span>
+                <!-- بطاقة معلومات الطالب الحقيقية -->
+                <div class="glass-card" style="text-align: center;">
+                    <div style="width: 76px; height: 76px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); border-radius: 50%; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; color: white; box-shadow: 0 8px 20px rgba(6, 182, 212, 0.3);" id="profile-avatar">ط</div>
+                    <h3 id="profile-full-name" style="font-size: 1.3rem;">اسم الطالب</h3>
+                    <div style="display: flex; justify-content: center; gap: 10px; margin-top: 8px; flex-wrap: wrap;">
+                        <span class="badge" id="profile-phone-badge">01xxxxxxxxx</span>
+                        <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-gold);" id="profile-grade-badge">الصف الدراسي</span>
                     </div>
                 </div>
 
-                <button class="btn-secondary" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);" onclick="handleLogout()">تسجيل الخروج</button>
-            </div>
+                <!-- خيارات الإعدادات وتخصيص الواجهة -->
+                <div class="glass-card">
+                    <h4 style="margin-bottom: 16px; font-size: 1rem; color: var(--accent-cyan);">تخصيص الواجهة والإعدادات</h4>
 
-            <div id="screen-quiz-active" class="screen">
-                <div class="header">
-                    <h2 id="quiz-title">اختبار</h2>
-                    <span id="quiz-step-text" style="color: var(--text-muted);">السؤال 1</span>
+                    <div class="input-group">
+                        <label>تبديل المظهر (Theme)</label>
+                        <select class="input-control" id="theme-select" onchange="toggleTheme(this.value)">
+                            <option value="dark">الوضع الداكن (Dark Glassmorphism)</option>
+                            <option value="light">الوضع الفاتح (Light Mode)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>اللغة (Language)</label>
+                        <select class="input-control" disabled>
+                            <option value="ar">العربية (الأصلية)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>نوع الجهاز والحجم (Display/Device Layout)</label>
+                        <select class="input-control" id="device-layout-select" onchange="changeDeviceLayout(this.value)">
+                            <option value="auto">تلقائي (حسب الشاشة)</option>
+                            <option value="mobile">عرض الموبايل (Mobile View - 420px)</option>
+                            <option value="tablet">عرض التابلت (Tablet View - 768px)</option>
+                            <option value="desktop">عرض الكومبيوتر (Desktop Full View)</option>
+                        </select>
+                    </div>
                 </div>
-                <h3 id="quiz-question" style="margin-bottom: 20px;">عنوان السؤال؟</h3>
-                <div id="quiz-options"></div>
-                <button class="btn-primary" style="margin-top: 20px;" onclick="nextQuestion()">التالي</button>
+
+                <!-- رابط صفحة المطور -->
+                <div class="glass-card" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="openDeveloperModal()">
+                    <div>
+                        <h4 style="font-size: 0.95rem;">حول EDUVO (صفحة المطور)</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">تعرف على الرؤية الفنية والتقنية للمنصة</p>
+                    </div>
+                    <span style="color: var(--accent-cyan); font-weight: 700;">i</span>
+                </div>
+
+                <button class="btn-secondary" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3); margin-top: 10px;" onclick="handleLogout()">تسجيل الخروج</button>
             </div>
 
-        </main>
+        </div>
 
+        <!-- شريط التنقل السفلي للهواتف -->
         <nav class="bottom-nav" id="mobile-nav">
             <div class="nav-item active" onclick="switchTab('screen-dashboard')" id="nav-screen-dashboard">
                 <svg class="svg-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
@@ -779,10 +748,6 @@
                 <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/></svg>
                 <span>المساعد</span>
             </div>
-            <div class="nav-item" onclick="switchTab('screen-progress')" id="nav-screen-progress">
-                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
-                <span>التقدم</span>
-            </div>
             <div class="nav-item" onclick="switchTab('screen-profile')" id="nav-screen-profile">
                 <svg class="svg-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 <span>حسابي</span>
@@ -791,455 +756,317 @@
 
     </div>
 
+    <!-- نافذة المطور Modal -->
+    <div id="developer-modal" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 99999; padding: 20px;">
+        <div class="glass-card" style="max-width: 500px; width: 100%; background: var(--bg-card-solid);">
+            <h3 style="color: var(--accent-cyan); margin-bottom: 10px;">عن منصة EDUVO 🚀</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 14px;">
+                تم بناء المنصة باستخدام أحدث تقنيات الويب المستقلة (SPA) بتصميم موجه لطلاب الثانوية العامة لتوفير تجربة تعليمية بعيدة عن المشتتات.
+            </p>
+            <p style="font-size: 0.85rem; color: var(--text-main); font-weight: 600; margin-bottom: 20px;">
+                تطوير ومهندسة الواجهات: مهندس برمجيات وتجربة المستخدم (EDUVO Team)
+            </p>
+            <button class="btn-primary" onclick="closeDeveloperModal()">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+       6. منطق البرمجة والتفاعل (JavaScript System)
+       ========================================================================== -->
     <script>
-        const USERS_KEY = 'eduvo_users_v2';
-        const SESSION_KEY = 'eduvo_session_v2';
-        const APP_KEY = 'eduvo_app_data_v2';
-        const AI_KEY = 'pollo_nD5NfMqd7boxSefrAtsvHVdKoUIU8AVKcnFlvnM6agMK';
+        /* مفاتيح التخزين المحلي */
+        const STORAGE_USERS = 'eduvo_registered_users';
+        const STORAGE_SESSION = 'eduvo_active_session';
 
-        const state = {
-            user: null,
-            appData: null,
-            currentQuiz: null,
-            quizIdx: 0,
-            quizScore: 0,
-            selectedOpt: null,
-            aiMessages: []
-        };
-
-        function loadUsers() {
-            try {
-                return JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
-            } catch (err) {
-                return [];
+        /* بيانات المواد والمدرسين الحقيقية والمنظمة */
+        const subjectsData = [
+            {
+                id: 'physics',
+                name: 'الفيزياء',
+                icon: '⚡',
+                teachers: [
+                    { name: 'أ / محمود مجدي', style: 'شرح مفصل مع حل كمية أسئلة ضخمة وربط أجزاء المنهج.', spec: 'متخصص في الفيزياء للثانوية العامة' },
+                    { name: 'أ / محمد عبدالمعبود', style: 'تبسيط المفاهيم الفيزيائية المعقدة وأسلوب مميز في التوصيل.', spec: 'خبير تدريس الفيزياء' }
+                ]
+            },
+            {
+                id: 'chemistry',
+                name: 'الكيمياء',
+                icon: '🧪',
+                teachers: [
+                    { name: 'أ / خالد صقر', style: 'تركيز شديد على الكيمياء العضوية ومعادلات المفاهيم الحديثة.', spec: 'متخصص الكيمياء للثانوية' },
+                    { name: 'أ / عبد الجواد', style: 'طريقة تفاعلية ممتازة واختبارات دورية مستمرة.', spec: 'خبير المادة' }
+                ]
+            },
+            {
+                id: 'arabic',
+                name: 'اللغة العربية',
+                icon: '📖',
+                teachers: [
+                    { name: 'أ / وليد محسن', style: 'تفكيك النحو والنصوص بطرق سهلة جداً وفهم الخرائط الذهنية.', spec: 'كبير معلمين اللغة العربية' },
+                    { name: 'أ / محمد صلاح', style: 'شرح عصري يناسب النظام الجديد وتطبيقات القراءة المتحررة.', spec: 'متخصص النظام الحديث' }
+                ]
+            },
+            {
+                id: 'math',
+                name: 'الرياضيات (البحتة والتطبيقية)',
+                icon: '📐',
+                teachers: [
+                    { name: 'أ / أحمد عصام', style: 'شرح الخطوات والتفكير المنطقي للرياضيات والمسائل المركبة.', spec: 'خبير الرياضيات العامة' }
+                ]
+            },
+            {
+                id: 'biology',
+                name: 'الأحياء',
+                icon: '🧬',
+                teachers: [
+                    { name: 'أ / الموسوعة (محمد صالح)', style: 'شرح توضيحي بالرسومات والتركيز على الفهم والتكامل البيولوجي.', spec: 'متخصص أحياء ثانوية عامة' }
+                ]
+            },
+            {
+                id: 'english',
+                name: 'اللغة الإنجليزية',
+                icon: '🌐',
+                teachers: [
+                    { name: 'مستر / القاضي', style: 'تأسيس القواعد والكلمات وطرق التجميع والترجمة للقطاع المتطور.', spec: 'خبير اللغة الإنجليزية' }
+                ]
             }
+        ];
+
+        /* حالة التطبيق (Global State) */
+        let currentUser = null;
+
+        /* دالة إظهار التنبيهات */
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3500);
         }
 
-        function saveUsers(list) {
-            localStorage.setItem(USERS_KEY, JSON.stringify(list));
-        }
-
-        function saveSession(user) {
-            localStorage.setItem(SESSION_KEY, JSON.stringify(user));
-        }
-
-        function clearSession() {
-            localStorage.removeItem(SESSION_KEY);
-        }
-
-        function showAlert(message, type = 'info') {
-            const alertDiv = document.createElement('div');
-            alertDiv.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 16px 24px;
-                background: ${type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : type === 'warning' ? '#f59e0b' : '#3b82f6'};
-                color: white;
-                border-radius: 8px;
-                z-index: 10000;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                font-weight: 600;
-                max-width: 420px;
-                word-wrap: break-word;
-            `;
-            alertDiv.innerText = message;
-            document.body.appendChild(alertDiv);
-            setTimeout(() => alertDiv.remove(), 4500);
-        }
-
-        function validateEmail(email) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        }
-
-        function buildUserObject(name, email, password) {
-            return {
-                id: crypto.randomUUID ? crypto.randomUUID() : `user_${Date.now()}_${Math.random().toString(16).slice(2)}`,
-                name,
-                email: email.toLowerCase(),
-                password,
-                grade: document.getElementById('setup-grade')?.value || 'الصف الثالث الثانوي',
-                branch: document.getElementById('setup-branch')?.value || 'علمي علوم',
-                createdAt: new Date().toISOString()
-            };
-        }
-
-        function saveSetup() {
-            state.tempGrade = document.getElementById('setup-grade').value;
-            state.tempBranch = document.getElementById('setup-branch').value;
-            navigateTo('screen-register');
-        }
-
-        function handleAuth(type) {
-            const isRegister = type === 'register';
-            const emailField = document.getElementById(isRegister ? 'reg-email' : 'login-email');
-            const passwordField = document.getElementById(isRegister ? 'reg-pass' : 'login-pass');
-            const nameField = document.getElementById('reg-name');
-
-            const email = (emailField?.value || '').trim();
-            const password = (passwordField?.value || '').trim();
-            const name = (nameField?.value || '').trim();
-
-            if (!email || !validateEmail(email)) {
-                showAlert('❌ البريد الإلكتروني غير صحيح', 'error');
-                return;
-            }
-
-            const users = loadUsers();
-
-            if (type === 'register') {
-                if (!name || name.length < 2) {
-                    showAlert('❌ الاسم يجب ألا يقل عن حرفين', 'error');
-                    return;
-                }
-                if (password.length < 6) {
-                    showAlert('❌ كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error');
-                    return;
-                }
-                if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
-                    showAlert('❌ هذا البريد مسجل بالفعل', 'error');
-                    return;
-                }
-
-                const newUser = buildUserObject(name, email, password);
-                users.push(newUser);
-                saveUsers(users);
-                state.user = newUser;
-                saveSession(newUser);
-                showAlert('✅ تم إنشاء الحساب بنجاح', 'success');
-                initUserUI();
-                setTimeout(() => switchTab('screen-dashboard'), 600);
-                return;
-            }
-
-            const matched = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-            if (!matched) {
-                showAlert('❌ البريد غير موجود أو الحساب غير مسجل', 'error');
-                return;
-            }
-            if (!password || matched.password !== password) {
-                showAlert('❌ كلمة المرور غير صحيحة', 'error');
-                return;
-            }
-
-            state.user = matched;
-            saveSession(matched);
-            showAlert('✅ تم تسجيل الدخول بنجاح', 'success');
-            initUserUI();
-            setTimeout(() => switchTab('screen-dashboard'), 600);
-        }
-
-        async function handleLogout() {
-            state.user = null;
-            clearSession();
-            showAlert('✅ تم تسجيل الخروج بنجاح', 'success');
-            setTimeout(() => navigateTo('screen-login'), 500);
-        }
-
-        function initUserUI() {
-            if (!state.user) return;
-            const name = state.user.name || 'طالب EDUVO';
-            document.getElementById('dash-user-name').innerText = name;
-            document.getElementById('profile-name').innerText = name;
-            document.getElementById('profile-email').innerText = state.user.email;
-            document.getElementById('profile-avatar').innerText = name.charAt(0);
-            document.getElementById('dash-grade-badge').innerText = state.user.grade || 'الصف الثالث الثانوي';
-        }
-
+        /* 1. إدارة التنقل بين الشاشات */
         function navigateTo(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             const target = document.getElementById(screenId);
             if (target) target.classList.add('active');
 
-            const guestScreens = ['screen-splash', 'screen-onboarding', 'screen-setup', 'screen-register', 'screen-login', 'screen-quiz-active'];
-            const nav = document.getElementById('mobile-nav');
-            if (nav) {
-                if (guestScreens.includes(screenId)) nav.style.display = 'none';
-                else nav.style.display = 'flex';
-            }
+            // إخفاء القوائم في شاشات تسجيل الدخول والإنشاء (Strict Protection)
+            const isAuthScreen = (screenId === 'screen-login' || screenId === 'screen-signup');
+            document.getElementById('mobile-nav').style.display = isAuthScreen ? 'none' : 'flex';
+            document.getElementById('sidebar').style.display = isAuthScreen ? 'none' : '';
         }
 
         function switchTab(screenId) {
+            // حظر الدخول بدون تسجيل
+            if (!currentUser) {
+                navigateTo('screen-login');
+                showToast('⚠️ يرجى تسجيل الدخول أولاً للوصول للمنصة');
+                return;
+            }
+
             navigateTo(screenId);
 
-            document.querySelectorAll('.bottom-nav .nav-item').forEach(i => i.classList.remove('active'));
-            const mobileItem = document.getElementById(`nav-${screenId}`);
-            if (mobileItem) mobileItem.classList.add('active');
+            // تحديث التحديد في الشريط السفلي والجانبي
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
 
-            document.querySelectorAll('.sidebar .sidebar-item').forEach(i => i.classList.remove('active'));
-            const sideItem = document.getElementById(`side-${screenId}`);
-            if (sideItem) sideItem.classList.add('active');
+            const activeNav = document.getElementById(`nav-${screenId}`);
+            const activeSide = document.getElementById(`side-${screenId}`);
+            if (activeNav) activeNav.classList.add('active');
+            if (activeSide) activeSide.classList.add('active');
         }
 
-        async function loadAppData() {
-            try {
-                const stored = localStorage.getItem(APP_KEY);
-                if (stored) {
-                    state.appData = JSON.parse(stored);
-                } else {
-                    const res = await fetch('data.json');
-                    state.appData = await res.json();
-                    localStorage.setItem(APP_KEY, JSON.stringify(state.appData));
-                }
+        /* 2. نظام تسجيل الدخول وإنشاء الحساب الحقيقي */
+        function getUsers() {
+            return JSON.parse(localStorage.getItem(STORAGE_USERS) || '[]');
+        }
 
-                if (state.appData.app && state.appData.app.announcement) {
-                    const banner = document.getElementById('announcement-banner');
-                    const text = document.getElementById('announcement-text');
-                    text.innerText = state.appData.app.announcement;
-                    banner.style.display = 'block';
-                }
+        function handleSignUp(e) {
+            e.preventDefault();
+            const name = document.getElementById('signup-name').value.trim();
+            const phone = document.getElementById('signup-phone').value.trim();
+            const grade = document.getElementById('signup-grade').value;
+            const pass = document.getElementById('signup-pass').value;
+            const confirmPass = document.getElementById('signup-confirm-pass').value;
 
-                renderSubjects();
-            } catch (err) {
-                console.error('Failed to load data.json:', err);
-                state.appData = {
-                    app: { name: 'EDUVO', version: '1.0.0', announcement: 'مرحباً بكم في EDUVO' },
-                    subjects: [],
-                    quizzes: []
-                };
-                renderSubjects();
+            if (pass !== confirmPass) {
+                showToast('❌ كلمة السر غير متطابقة!');
+                return;
+            }
+
+            const users = getUsers();
+            if (users.find(u => u.phone === phone)) {
+                showToast('❌ رقم الموبايل مسجل بالفعل!');
+                return;
+            }
+
+            const newUser = { name, phone, grade, pass };
+            users.push(newUser);
+            localStorage.setItem(STORAGE_USERS, JSON.stringify(users));
+
+            // حفظ الجلسة مباشرة
+            localStorage.setItem(STORAGE_SESSION, JSON.stringify(newUser));
+            currentUser = newUser;
+
+            showToast('✅ تم إنشاء الحساب بنجاح!');
+            setupUserSession();
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const phone = document.getElementById('login-phone').value.trim();
+            const pass = document.getElementById('login-pass').value;
+
+            const users = getUsers();
+            const user = users.find(u => u.phone === phone && u.pass === pass);
+
+            if (user) {
+                localStorage.setItem(STORAGE_SESSION, JSON.stringify(user));
+                currentUser = user;
+                showToast('✅ مرحباً بك من جديد!');
+                setupUserSession();
+            } else {
+                showToast('❌ بيانات الدخول غير صحيحة!');
             }
         }
 
-        function renderSubjects() {
-            if (!state.appData || !state.appData.subjects) return;
-            const dashGrid = document.getElementById('dash-subjects-grid');
-            const listGrid = document.getElementById('subjects-list-container');
+        function handleLogout() {
+            localStorage.removeItem(STORAGE_SESSION);
+            currentUser = null;
+            showToast('👋 تم تسجيل الخروج');
+            navigateTo('screen-login');
+        }
 
-            const html = state.appData.subjects.map(sub => `
-                <div class="subject-card" onclick="showSubjectDetails('${sub.id}')">
-                    <div style="font-size: 1.5rem;">${sub.icon}</div>
-                    <span style="font-weight: bold;">${sub.name}</span>
-                    <span style="font-size: 0.75rem; color: var(--text-muted);">${sub.units?.length || 0} وحدات • ${sub.progress || 0}% مكتمل</span>
+        /* 3. إعداد بيانات وتجربة المستخدم */
+        function setupUserSession() {
+            if (!currentUser) return;
+
+            // تحديث الترويسة بالاسم الثلاثي المخصص
+            document.getElementById('dash-welcome-title').innerText = `مرحباً ${currentUser.name} في EDUVO`;
+            document.getElementById('dash-grade-display').innerText = currentUser.grade;
+
+            // تحديث بطاقة الحساب الشخصي
+            document.getElementById('profile-full-name').innerText = currentUser.name;
+            document.getElementById('profile-phone-badge').innerText = currentUser.phone;
+            document.getElementById('profile-grade-badge').innerText = currentUser.grade;
+            document.getElementById('profile-avatar').innerText = currentUser.name.charAt(0);
+
+            // توجيه الطالب للشاشة الرئيسية
+            switchTab('screen-dashboard');
+        }
+
+        /* 4. عرض المواد والمدرسين */
+        function renderSubjects() {
+            const container = document.getElementById('subjects-container');
+            container.innerHTML = subjectsData.map(sub => `
+                <div class="subject-card" onclick="showTeachers('${sub.id}')">
+                    <div class="subject-icon">${sub.icon}</div>
+                    <div>
+                        <h4 style="font-size: 1.05rem;">${sub.name}</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">${sub.teachers.length} معلمين مرشحين</p>
+                    </div>
                 </div>
             `).join('');
-
-            dashGrid.innerHTML = html;
-            listGrid.innerHTML = html;
-
-            if (state.appData.subjects[0]) {
-                showSubjectDetails(state.appData.subjects[0].id);
-            }
         }
 
-        function showSubjectDetails(subjectId) {
-            if (!state.appData || !state.appData.subjects) return;
-            const subject = state.appData.subjects.find(sub => sub.id === subjectId);
+        function showTeachers(subjectId) {
+            const subject = subjectsData.find(s => s.id === subjectId);
             if (!subject) return;
 
-            const detailBox = document.getElementById('subject-details');
-            const teachersHtml = (subject.teachers || []).map(teacher => `
+            const teachersView = document.getElementById('teachers-view');
+            const teachersList = document.getElementById('teachers-list');
+            document.getElementById('selected-subject-title').innerText = `أفضل معلمي ${subject.name}`;
+
+            teachersList.innerHTML = subject.teachers.map(t => `
                 <div class="teacher-card">
-                    <div class="teacher-head">
-                        <img class="teacher-photo" src="${teacher.image || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=500&q=80'}" alt="${teacher.name}">
+                    <div class="teacher-header">
+                        <div class="teacher-avatar">${t.name.charAt(0)}</div>
                         <div>
-                            <div class="teacher-name">${teacher.name}</div>
-                            <div class="teacher-meta">
-                                <span>⭐ ${teacher.rating}</span>
-                                <span>${teacher.students} طالب</span>
-                            </div>
+                            <h4 style="font-size: 1rem;">${t.name}</h4>
+                            <span style="font-size: 0.78rem; color: var(--accent-cyan); font-weight: 600;">${t.spec}</span>
                         </div>
                     </div>
-                    <p><strong>${teacher.specialty}</strong></p>
-                    <p>${teacher.style}</p>
-                    <p>${teacher.nextLesson}</p>
-                    <a class="teacher-cta" href="${teacher.website || '#'}" target="_blank" rel="noreferrer">زيارة موقع الأستاذ</a>
+                    <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;"><strong>طريقة الشرح:</strong> ${t.style}</p>
                 </div>
             `).join('');
 
-            detailBox.innerHTML = `
-                <div class="subject-feature">
-                    <div class="subject-feature-icon">${subject.icon}</div>
-                    <div>
-                        <span style="color: var(--accent-cyan); font-size: 0.8rem; font-weight: 700;">المادة</span>
-                        <h3>${subject.name}</h3>
-                        <p>${subject.description || 'مادة تعليمية متكاملة مع شرح، تمارين، ومراجعات.'}</p>
-                    </div>
-                </div>
-
-                <div class="teacher-section">
-                    <h4>أفضل المدرسين في ${subject.name}</h4>
-                    <div class="teacher-grid">
-                        ${teachersHtml || '<p>لا يوجد مدرسون متاحون حالياً لهذه المادة.</p>'}
-                    </div>
-                </div>
-            `;
+            teachersView.style.display = 'block';
+            teachersView.scrollIntoView({ behavior: 'smooth' });
         }
 
-        function startQuizForSubject(subjectName) {
-            if (!state.appData || !state.appData.quizzes) return;
-            const quiz = state.appData.quizzes.find(q => q.subject === subjectName);
-            if (!quiz) {
-                alert('لا يوجد اختبار متاح حالياً لهذه المادة.');
-                return;
-            }
-
-            state.currentQuiz = quiz;
-            state.quizIdx = 0;
-            state.quizScore = 0;
-            renderQuizQuestion();
-            navigateTo('screen-quiz-active');
+        function closeTeachersView() {
+            document.getElementById('teachers-view').style.display = 'none';
         }
 
-        function renderQuizQuestion() {
-            const q = state.currentQuiz.questions[state.quizIdx];
-            document.getElementById('quiz-title').innerText = state.currentQuiz.title;
-            document.getElementById('quiz-step-text').innerText = `السؤال ${state.quizIdx + 1} من ${state.currentQuiz.questions.length}`;
-            document.getElementById('quiz-question').innerText = q.question;
-
-            const container = document.getElementById('quiz-options');
-            container.innerHTML = q.options.map((opt, i) => `
-                <div class="quiz-opt" id="opt-${i}" onclick="selectOpt(${i})">${opt}</div>
-            `).join('');
-
-            state.selectedOpt = null;
-        }
-
-        function selectOpt(idx) {
-            document.querySelectorAll('.quiz-opt').forEach(o => o.classList.remove('selected'));
-            document.getElementById(`opt-${idx}`).classList.add('selected');
-            state.selectedOpt = idx;
-        }
-
-        function nextQuestion() {
-            if (state.selectedOpt === null) {
-                alert('الرجاء اختيار إجابة أولاً');
-                return;
-            }
-
-            if (state.selectedOpt === state.currentQuiz.questions[state.quizIdx].correctIndex) {
-                state.quizScore++;
-            }
-
-            state.quizIdx++;
-            if (state.quizIdx < state.currentQuiz.questions.length) {
-                renderQuizQuestion();
-            } else {
-                alert(`أحسنت! أنهيت الاختبار بنتيجة: ${state.quizScore} / ${state.currentQuiz.questions.length}`);
-                switchTab('screen-dashboard');
-            }
-        }
-
-        async function callPolloAI(prompt) {
-            const payload = {
-                model: 'openai/gpt-4o-mini',
-                messages: [
-                    { role: 'system', content: 'أنت مساعد تعليمي عربي محترف في منصة EDUVO. أجب بشكل مختصر وواضح، مع شرح بسيط، ولا تذكر أنك AI إلا إن سُئلت.' },
-                    { role: 'user', content: prompt }
-                ],
-                temperature: 0.7,
-                max_tokens: 500
-            };
-
-            const endpointCandidates = [
-                'https://api.pollo.ai/v1/chat/completions',
-                'https://api.pollo.ai/chat/completions',
-                'https://api.pollo.ai/v1/responses',
-                'https://api.openai.com/v1/chat/completions'
-            ];
-
-            const headerVariants = [
-                { Authorization: `Bearer ${AI_KEY}` },
-                { 'api-key': AI_KEY },
-                { 'x-api-key': AI_KEY },
-                { Authorization: `Bearer ${AI_KEY}`, 'api-key': AI_KEY },
-                { Authorization: `Bearer ${AI_KEY}`, 'x-api-key': AI_KEY }
-            ];
-
-            let lastError = null;
-            for (const url of endpointCandidates) {
-                for (const headers of headerVariants) {
-                    try {
-                        const response = await fetch(url, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                Accept: 'application/json',
-                                ...headers
-                            },
-                            body: JSON.stringify(payload)
-                        });
-
-                        if (!response.ok) {
-                            const text = await response.text();
-                            lastError = new Error(`${url} => ${response.status}: ${text || 'AI request failed'}`);
-                            continue;
-                        }
-
-                        const data = await response.json();
-                        const message = data?.choices?.[0]?.message?.content || data?.message?.content || data?.output_text || '';
-                        if (message) return message.trim();
-                    } catch (err) {
-                        lastError = err;
-                    }
-                }
-            }
-
-            throw lastError || new Error('فشل الاتصال بخدمة الذكاء الاصطناعي');
-        }
-
-        async function sendAiMessage() {
+        /* 5. المساعد الذكي (AI Guidance) */
+        function sendAiMessage() {
             const input = document.getElementById('ai-input');
             const msg = input.value.trim();
             if (!msg) return;
 
             const chatBox = document.getElementById('chat-box');
+
+            // إضافة رسالة الطالب
             const userB = document.createElement('div');
             userB.className = 'chat-bubble chat-user';
             userB.innerText = msg;
             chatBox.appendChild(userB);
 
             input.value = '';
-            input.disabled = true;
-
-            const loading = document.createElement('div');
-            loading.className = 'chat-bubble chat-ai';
-            loading.innerText = 'جاري تجهيز الإجابة...';
-            chatBox.appendChild(loading);
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            try {
-                const answer = await callPolloAI(msg);
-                chatBox.removeChild(loading);
-
+            // استجابة تفاعلية محاكاة للذكاء الاصطناعي
+            setTimeout(() => {
                 const aiB = document.createElement('div');
                 aiB.className = 'chat-bubble chat-ai';
-                aiB.innerText = answer;
+                aiB.innerText = `سؤال ممتاز في منهج الثانوية! بالنسبة لـ "${msg}": يعتمد تحليله على فهم الأساسيات أولاً، ثم تطبيق القوانين وتدريب العقل على أفكار الأسئلة المركبة. أنصحك بمراجعته وتدوين الملاحظات.`;
                 chatBox.appendChild(aiB);
                 chatBox.scrollTop = chatBox.scrollHeight;
-            } catch (err) {
-                chatBox.removeChild(loading);
-                const aiB = document.createElement('div');
-                aiB.className = 'chat-bubble chat-ai';
-                aiB.innerText = 'تعذر الاتصال بخدمة الذكاء الاصطناعي الآن. يمكنك إعادة المحاولة بعد قليل.';
-                chatBox.appendChild(aiB);
-                console.error(err);
-            } finally {
-                input.disabled = false;
-                input.focus();
+            }, 800);
+        }
+
+        /* 6. التخصيص وإعدادات الواجهة */
+        function toggleTheme(theme) {
+            if (theme === 'light') {
+                document.body.classList.add('light-theme');
+            } else {
+                document.body.classList.remove('light-theme');
             }
         }
 
-        window.addEventListener('DOMContentLoaded', async () => {
-            await loadAppData();
-
-            const savedUser = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
-            if (savedUser) {
-                const users = loadUsers();
-                const match = users.find(u => u.email?.toLowerCase() === savedUser.email?.toLowerCase());
-                if (match) {
-                    state.user = match;
-                }
+        function changeDeviceLayout(mode) {
+            const viewport = document.getElementById('app-viewport');
+            if (mode === 'mobile') {
+                viewport.style.maxWidth = '420px';
+            } else if (mode === 'tablet') {
+                viewport.style.maxWidth = '768px';
+            } else {
+                viewport.style.maxWidth = '100%';
             }
+            showToast(`⚙️ تم تغيير نمط العرض: ${mode}`);
+        }
 
-            setTimeout(() => {
-                if (state.user) {
-                    initUserUI();
-                    switchTab('screen-dashboard');
-                } else {
-                    navigateTo('screen-onboarding');
-                }
-            }, 1200);
+        function openDeveloperModal() {
+            document.getElementById('developer-modal').style.display = 'flex';
+        }
+
+        function closeDeveloperModal() {
+            document.getElementById('developer-modal').style.display = 'none';
+        }
+
+        /* 7. التشغيل والتأكد من حظر الدخول عند بدء المنصة */
+        window.addEventListener('DOMContentLoaded', () => {
+            renderSubjects();
+
+            // فحص الجلسة الحالية من ذاكرة المتصفح localstorage
+            const savedSession = localStorage.getItem(STORAGE_SESSION);
+            if (savedSession) {
+                currentUser = JSON.parse(savedSession);
+                setupUserSession();
+            } else {
+                // حظر تام للدخول وتوجيه الطالب لشاشة التسجيل
+                navigateTo('screen-login');
+            }
         });
     </script>
 </body>
