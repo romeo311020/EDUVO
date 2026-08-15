@@ -480,17 +480,6 @@
                 </div>
                 <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px;">دخول لوحة الإدارة</button>
             </form>
-            <div style="margin: 18px 0 12px; display:flex; align-items:center; gap:10px; color:var(--text-muted); font-size:0.8rem;">
-                <span style="height:1px; flex:1; background:var(--border-color);"></span>
-                <span>أو للتجربة المحلية</span>
-                <span style="height:1px; flex:1; background:var(--border-color);"></span>
-            </div>
-            <button type="button" class="btn btn-secondary" style="width:100%; justify-content:center; padding:12px;" onclick="handleLocalAdminLogin()">
-                فتح لوحة الإدارة المحلية
-            </button>
-            <p style="color:var(--text-muted); font-size:0.72rem; line-height:1.6; margin-top:10px;">
-                الوضع المحلي مناسب للتجربة على نفس الجهاز فقط، ولا يُستخدم كحماية حقيقية عند النشر.
-            </p>
         </div>
     </div>
 
@@ -725,7 +714,6 @@
 
         let state = {
             currentAdmin: { name: 'GitHub Admin' },
-            authMode: 'local',
             data: {
                 app: {
                     name: 'EDUVO',
@@ -744,82 +732,6 @@
                 filePath: 'data.json'
             }
         };
-
-        const LOCAL_USERS_KEY = 'eduvo_users_v1';
-        const LOCAL_ANNOUNCEMENT_KEY = 'eduvo_announcement_v1';
-
-        function readLocalUsers() {
-            try {
-                const users = JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '[]');
-                return Array.isArray(users) ? users : [];
-            } catch (err) {
-                console.error('Local users load error:', err);
-                return [];
-            }
-        }
-
-        function loadLocalAdminData() {
-            const users = readLocalUsers();
-            const announcement = localStorage.getItem(LOCAL_ANNOUNCEMENT_KEY) || 'مرحباً بكم في EDUVO';
-
-            state.data = normalizeGithubData({
-                ...state.data,
-                app: { ...state.data.app, announcement },
-                profiles: users.map(user => ({
-                    id: user.id || user.phone,
-                    name: user.fullName || user.name || 'طالب',
-                    email: user.email || user.phone || '',
-                    phone: user.phone || '',
-                    grade: user.grade || 'غير محدد',
-                    section: user.section || '—',
-                    status: user.status || 'active',
-                    created_at: user.createdAt || user.created_at || ''
-                }))
-            });
-            return state.data;
-        }
-
-        function saveLocalAdminData() {
-            const users = readLocalUsers();
-            const byKey = new Map(users.map(user => [
-                String(user.id || user.phone),
-                user
-            ]));
-
-            (state.data.profiles || []).forEach(profile => {
-                const key = String(profile.id || profile.phone || profile.email);
-                const user = byKey.get(key);
-                if (user) {
-                    user.status = profile.status || 'active';
-                    user.grade = profile.grade || user.grade;
-                    user.section = profile.section || user.section;
-                }
-            });
-
-            localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(users));
-            localStorage.setItem(
-                LOCAL_ANNOUNCEMENT_KEY,
-                state.data.app?.announcement || 'مرحباً بكم في EDUVO'
-            );
-            return true;
-        }
-
-        function closeAdminLogin() {
-            const overlay = document.getElementById('admin-login-overlay');
-            if (!overlay) return;
-            overlay.style.opacity = '0';
-            setTimeout(() => {
-                overlay.style.display = 'none';
-            }, 300);
-        }
-
-        function handleLocalAdminLogin() {
-            state.authMode = 'local';
-            loadLocalAdminData();
-            closeAdminLogin();
-            renderDashboard();
-            showAlert('✅ تم فتح لوحة الإدارة المحلية', 'success');
-        }
 
         function normalizeGithubData(data) {
             const safe = data && typeof data === 'object' ? data : {};
@@ -1064,7 +976,6 @@
                     branch: defaultBranch,
                     filePath: 'data.json'
                 };
-                state.authMode = 'github';
 
                 const persisted = {
                     owner,
@@ -1131,12 +1042,6 @@
         }
 
         async function saveRepoData() {
-            if (state.authMode === 'local') {
-                saveLocalAdminData();
-                setGithubStatus('تم حفظ التغييرات على هذا الجهاز ✅', 'success');
-                return true;
-            }
-
             const settings = saveGithubSettings();
             if (!settings) return false;
 
@@ -1370,9 +1275,8 @@
             const value = input.value.trim();
             state.data.app = state.data.app || {};
             state.data.app.announcement = value || 'مرحباً بكم في EDUVO';
-            saveRepoData().then(saved => {
-                if (saved) showAlert('✅ تم تحديث الإعلان بنجاح', 'success');
-            });
+            saveRepoData();
+            showAlert('✅ تم تحديث الإعلان بنجاح', 'success');
         }
 
         function handleAdminLogout() {
