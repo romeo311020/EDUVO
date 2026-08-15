@@ -656,7 +656,6 @@
     const USERS_KEY = 'eduvo_users_v1';
     const SESSION_KEY = 'eduvo_session_v1';
     const SETTINGS_KEY = 'eduvo_settings_v1';
-      const ANNOUNCEMENT_KEY = 'eduvo_announcement_v1';
 
     const subjects = [
       {
@@ -872,12 +871,6 @@
       document.getElementById('profile-avatar').textContent = name.trim().charAt(0) || 'ع';
     }
 
-    function applyAnnouncement() {
-      const announcement = localStorage.getItem(ANNOUNCEMENT_KEY);
-      const alert = document.getElementById('dashboard-alert');
-      if (announcement && alert) alert.textContent = announcement;
-    }
-
     function handleSignup() {
       const name = document.getElementById('signup-name').value.trim();
       const phone = sanitizePhone(document.getElementById('signup-phone').value);
@@ -914,16 +907,16 @@
         phone,
         grade,
         password,
-        status: 'pending',
         createdAt: new Date().toISOString()
       };
 
       users.push(user);
       saveUsers(users);
-      state.user = null;
-      clearSession();
-      showMessage('✅ تم إنشاء الحساب. الحساب في انتظار موافقة الإدارة.', 'success');
-      authTab('login');
+      state.user = user;
+      saveSession(user);
+      updateUserProfile();
+      showMessage('✅ تم إنشاء الحساب بنجاح', 'success');
+      setActiveScreen('screen-dashboard');
     }
 
     function handleLogin() {
@@ -946,20 +939,9 @@
         return;
       }
 
-      if (match.status === 'pending') {
-        showMessage('⏳ الحساب في انتظار موافقة الإدارة', 'error');
-        return;
-      }
-
-      if (match.status === 'suspended' || match.status === 'rejected') {
-        showMessage('❌ الحساب غير متاح حالياً. تواصل مع الإدارة', 'error');
-        return;
-      }
-
       state.user = match;
       saveSession(match);
       updateUserProfile();
-      applyAnnouncement();
       showMessage('✅ تم تسجيل الدخول بنجاح', 'success');
       setActiveScreen('screen-dashboard');
     }
@@ -1062,7 +1044,7 @@
         if (saved) {
           const users = getUsers();
           const match = users.find(item => item.phone === saved.phone);
-          if (match && (!match.status || match.status === 'active')) {
+          if (match) {
             state.user = match;
           }
         }
@@ -1080,7 +1062,6 @@
 
       if (state.user) {
         updateUserProfile();
-        applyAnnouncement();
         setActiveScreen('screen-dashboard');
       } else {
         setActiveScreen('screen-auth');
