@@ -1067,6 +1067,31 @@
         setActiveScreen('screen-auth');
       }
     });
+// إضافة دالة لجلب البيانات المحدثة من GitHub عند فتح الموقع
+async function loadDataFromGitHub() {
+    try {
+        // استبدل YOUR_USERNAME و YOUR_REPO برابط مستودعك
+        const response = await fetch('https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/data.json');
+        if (response.ok) {
+            const data = await response.json();
+            
+            // تحديث البيانات في الـ LocalStorage بالبيانات الجديدة القادمة من GitHub
+            if (data.subjects) localStorage.setItem('eduvo_subjects', JSON.stringify(data.subjects));
+            if (data.teachers) localStorage.setItem('eduvo_teachers', JSON.stringify(data.teachers));
+            if (data.users) localStorage.setItem('eduvo_users_data', JSON.stringify(data.users));
+            
+            // إعادة رسم الواجهة بالبيانات الجديدة
+            renderSubjects();
+        }
+    } catch (error) {
+        console.error("خطأ في جلب البيانات:", error);
+    }
+}
+
+// تشغيل الدالة عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', () => {
+    loadDataFromGitHub();
+});
   </script>
 </body>
 </html>
