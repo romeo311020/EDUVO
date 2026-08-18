@@ -53,14 +53,7 @@
       ]
     }
   ],
-  "teachers": [
-    {
-      "id": "teacher-2",
-      "name": "د. أحمد محمود",
-      "subject": "الفيزياء",
-      "image": "https://ui-avatars.com/api/?name=أحمد+محمود&background=6C5CE7&color=fff"
-    }
-  ],
+  "teachers": [],
   "announcements": [
     {
       "id": "ann-1",
