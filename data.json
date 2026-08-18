@@ -55,12 +55,6 @@
   ],
   "teachers": [
     {
-      "id": "teacher-1",
-      "name": "أ. محمد علي",
-      "subject": "اللغة العربية",
-      "image": "https://ui-avatars.com/api/?name=محمد+علي&background=0D8ABC&color=fff"
-    },
-    {
       "id": "teacher-2",
       "name": "د. أحمد محمود",
       "subject": "الفيزياء",
