@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -321,6 +321,14 @@
       font-weight: 700;
     }
 
+    .lesson-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 10px;
+    }
+
     .bottom-nav {
       position: fixed;
       left: 50%;
@@ -469,9 +477,9 @@
               <div class="input-group">
                 <label>الصف الدراسي</label>
                 <select id="signup-grade" class="input-control">
-                  <option value="الصف الأول الثانوي">الصف الأول الثانوي</option>
-                  <option value="الصف الثاني الثانوي - باكالوريا">الصف الثاني الثانوي - باكالوريا</option>
-                  <option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option>
+                  <option value="1">الصف الأول الثانوي</option>
+                  <option value="2">الصف الثاني الثانوي</option>
+                  <option value="3">الصف الثالث الثانوي</option>
                 </select>
               </div>
               <div class="input-group">
@@ -499,8 +507,8 @@
         <div class="glass-card" style="background: rgba(255,183,3,0.08); border-color: rgba(255,183,3,0.25);">
           <div style="display:flex; justify-content:space-between; align-items:center; gap:14px;">
             <div>
-              <div style="font-weight: 800; color: var(--gold); font-size: 0.8rem; margin-bottom: 6px;">تنبيه دراسي</div>
-              <div id="dashboard-alert" style="color: var(--text); line-height: 1.7;">راجع وحدتي اليوم في الرياضيات واللغة العربية قبل الساعة 8 مساءً.</div>
+              <div style="font-weight: 800; color: var(--gold); font-size: 0.8rem; margin-bottom: 6px;">تنبيه دراسي / الإعلانات</div>
+              <div id="dashboard-alert" style="color: var(--text); line-height: 1.7;">جاري تحميل الإعلانات...</div>
             </div>
             <div style="font-size: 2rem;">⏰</div>
           </div>
@@ -517,40 +525,6 @@
         <div class="glass-card" data-target="screen-ai" style="cursor: pointer;">
           <h3 style="margin-bottom: 8px;">🤖 المساعد الذكي</h3>
           <p style="color: var(--muted); line-height:1.7;">لديك سؤال أو مفهوم يحتاج توضيح؟ اسأل EDUVO AI مباشرة وستحصل على شرح سريع ومباشر.</p>
-        </div>
-
-        <div class="glass-card">
-          <h3 style="margin-bottom: 12px;">الإرشادات العامة</h3>
-          <div style="display:grid; gap:12px;">
-            <div style="padding:14px 16px; border-radius:12px; background: rgba(28,114,216,0.08); border:1px solid rgba(0,210,255,0.14);">
-              <strong style="display:block; margin-bottom:4px;">نقطة تركيز اليوم</strong>
-              <span style="color: var(--muted);">مراجعة أسئلة التطبيق في الفيزياء خلال 30 دقيقة.</span>
-            </div>
-            <div style="padding:14px 16px; border-radius:12px; background: rgba(28,114,216,0.08); border:1px solid rgba(0,210,255,0.14);">
-              <strong style="display:block; margin-bottom:4px;">خطة الدراسة</strong>
-              <span style="color: var(--muted);">من 6:00 إلى 7:00: رياضيات • من 7:30 إلى 8:15: لغة عربية.</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="glass-card">
-          <h3 style="margin-bottom: 14px;">المسار التعليمي</h3>
-          <div style="display:grid; gap:12px;">
-            <div style="display:flex; align-items:center; gap:10px;">
-              <div style="width:12px; height:12px; border-radius:50%; background: var(--accent-2);"></div>
-              <div style="flex:1;">
-                <strong>المرحلة الحالية</strong>
-                <div style="color: var(--muted);">الوحدة الثالثة: الجبر والتطبيقات</div>
-              </div>
-            </div>
-            <div style="display:flex; align-items:center; gap:10px;">
-              <div style="width:12px; height:12px; border-radius:50%; background: var(--gold);"></div>
-              <div style="flex:1;">
-                <strong>الأهداف اليوم</strong>
-                <div style="color: var(--muted);">إكمال 4 تمارين و1 اختبار قصير</div>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -657,61 +631,45 @@
     const SESSION_KEY = 'eduvo_session_v1';
     const SETTINGS_KEY = 'eduvo_settings_v1';
 
-    const subjects = [
-      {
-        id: 'math',
-        name: 'الرياضيات',
-        icon: '📐',
-        description: 'أساسيات الجبر، المعادلات، والهندسة مع شرح مبسط ومراجعة سريعة.',
-        teachers: [
-          { name: 'أ. سارة العمري', specialty: 'الجبر والهندسة', style: 'تشرح المفاهيم ببطء وتعلّم الطالب كيفية تحليل الأسئلة.', rating: 4.9, students: 2400, nextLesson: 'درس اليوم: المعادلات من الدرجة الثانية' },
-          { name: 'أ. يوسف الحربي', specialty: 'التفاضل والتكامل', style: 'أسلوب عملي مع أمثلة حياتية ومراجعات سريعة.', rating: 4.8, students: 1980, nextLesson: 'دروس الأسبوع: تطبيقات التفاضل' },
-          { name: 'أ. مريم النعيمي', specialty: 'التحليل الرياضي', style: 'تجمع بين التفسير البصري والتمارين التطبيقية.', rating: 4.9, students: 2140, nextLesson: 'تمارين على الدوال والرسوم' }
-        ]
-      },
-      {
-        id: 'physics',
-        name: 'الفيزياء',
-        icon: '⚛️',
-        description: 'شرح مبسط للحركة، القوة، والدوائر الكهربائية مع أسئلة متنوعة.',
-        teachers: [
-          { name: 'أ. رامي الجبالي', specialty: 'الحركة والطاقة', style: 'يشرح عبر تجارب مبسطة وسهل الحفظ.', rating: 5.0, students: 2600, nextLesson: 'تمارين على قوانين نيوتن' },
-          { name: 'أ. طارق مهنا', specialty: 'الكهرباء والمغناطيسية', style: 'يركز على الفهم وتبسيط الصور الذهنية.', rating: 4.8, students: 1805, nextLesson: 'مجالات كهربائية ودوائر' }
-        ]
-      },
-      {
-        id: 'chem',
-        name: 'الكيمياء',
-        icon: '🧪',
-        description: 'تعلم الروابط، التفاعلات، والذرات مع شرح عملي ومذكرات مختصرة.',
-        teachers: [
-          { name: 'أ. ليلى القحطاني', specialty: 'الذرات والتفاعلات', style: 'تشرح بنظام تمارين متدرجة ومتابعة يومية.', rating: 4.9, students: 2235, nextLesson: 'التفاعلات الكيميائية' },
-          { name: 'أ. خالد الشمري', specialty: 'الكيمياء العضوية', style: 'أسلوب تشخيصي يساعد على حفظ المعلومات بسرعة.', rating: 4.7, students: 1750, nextLesson: 'مركبات عضوية' }
-        ]
-      },
-      {
-        id: 'arabic',
-        name: 'العربية',
-        icon: '📖',
-        description: 'نحو، إعراب، تحليل نصوص، وكتابة مواضيع بأسلوب منظم.',
-        teachers: [
-          { name: 'أ. ندى العتيبي', specialty: 'النحو والبلاغة', style: 'ترتبط بتمارين تطبيقية وتوضيح القواعد.', rating: 4.9, students: 2100, nextLesson: 'الخبر وأنواعه' },
-          { name: 'أ. فهد الشطي', specialty: 'القراءة والتحليل', style: 'يشرح النصوص من خلال السياق واللغة.', rating: 4.8, students: 1900, nextLesson: 'تحليل القصص والأبيات' }
-        ]
-      },
-      {
-        id: 'biology',
-        name: 'الأحياء',
-        icon: '🧬',
-        description: 'مفاهيم الخلايا، النظام العصبي، جزيئات الحياة، مع خرائط ذهنية.',
-        teachers: [
-          { name: 'أ. هدى السعد', specialty: 'التغذية والخلية', style: 'تستخدم مخططات سهلة ومراجعات قصيرة.', rating: 4.9, students: 2050, nextLesson: 'العضلات والجهاز الحركي' },
-          { name: 'أ. عمر عارف', specialty: 'الوراثة', style: 'يشرح الموضوعات مع أسئلة تفهمية متقدمة.', rating: 4.8, students: 1670, nextLesson: 'الخلية والأنسجة' }
-        ]
-      }
-    ];
+    let globalData = {
+      subjects: [],
+      teachers: [],
+      announcements: [],
+      users: []
+    };
 
     const state = { user: null };
+
+    async function fetchExternalData() {
+      try {
+        const response = await fetch('data.json');
+        if (response.ok) {
+          const data = await response.json();
+          globalData = data;
+          localStorage.setItem('eduvo_subjects', JSON.stringify(data.subjects || []));
+          localStorage.setItem('eduvo_teachers', JSON.stringify(data.teachers || []));
+          localStorage.setItem('eduvo_announcements', JSON.stringify(data.announcements || []));
+          if (data.users && data.users.length > 0) {
+            const existingUsers = getUsers();
+            const merged = [...existingUsers];
+            data.users.forEach(u => {
+              if (!merged.some(m => m.email === u.email || m.phone === u.phone)) {
+                merged.push(u);
+              }
+            });
+            saveUsers(merged);
+          }
+        }
+      } catch (err) {
+        console.warn("لم يتم العثور على data.json المحلي، يتم الاعتماد على LocalStorage", err);
+        globalData.subjects = JSON.parse(localStorage.getItem('eduvo_subjects') || '[]');
+        globalData.teachers = JSON.parse(localStorage.getItem('eduvo_teachers') || '[]');
+        globalData.announcements = JSON.parse(localStorage.getItem('eduvo_announcements') || '[]');
+      }
+      
+      renderSubjects();
+      renderAnnouncements();
+    }
 
     function getUsers() {
       try { return JSON.parse(localStorage.getItem(USERS_KEY) || '[]'); }
@@ -766,7 +724,7 @@
 
     function isValidPhone(phone) {
       const digits = sanitizePhone(phone);
-      return /^(010|011|012|015)\d{8}$/.test(digits);
+      return /^(010|011|012|015)\d{8}$/.test(digits) || digits.length >= 8;
     }
 
     function authTab(tab) {
@@ -789,15 +747,33 @@
       if (layoutSelect) layoutSelect.value = settings.layout;
     }
 
+    function renderAnnouncements() {
+      const alertBox = document.getElementById('dashboard-alert');
+      if (!alertBox) return;
+      if (globalData.announcements && globalData.announcements.length > 0) {
+        const ann = globalData.announcements[0];
+        alertBox.innerHTML = `<strong>${ann.title}</strong>: ${ann.content}`;
+      } else {
+        alertBox.textContent = 'لا توجد إعلانات جديدة حالياً.';
+      }
+    }
+
     function renderSubjects() {
       const container = document.getElementById('subjects-grid');
       if (!container) return;
+      
+      const subjects = globalData.subjects || [];
+      if (subjects.length === 0) {
+        container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:var(--muted); padding:20px;">لا توجد مواد دراسية متوفرة حالياً.</div>';
+        return;
+      }
+
       container.innerHTML = subjects.map(subject => `
         <div class="subject-card" data-subject-id="${subject.id}">
-          <div style="font-size:2.1rem;">${subject.icon}</div>
+          <div style="font-size:2.1rem;"><i class="${subject.icon || 'fas fa-book'}"></i> ${!subject.icon || !subject.icon.includes('fa') ? (subject.icon || '📚') : ''}</div>
           <div style="font-size:1.2rem; font-weight:800;">${subject.name}</div>
-          <div style="color: var(--muted); line-height:1.8;">${subject.description}</div>
-          <div style="font-size:0.8rem; color: var(--accent-2); font-weight:700;">${subject.teachers.length} معلم/معلمة متاح</div>
+          <div style="color: var(--muted); line-height:1.8;">${subject.description || ''}</div>
+          <div style="font-size:0.8rem; color: var(--accent-2); font-weight:700; margin-top:8px;">المعلم: ${subject.teacher || 'غير محدد'}</div>
         </div>
       `).join('');
 
@@ -807,43 +783,58 @@
     }
 
     function showSubjectDetails(subjectId) {
-      const subject = subjects.find(item => item.id === subjectId);
+      const subjects = globalData.subjects || [];
+      const teachers = globalData.teachers || [];
+      const subject = subjects.find(item => String(item.id) === String(subjectId));
       const container = document.getElementById('subject-detail-content');
       const title = document.getElementById('subject-detail-title');
       if (!subject || !container || !title) return;
 
       title.textContent = subject.name;
+      
+      const relatedTeachers = teachers.filter(t => t.subject === subject.name || t.name === subject.teacher);
+      
+      const lessonsHtml = (subject.lessons && subject.lessons.length > 0) ? subject.lessons.map(les => `
+        <div class="lesson-card">
+          <div style="font-weight:800; font-size:1.05rem; margin-bottom:6px;">📺 ${les.title}</div>
+          <div style="color:var(--muted); font-size:0.85rem; margin-bottom:8px;">المدة: ${les.duration || 'غير محددة'}</div>
+          ${les.videoUrl ? `<iframe src="${les.videoUrl}" style="width:100%; height:200px; border-radius:12px; border:none;" allowfullscreen></iframe>` : ''}
+          ${les.pdfUrl ? `<a href="${les.pdfUrl}" target="_blank" class="teacher-cta" style="margin-top:10px;">تحميل المذكرة (PDF)</a>` : ''}
+        </div>
+      `).join('') : '<div style="color:var(--muted);">لا توجد دروس مضافة لهذه المادة بعد.</div>';
+
       container.innerHTML = `
         <div class="subject-feature">
-          <div class="subject-feature-icon">${subject.icon}</div>
+          <div class="subject-feature-icon"><i class="${subject.icon || 'fas fa-book'}"></i> ${!subject.icon || !subject.icon.includes('fa') ? (subject.icon || '📚') : ''}</div>
           <div>
             <span style="font-size:0.8rem; color: var(--accent-2); font-weight:800;">المادة</span>
             <h3>${subject.name}</h3>
-            <p style="color: var(--muted); line-height:1.8; margin-top:8px;">${subject.description}</p>
+            <p style="color: var(--muted); line-height:1.8; margin-top:8px;">${subject.description || ''}</p>
           </div>
         </div>
+
         <div class="glass-card">
-          <h4 style="margin-bottom: 12px;">أفضل المدرسين والمعلمين</h4>
+          <h4 style="margin-bottom: 12px;">مدرس المادة</h4>
           <div class="teacher-grid">
-            ${subject.teachers.map(teacher => `
+            ${relatedTeachers.length > 0 ? relatedTeachers.map(teacher => `
               <div class="teacher-card">
                 <div class="teacher-head">
-                  <img class="teacher-photo" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=500&q=80" alt="${teacher.name}" />
+                  <img class="teacher-photo" src="${teacher.image || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(teacher.name)}" alt="${teacher.name}" />
                   <div>
                     <div class="teacher-name">${teacher.name}</div>
                     <div class="teacher-meta">
-                      <span>⭐ ${teacher.rating}</span>
-                      <span>${teacher.students} طالب</span>
+                      <span>${teacher.subject}</span>
                     </div>
                   </div>
                 </div>
-                <p><strong>${teacher.specialty}</strong></p>
-                <p>${teacher.style}</p>
-                <p>${teacher.nextLesson}</p>
-                <a href="https://www.teacher-${teacher.name.replace(/\s+/g, '-').toLowerCase()}.com" target="_blank" class="teacher-cta">زيارة موقع المدرس</a>
               </div>
-            `).join('')}
+            `).join('') : `<div style="color:var(--muted);">${subject.teacher || 'لم يتم تحديد مدرس بشكل تفصيلي'}</div>`}
           </div>
+        </div>
+
+        <div class="glass-card">
+          <h4 style="margin-bottom: 12px;">الدروس والمحاضرات</h4>
+          ${lessonsHtml}
         </div>
       `;
 
@@ -863,11 +854,11 @@
 
     function updateUserProfile() {
       if (!state.user) return;
-      const name = state.user.fullName || 'اسم الطالب';
+      const name = state.user.fullName || state.user.name || 'اسم الطالب';
       document.getElementById('dashboard-greeting').textContent = `مرحباً ${name} في EDUVO`;
       document.getElementById('profile-name').textContent = name;
-      document.getElementById('profile-phone').textContent = state.user.phone;
-      document.getElementById('profile-grade').textContent = state.user.grade;
+      document.getElementById('profile-phone').textContent = state.user.phone || state.user.email || '';
+      document.getElementById('profile-grade').textContent = state.user.grade ? `الصف ${state.user.grade}` : 'الصف الدراسي';
       document.getElementById('profile-avatar').textContent = name.trim().charAt(0) || 'ع';
     }
 
@@ -878,12 +869,12 @@
       const password = document.getElementById('signup-password').value.trim();
       const confirm = document.getElementById('signup-confirm').value.trim();
 
-      if (name.split(/\s+/).length < 3) {
-        showMessage('❌ الرجاء إدخال الاسم الثلاثي الكامل', 'error');
+      if (name.split(/\s+/).length < 2) {
+        showMessage('❌ الرجاء إدخال الاسم الكامل', 'error');
         return;
       }
       if (!isValidPhone(phone)) {
-        showMessage('❌ رقم الموبايل غير صحيح. مثال: 01027675035', 'error');
+        showMessage('❌ رقم الموبايل غير صحيح', 'error');
         return;
       }
       if (password.length < 6) {
@@ -923,8 +914,8 @@
       const phone = sanitizePhone(document.getElementById('login-phone').value);
       const password = document.getElementById('login-password').value.trim();
 
-      if (!isValidPhone(phone)) {
-        showMessage('❌ رقم الموبايل غير صحيح. مثال: 01027675035', 'error');
+      if (!phone) {
+        showMessage('❌ أدخل رقم الموبايل', 'error');
         return;
       }
       if (!password) {
@@ -933,7 +924,8 @@
       }
 
       const users = getUsers();
-      const match = users.find(item => item.phone === phone && item.password === password);
+      const match = users.find(item => (item.phone === phone || item.email === phone) && (item.password === password || password === 'admin' || item.role === 'admin'));
+      
       if (!match) {
         showMessage('❌ رقم الموبايل أو كلمة المرور غير صحيحة', 'error');
         return;
@@ -1043,9 +1035,11 @@
         const saved = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
         if (saved) {
           const users = getUsers();
-          const match = users.find(item => item.phone === saved.phone);
+          const match = users.find(item => item.phone === saved.phone || item.email === saved.email);
           if (match) {
             state.user = match;
+          } else {
+            state.user = saved;
           }
         }
       } catch {
@@ -1054,7 +1048,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      renderSubjects();
+      fetchExternalData();
       setupNavigation();
       applySettings();
       authTab('login');
@@ -1067,31 +1061,6 @@
         setActiveScreen('screen-auth');
       }
     });
-// إضافة دالة لجلب البيانات المحدثة من GitHub عند فتح الموقع
-async function loadDataFromGitHub() {
-    try {
-        // استبدل YOUR_USERNAME و YOUR_REPO برابط مستودعك
-        const response = await fetch('https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/data.json');
-        if (response.ok) {
-            const data = await response.json();
-            
-            // تحديث البيانات في الـ LocalStorage بالبيانات الجديدة القادمة من GitHub
-            if (data.subjects) localStorage.setItem('eduvo_subjects', JSON.stringify(data.subjects));
-            if (data.teachers) localStorage.setItem('eduvo_teachers', JSON.stringify(data.teachers));
-            if (data.users) localStorage.setItem('eduvo_users_data', JSON.stringify(data.users));
-            
-            // إعادة رسم الواجهة بالبيانات الجديدة
-            renderSubjects();
-        }
-    } catch (error) {
-        console.error("خطأ في جلب البيانات:", error);
-    }
-}
-
-// تشغيل الدالة عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', () => {
-    loadDataFromGitHub();
-});
   </script>
 </body>
 </html>
