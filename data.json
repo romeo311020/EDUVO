@@ -1,78 +1,79 @@
 {
-    "users": [
+  "users": [
+    {
+      "id": "admin-1",
+      "name": "المدير العام",
+      "email": "admin@eduvo.com",
+      "role": "admin",
+      "status": "active",
+      "stage": "all"
+    },
+    {
+      "id": "student-1",
+      "name": "أحمد محمد",
+      "email": "ahmed@eduvo.com",
+      "role": "student",
+      "status": "active",
+      "stage": "3"
+    }
+  ],
+  "subjects": [
+    {
+      "id": "sub-arabic",
+      "name": "اللغة العربية",
+      "grade": "3",
+      "icon": "fas fa-book",
+      "teacher": "أ. محمد علي",
+      "description": "شرح كامل لمنهج اللغة العربية - النحو والبلاغة والأدب",
+      "lessons": [
         {
-            "id": "admin-1",
-            "name": "المدير العام",
-            "email": "admin@eduvo.com",
-            "role": "admin",
-            "status": "active",
-            "stage": "all"
-        },
-        {
-            "id": "student-1",
-            "name": "أحمد محمد",
-            "email": "ahmed@eduvo.com",
-            "role": "student",
-            "status": "active",
-            "stage": "3"
+          "id": "les-1",
+          "title": "مقدمة في النحو - الأساسيات",
+          "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration": "25 دقيقة",
+          "pdfUrl": ""
         }
-    ],
-    "subjects": [
+      ]
+    },
+    {
+      "id": "sub-physics",
+      "name": "الفيزياء",
+      "grade": "3",
+      "icon": "fas fa-atom",
+      "teacher": "د. أحمد محمود",
+      "description": "منهج الفيزياء للصف الثالث الثانوي - الكهربية والحبيسة",
+      "lessons": [
         {
-            "id": "sub-arabic",
-            "name": "اللغة العربية",
-            "grade": "3",
-            "icon": "fas fa-book",
-            "teacher": "أ. محمد علي",
-            "description": "شرح كامل لمنهج اللغة العربية - النحو والبلاغة والأدب",
-            "lessons": [
-                {
-                    "id": "les-1",
-                    "title": "مقدمة في النحو - الأساسيات",
-                    "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-                    "duration": "25 دقيقة",
-                    "pdfUrl": ""
-                }
-            ]
-        },
-        {
-            "id": "sub-physics",
-            "name": "الفيزياء",
-            "grade": "3",
-            "icon": "fas fa-atom",
-            "teacher": "د. أحمد محمود",
-            "description": "منهج الفيزياء للصف الثالث الثانوي - الكهربية والحبيسة",
-            "lessons": [
-                {
-                    "id": "les-2",
-                    "title": "التيار الكهربي وقانون أوم",
-                    "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-                    "duration": "40 دقيقة",
-                    "pdfUrl": ""
-                }
-            ]
+          "id": "les-2",
+          "title": "التيار الكهربي وقانون أوم",
+          "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration": "40 دقيقة",
+          "pdfUrl": ""
         }
-    ],
-    "teachers": [
-        {
-            "id": "teacher-1",
-            "name": "أ. محمد علي",
-            "subject": "اللغة العربية",
-            "image": "https://ui-avatars.com/api/?name=محمد+علي&background=0D8ABC&color=fff"
-        },
-        {
-            "id": "teacher-2",
-            "name": "د. أحمد محمود",
-            "subject": "الفيزياء",
-            "image": "https://ui-avatars.com/api/?name=أحمد+محمود&background=6C5CE7&color=fff"
-        }
-    ],
-    "announcements": [
-        {
-            "id": "ann-1",
-            "title": "أهلاً بكم في منصة EDUVO التعليمية",
-            "content": "تم إطلاق المنصة بنجاح، يمكنك الآن متابعة الدروس والمواد الدراسية.",
-            "date": "2026-08-18"
-        }
-    ]
+      ]
+    }
+  ],
+  "teachers": [
+    {
+      "id": "teacher-1",
+      "name": "أ. محمد علي",
+      "subject": "اللغة العربية",
+      "image": "https://ui-avatars.com/api/?name=محمد+علي&background=0D8ABC&color=fff"
+    },
+    {
+      "id": "teacher-2",
+      "name": "د. أحمد محمود",
+      "subject": "الفيزياء",
+      "image": "https://ui-avatars.com/api/?name=أحمد+محمود&background=6C5CE7&color=fff"
+    }
+  ],
+  "announcements": [
+    {
+      "id": "ann-1",
+      "title": "أهلاً بكم في منصة EDUVO التعليمية",
+      "content": "تم إطلاق المنصة بنجاح، يمكنك الآن متابعة الدروس والمواد الدراسية.",
+      "date": "2026-08-18"
+    }
+  ],
+  "profiles": []
 }
