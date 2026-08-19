@@ -160,6 +160,18 @@
     "supportEmail": "support@eduvo.com",
     "supportPhone": "+20 100 000 0000"
   },
-  "teachers": [],
+  "teachers": [
+    {
+      "id": "1yer6u79d",
+      "name": "المهندس كمال المراكبي",
+      "specialty": "هندسة حاسبات و معلومات",
+      "subjectId": "برمجه-و-ذكاء-اصطناعي",
+      "rating": 4.9,
+      "students": 1000,
+      "website": "https://kamalelmarakby.com/",
+      "style": "",
+      "nextLesson": "الدرس القادم قريباً"
+    }
+  ],
   "profiles": []
 }
