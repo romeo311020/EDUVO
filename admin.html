@@ -509,6 +509,10 @@
                     <svg class="svg-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     <span>إدارة المعلمين</span>
                 </div>
+                <div class="nav-item" onclick="switchView('view-books', this)">
+                    <svg class="svg-icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    <span>إدارة الكتب</span>
+                </div>
                 <div class="nav-item" onclick="switchView('view-students', this)">
                     <svg class="svg-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     <span>إدارة الطلاب</span>
@@ -697,6 +701,49 @@
                 </div>
             </section>
 
+            <section id="view-books" class="view-panel">
+                <h2>إدارة الكتب 📘</h2>
+
+                <div class="stat-card">
+                    <h3 style="margin-bottom: 16px;">إضافة كتاب جديد</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                        <div class="github-field">
+                            <label>عنوان الكتاب</label>
+                            <input type="text" id="book-title" placeholder="مثال: كتاب الرياضيات - الجبر والهندسة">
+                        </div>
+                        <div class="github-field">
+                            <label>المادة</label>
+                            <select id="book-subject">
+                                <option value="">-- اختر المادة (اختياري) --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="github-field" style="margin-top: 12px;">
+                        <label>محتوى الكتاب (النص الذي سيتحول إلى PDF)</label>
+                        <textarea id="book-content" rows="8" placeholder="اكتب أو الصق محتوى الكتاب هنا بالكامل..."></textarea>
+                    </div>
+                    <div class="github-actions" style="margin-top: 16px;">
+                        <button type="button" class="btn btn-primary" onclick="addNewBook()">➕ إضافة الكتاب</button>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 20px; margin-bottom: 12px;">الكتب الحالية</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>العنوان</th>
+                                <th>المادة</th>
+                                <th>حجم المحتوى</th>
+                                <th>العمليات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="books-tbody">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
             <section id="view-students" class="view-panel">
                 <h2>قائمة الطلاب 👨‍🎓</h2>
                 <div class="table-container">
@@ -748,6 +795,24 @@
                         <label>نص الإعلان (سيظهر على الصفحة الرئيسية)</label>
                         <textarea id="app-announcement" rows="4" placeholder="مرحباً بك في EDUVO..."></textarea>
                     </div>
+                    <button type="button" class="btn btn-primary" onclick="saveAppSettings()" style="margin-top: 12px;">💾 حفظ الإعدادات</button>
+                </div>
+
+                <div class="stat-card" style="margin-top: 20px;">
+                    <h3 style="margin-bottom: 16px;">🔐 تسجيل الدخول والمساعد الذكي</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                        <div class="github-field">
+                            <label>Google Client ID</label>
+                            <input type="text" id="app-google-client-id" placeholder="xxxxxxxx.apps.googleusercontent.com">
+                        </div>
+                        <div class="github-field">
+                            <label>رابط المساعد الذكي (AI Endpoint) - اختياري</label>
+                            <input type="text" id="app-ai-endpoint" placeholder="https://your-worker.workers.dev">
+                        </div>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 10px;">
+                        ⚠️ ضع هنا الـ Client ID فقط وليس الـ Client Secret أبداً — السكريت سري ولا يوضع في أي كود ظاهر للمستخدمين.
+                    </p>
                     <button type="button" class="btn btn-primary" onclick="saveAppSettings()" style="margin-top: 12px;">💾 حفظ الإعدادات</button>
                 </div>
 
@@ -811,8 +876,11 @@
                     supportEmail: 'support@eduvo.com',
                     supportPhone: '+20 100 000 0000'
                 },
+                googleClientId: '',
+                aiEndpoint: '',
                 subjects: [],
                 teachers: [],
+                books: [],
                 profiles: []
             },
             githubConfig: {
@@ -833,8 +901,11 @@
                 supportEmail: 'support@eduvo.com',
                 supportPhone: '+20 100 000 0000'
             };
+            safe.googleClientId = typeof safe.googleClientId === 'string' ? safe.googleClientId : '';
+            safe.aiEndpoint = typeof safe.aiEndpoint === 'string' ? safe.aiEndpoint : '';
             safe.subjects = Array.isArray(safe.subjects) ? safe.subjects : [];
             safe.teachers = Array.isArray(safe.teachers) ? safe.teachers : [];
+            safe.books = Array.isArray(safe.books) ? safe.books : [];
             safe.profiles = Array.isArray(safe.profiles) ? safe.profiles : [];
             return safe;
         }
@@ -1104,6 +1175,9 @@
                 }
 
                 renderDashboard();
+                loadSettingsIntoForm();
+                populateSubjectSelect();
+                syncEditorFromState();
                 showAlert('✅ تم الدخول بنجاح إلى لوحة الإدارة', 'success');
             } catch (err) {
                 console.error('GitHub login error:', err);
@@ -1150,6 +1224,16 @@
                 const content = decodeGitHubFileContent(fileInfo.content || '');
                 const editor = document.getElementById('github-file-content');
                 if (editor) editor.value = content;
+
+                try {
+                    state.data = normalizeData(JSON.parse(content));
+                    saveDataLocally();
+                    populateSubjectSelect();
+                    renderDashboard();
+                    loadSettingsIntoForm();
+                } catch (parseErr) {
+                    console.warn('تعذر تحليل محتوى الملف كـ JSON صالح', parseErr);
+                }
 
                 setGithubStatus(`تم تحميل البيانات من GitHub بنجاح ✅`, 'success');
                 return content;
@@ -1224,14 +1308,25 @@
 
         // ===== المواد الدراسية =====
         function populateSubjectSelect() {
-            const select = document.getElementById('teacher-subject');
-            if (!select) return;
-            select.innerHTML = '<option value="">-- اختر المادة --</option>';
+            const teacherSelect = document.getElementById('teacher-subject');
+            const bookSelect = document.getElementById('book-subject');
+
+            if (teacherSelect) teacherSelect.innerHTML = '<option value="">-- اختر المادة --</option>';
+            if (bookSelect) bookSelect.innerHTML = '<option value="">-- اختر المادة (اختياري) --</option>';
+
             (state.data.subjects || []).forEach(subject => {
-                const option = document.createElement('option');
-                option.value = subject.id || subject.name;
-                option.textContent = subject.name;
-                select.appendChild(option);
+                if (teacherSelect) {
+                    const option = document.createElement('option');
+                    option.value = subject.id || subject.name;
+                    option.textContent = subject.name;
+                    teacherSelect.appendChild(option);
+                }
+                if (bookSelect) {
+                    const option2 = document.createElement('option');
+                    option2.value = subject.id || subject.name;
+                    option2.textContent = subject.name;
+                    bookSelect.appendChild(option2);
+                }
             });
         }
 
@@ -1264,6 +1359,7 @@
             document.getElementById('subject-description').value = '';
 
             saveDataLocally();
+            syncEditorFromState();
             renderSubjects();
             populateSubjectSelect();
             showAlert('✅ تمت إضافة المادة بنجاح', 'success');
@@ -1275,6 +1371,7 @@
             if (index > -1) {
                 state.data.subjects.splice(index, 1);
                 saveDataLocally();
+                syncEditorFromState();
                 renderSubjects();
                 populateSubjectSelect();
                 showAlert('✅ تم حذف المادة بنجاح', 'success');
@@ -1336,6 +1433,7 @@
             document.getElementById('teacher-style').value = '';
 
             saveDataLocally();
+            syncEditorFromState();
             renderTeachers();
             showAlert('✅ تمت إضافة المعلم بنجاح', 'success');
         }
@@ -1346,6 +1444,7 @@
             if (index > -1) {
                 state.data.teachers.splice(index, 1);
                 saveDataLocally();
+                syncEditorFromState();
                 renderTeachers();
                 showAlert('✅ تم حذف المعلم بنجاح', 'success');
             }
@@ -1370,6 +1469,68 @@
                     </tr>
                 `;
             }).join('');
+        }
+
+        // ===== الكتب =====
+        function addNewBook() {
+            const title = document.getElementById('book-title')?.value.trim();
+            const subjectId = document.getElementById('book-subject')?.value.trim();
+            const content = document.getElementById('book-content')?.value.trim();
+
+            if (!title) {
+                showAlert('❌ أدخل عنوان الكتاب', 'error');
+                return;
+            }
+
+            const subject = (state.data.subjects || []).find(s => s.id === subjectId);
+
+            const newBook = {
+                id: Math.random().toString(36).substr(2, 9),
+                title,
+                subjectId: subjectId || '',
+                subjectName: subject ? subject.name : '',
+                content: content || ''
+            };
+
+            if (!state.data.books) state.data.books = [];
+            state.data.books.push(newBook);
+
+            document.getElementById('book-title').value = '';
+            document.getElementById('book-subject').value = '';
+            document.getElementById('book-content').value = '';
+
+            saveDataLocally();
+            syncEditorFromState();
+            renderBooks();
+            showAlert('✅ تمت إضافة الكتاب بنجاح', 'success');
+        }
+
+        function deleteBook(bookId) {
+            if (!confirm('هل تريد حقاً حذف هذا الكتاب؟')) return;
+            const index = (state.data.books || []).findIndex(b => b.id === bookId);
+            if (index > -1) {
+                state.data.books.splice(index, 1);
+                saveDataLocally();
+                syncEditorFromState();
+                renderBooks();
+                showAlert('✅ تم حذف الكتاب بنجاح', 'success');
+            }
+        }
+
+        function renderBooks() {
+            const tbody = document.getElementById('books-tbody');
+            if (!tbody) return;
+
+            tbody.innerHTML = (state.data.books || []).map(book => `
+                <tr>
+                    <td><strong>${book.title}</strong></td>
+                    <td>${book.subjectName || '—'}</td>
+                    <td>${book.content ? book.content.length + ' حرف' : 'لا يوجد محتوى'}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deleteBook('${book.id}')" title="حذف الكتاب">🗑️ حذف</button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
         // ===== الطلاب =====
@@ -1402,6 +1563,7 @@
             if (index > -1) {
                 state.data.profiles.splice(index, 1);
                 saveDataLocally();
+                syncEditorFromState();
                 renderDashboard();
                 showAlert('✅ تم حذف الطالب بنجاح', 'success');
             }
@@ -1418,6 +1580,7 @@
             profiles[index].status = newStatus;
             state.data.profiles = profiles;
             saveDataLocally();
+            syncEditorFromState();
             renderDashboard();
 
             const statusText = {
@@ -1445,6 +1608,8 @@
             const supportEmail = document.getElementById('app-support-email')?.value.trim() || '';
             const supportPhone = document.getElementById('app-support-phone')?.value.trim() || '';
             const announcement = document.getElementById('app-announcement')?.value.trim() || '';
+            const googleClientId = document.getElementById('app-google-client-id')?.value.trim() || '';
+            const aiEndpoint = document.getElementById('app-ai-endpoint')?.value.trim() || '';
 
             state.data.app = {
                 ...state.data.app,
@@ -1454,9 +1619,19 @@
                 supportPhone,
                 announcement
             };
+            state.data.googleClientId = googleClientId;
+            state.data.aiEndpoint = aiEndpoint;
 
             saveDataLocally();
+            syncEditorFromState();
             showAlert('✅ تم حفظ إعدادات التطبيق بنجاح', 'success');
+        }
+
+        function syncEditorFromState() {
+            const editor = document.getElementById('github-file-content');
+            if (editor) {
+                editor.value = JSON.stringify(normalizeData(state.data), null, 2);
+            }
         }
 
         function saveDataLocally() {
@@ -1492,6 +1667,7 @@
             renderStudents();
             renderSubjects();
             renderTeachers();
+            renderBooks();
         }
 
         function renderRecentTable() {
@@ -1565,6 +1741,24 @@
             `).join('');
         }
 
+        function loadSettingsIntoForm() {
+            const appName = document.getElementById('app-name');
+            const appVersion = document.getElementById('app-version');
+            const appAnnouncement = document.getElementById('app-announcement');
+            const appSupportEmail = document.getElementById('app-support-email');
+            const appSupportPhone = document.getElementById('app-support-phone');
+            const appGoogleClientId = document.getElementById('app-google-client-id');
+            const appAiEndpoint = document.getElementById('app-ai-endpoint');
+
+            if (appName) appName.value = state.data.app?.name || 'EDUVO';
+            if (appVersion) appVersion.value = state.data.app?.version || '1.0.0';
+            if (appAnnouncement) appAnnouncement.value = state.data.app?.announcement || '';
+            if (appSupportEmail) appSupportEmail.value = state.data.app?.supportEmail || '';
+            if (appSupportPhone) appSupportPhone.value = state.data.app?.supportPhone || '';
+            if (appGoogleClientId) appGoogleClientId.value = state.data.googleClientId || '';
+            if (appAiEndpoint) appAiEndpoint.value = state.data.aiEndpoint || '';
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             loadGithubSettings();
             loadDataLocally();
@@ -1584,21 +1778,10 @@
                 }
             }
 
-            // تحميل الإعدادات
-            const appName = document.getElementById('app-name');
-            const appVersion = document.getElementById('app-version');
-            const appAnnouncement = document.getElementById('app-announcement');
-            const appSupportEmail = document.getElementById('app-support-email');
-            const appSupportPhone = document.getElementById('app-support-phone');
-
-            if (appName) appName.value = state.data.app?.name || 'EDUVO';
-            if (appVersion) appVersion.value = state.data.app?.version || '1.0.0';
-            if (appAnnouncement) appAnnouncement.value = state.data.app?.announcement || '';
-            if (appSupportEmail) appSupportEmail.value = state.data.app?.supportEmail || '';
-            if (appSupportPhone) appSupportPhone.value = state.data.app?.supportPhone || '';
-
+            loadSettingsIntoForm();
             populateSubjectSelect();
             renderDashboard();
+            syncEditorFromState();
         });
     </script>
 </body>

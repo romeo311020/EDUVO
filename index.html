@@ -780,7 +780,7 @@
 
     // كل البيانات القابلة للتغيير (Client ID، المواد، المدرسين، الكتب) بقت في data.json
     // مفيش أي بيانات حساسة أو محتوى ثابت هنا في index.html خالص
-    let appConfig = { googleClientId: '', aiEndpoint: '', subjects: [], books: [] };
+    let appConfig = { googleClientId: '', aiEndpoint: '', subjects: [], teachers: [], books: [], app: {} };
 
     async function loadAppConfig() {
       try {
@@ -788,7 +788,11 @@
         if (res.ok) {
           const data = await res.json();
           appConfig = { ...appConfig, ...data };
-          subjects = appConfig.subjects || [];
+          const flatTeachers = appConfig.teachers || [];
+          subjects = (appConfig.subjects || []).map(subject => ({
+            ...subject,
+            teachers: flatTeachers.filter(t => t.subjectId === subject.id)
+          }));
         }
       } catch (err) {
         console.warn('تعذر تحميل data.json — تأكد إنه في نفس مجلد index.html', err);
@@ -1272,6 +1276,13 @@
       window.print();
     }
 
+    function applyAppConfigToUI() {
+      const alertEl = document.getElementById('dashboard-alert');
+      if (alertEl && appConfig.app && appConfig.app.announcement) {
+        alertEl.textContent = appConfig.app.announcement;
+      }
+    }
+
     function toggleEditProfile() {
       const form = document.getElementById('edit-profile-form');
       const isOpen = form.style.display === 'block';
@@ -1414,6 +1425,7 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       await loadAppConfig();
+      applyAppConfigToUI();
       renderSubjects();
       setupNavigation();
       applySettings();
