@@ -129,6 +129,14 @@
           "nextLesson": "الخلية والأنسجة"
         }
       ]
+    },
+    {
+      "id": "برمجه-و-ذكاء-اصطناعي",
+      "name": "برمجه و ذكاء اصطناعي",
+      "icon": "ht",
+      "color": "#1c72d8",
+      "description": "https://kamalelmarakby.com/",
+      "teachers": []
     }
   ],
   "books": [
