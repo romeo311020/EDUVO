@@ -97,6 +97,21 @@
 
     .screen.active {
       display: block;
+      animation: screenFadeIn 0.4s ease;
+    }
+
+    @keyframes screenFadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.5s ease both;
     }
 
     .glass-card {
@@ -108,6 +123,21 @@
       padding: 20px;
       box-shadow: var(--shadow);
       margin-bottom: 18px;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .glass-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(0,210,255,0.25);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    }
+
+    button, .btn-primary, .btn-secondary, .btn-social {
+      transition: transform 0.15s ease, opacity 0.15s ease, filter 0.15s ease;
+    }
+
+    button:active, .btn-primary:active, .btn-secondary:active, .btn-social:active {
+      transform: scale(0.97);
     }
 
     .header {
@@ -259,23 +289,6 @@
     }
 
     .btn-social svg { width: 19px; height: 19px; flex-shrink: 0; }
-
-    #print-book-content { display: none; }
-
-    @media print {
-      body * { visibility: hidden; }
-      #print-book-content, #print-book-content * { visibility: visible; }
-      #print-book-content {
-        display: block;
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 100%;
-        padding: 30px;
-        color: #000;
-        background: #fff;
-      }
-    }
 
     .grid-2 {
       display: grid;
@@ -491,6 +504,10 @@
         <svg class="svg-icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
         <span>الكتب</span>
       </div>
+      <div class="sidebar-item" data-target="screen-planner">
+        <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>جدول المذاكرة</span>
+      </div>
       <div class="sidebar-item" data-target="screen-profile">
         <svg class="svg-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span>حسابي</span>
@@ -604,7 +621,12 @@
 
         <div class="glass-card" data-target="screen-books" style="cursor: pointer;">
           <h3 style="margin-bottom: 8px;">📚 الكتب</h3>
-          <p style="color: var(--muted); line-height:1.7;">تصفح كتب المواد وحوّلها إلى PDF لتحميلها وطباعتها بسهولة.</p>
+          <p style="color: var(--muted); line-height:1.7;">تصفح كتب المواد وافتح ملفات PDF الخاصة بها مباشرة.</p>
+        </div>
+
+        <div class="glass-card" data-target="screen-planner" style="cursor: pointer;">
+          <h3 style="margin-bottom: 8px;">🗓️ جدول المذاكرة</h3>
+          <p style="color: var(--muted); line-height:1.7;">نظّم وقتك بنفسك وحدد مواعيد المذاكرة الخاصة بك أسبوعيًا.</p>
         </div>
 
         <div class="glass-card">
@@ -675,6 +697,41 @@
           <h2>الكتب 📚</h2>
         </div>
         <div id="books-container"></div>
+      </section>
+
+      <section id="screen-planner" class="screen">
+        <div class="header">
+          <h2>جدول المذاكرة 🗓️</h2>
+        </div>
+
+        <div class="glass-card">
+          <h4 style="margin-bottom: 14px;">إضافة مهمة مذاكرة</h4>
+          <div class="input-group">
+            <label>عنوان المهمة</label>
+            <input type="text" id="planner-title" class="input-control" placeholder="مثال: مراجعة الوحدة الثالثة رياضيات" />
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <div class="input-group">
+              <label>اليوم</label>
+              <select id="planner-day" class="input-control">
+                <option value="السبت">السبت</option>
+                <option value="الأحد">الأحد</option>
+                <option value="الاثنين">الاثنين</option>
+                <option value="الثلاثاء">الثلاثاء</option>
+                <option value="الأربعاء">الأربعاء</option>
+                <option value="الخميس">الخميس</option>
+                <option value="الجمعة">الجمعة</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>الوقت</label>
+              <input type="time" id="planner-time" class="input-control" />
+            </div>
+          </div>
+          <button type="button" id="planner-add-btn" class="btn-primary">➕ إضافة إلى الجدول</button>
+        </div>
+
+        <div id="planner-list"></div>
       </section>
 
       <section id="screen-profile" class="screen">
@@ -770,8 +827,6 @@
       </div>
     </nav>
   </div>
-
-  <div id="print-book-content"></div>
 
   <script>
     const USERS_KEY = 'eduvo_users_v1';
@@ -980,8 +1035,8 @@
     function renderSubjects() {
       const container = document.getElementById('subjects-grid');
       if (!container) return;
-      container.innerHTML = subjects.map(subject => `
-        <div class="subject-card" data-subject-id="${subject.id}">
+      container.innerHTML = subjects.map((subject, i) => `
+        <div class="subject-card fade-in-up" style="animation-delay:${i * 0.06}s;" data-subject-id="${subject.id}">
           <div style="font-size:2.1rem;">${subject.icon}</div>
           <div style="font-size:1.2rem; font-weight:800;">${subject.name}</div>
           <div style="color: var(--muted); line-height:1.8;">${subject.description}</div>
@@ -1013,10 +1068,10 @@
         <div class="glass-card">
           <h4 style="margin-bottom: 12px;">أفضل المدرسين والمعلمين</h4>
           <div class="teacher-grid">
-            ${subject.teachers.map(teacher => `
-              <div class="teacher-card">
+            ${subject.teachers.map((teacher, i) => `
+              <div class="teacher-card fade-in-up" style="animation-delay:${i * 0.08}s;">
                 <div class="teacher-head">
-                  <img class="teacher-photo" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=500&q=80" alt="${teacher.name}" />
+                  <img class="teacher-photo" src="${teacher.photo || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=500&q=80'}" alt="${teacher.name}" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=500&q=80'" />
                   <div>
                     <div class="teacher-name">${teacher.name}</div>
                     <div class="teacher-meta">
@@ -1028,7 +1083,7 @@
                 <p><strong>${teacher.specialty}</strong></p>
                 <p>${teacher.style}</p>
                 <p>${teacher.nextLesson}</p>
-                <a href="https://www.teacher-${teacher.name.replace(/\s+/g, '-').toLowerCase()}.com" target="_blank" class="teacher-cta">زيارة موقع المدرس</a>
+                ${teacher.website ? `<a href="${teacher.website}" target="_blank" rel="noopener" class="teacher-cta">زيارة موقع المدرس</a>` : ''}
               </div>
             `).join('')}
           </div>
@@ -1247,33 +1302,134 @@
 
       container.innerHTML = `
         <div class="grid-2">
-          ${books.map(book => `
-            <div class="glass-card">
+          ${books.map((book, i) => `
+            <div class="glass-card fade-in-up" style="animation-delay:${i * 0.06}s;">
               <div style="font-size:2rem; margin-bottom:8px;">📘</div>
               <div style="font-size:1.15rem; font-weight:800; margin-bottom:6px;">${book.title}</div>
-              ${book.subjectName ? `<div style="color: var(--accent-2); font-weight:700; font-size:0.85rem; margin-bottom:10px;">${book.subjectName}</div>` : ''}
-              <button type="button" class="btn-primary" data-book-id="${book.id}" style="margin-top:8px;">تحويل إلى PDF</button>
+              ${book.subjectName ? `<div style="color: var(--accent-2); font-weight:700; font-size:0.85rem; margin-bottom:8px;">${book.subjectName}</div>` : ''}
+              ${book.description ? `<p style="color: var(--muted); line-height:1.7; margin-bottom:10px;">${book.description}</p>` : ''}
+              ${book.url
+                ? `<a href="${book.url}" target="_blank" rel="noopener" class="btn-primary" style="margin-top:8px; display:block; text-align:center; text-decoration:none;">فتح الكتاب PDF</a>`
+                : `<button type="button" class="btn-secondary" disabled style="margin-top:8px; opacity:0.6;">لا يوجد رابط بعد</button>`}
             </div>
           `).join('')}
         </div>
       `;
-
-      container.querySelectorAll('[data-book-id]').forEach(btn => {
-        btn.addEventListener('click', () => convertBookToPdf(btn.dataset.bookId));
-      });
     }
 
-    function convertBookToPdf(bookId) {
-      const book = (appConfig.books || []).find(item => String(item.id) === String(bookId));
-      if (!book) return;
+    const PLANNER_DAYS = ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
 
-      const printArea = document.getElementById('print-book-content');
-      printArea.innerHTML = `
-        <h1 style="font-family:'Cairo',sans-serif; text-align:center; margin-bottom: 24px;">${book.title}</h1>
-        <div style="font-family:'Cairo',sans-serif; line-height:2.1; white-space:pre-wrap; direction:rtl; text-align:right;">${(book.content || 'لا يوجد محتوى مضاف لهذا الكتاب بعد. أضف حقل "content" لهذا الكتاب في data.json.').replace(/</g, '&lt;')}</div>
-      `;
+    function plannerStorageKey() {
+      return `eduvo_planner_${state.user ? state.user.id : 'guest'}`;
+    }
 
-      window.print();
+    function loadPlannerTasks() {
+      try {
+        const raw = localStorage.getItem(plannerStorageKey());
+        return raw ? JSON.parse(raw) : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function savePlannerTasks(tasks) {
+      localStorage.setItem(plannerStorageKey(), JSON.stringify(tasks));
+    }
+
+    function addPlannerTask() {
+      const titleInput = document.getElementById('planner-title');
+      const dayInput = document.getElementById('planner-day');
+      const timeInput = document.getElementById('planner-time');
+
+      const title = titleInput.value.trim();
+      const day = dayInput.value;
+      const time = timeInput.value;
+
+      if (!title || !time) {
+        showMessage('❌ أدخل عنوان المهمة والوقت', 'error');
+        return;
+      }
+
+      const tasks = loadPlannerTasks();
+      tasks.push({
+        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+        title,
+        day,
+        time,
+        done: false
+      });
+      savePlannerTasks(tasks);
+
+      titleInput.value = '';
+      timeInput.value = '';
+      renderPlannerScreen();
+      showMessage('✅ تمت إضافة المهمة لجدولك', 'success');
+    }
+
+    function togglePlannerTask(id) {
+      const tasks = loadPlannerTasks();
+      const task = tasks.find(t => t.id === id);
+      if (task) {
+        task.done = !task.done;
+        savePlannerTasks(tasks);
+        renderPlannerScreen();
+      }
+    }
+
+    function deletePlannerTask(id) {
+      const tasks = loadPlannerTasks().filter(t => t.id !== id);
+      savePlannerTasks(tasks);
+      renderPlannerScreen();
+    }
+
+    function renderPlannerScreen() {
+      const container = document.getElementById('planner-list');
+      if (!container) return;
+
+      const tasks = loadPlannerTasks();
+
+      if (!tasks.length) {
+        container.innerHTML = `
+          <div class="glass-card fade-in-up" style="text-align:center; color: var(--muted);">
+            جدولك فاضي حالياً. أضف أول مهمة مذاكرة من الأعلى، وأنت اللي تتحكم في وقتك بالكامل.
+          </div>
+        `;
+        return;
+      }
+
+      const sorted = [...tasks].sort((a, b) => {
+        const dayDiff = PLANNER_DAYS.indexOf(a.day) - PLANNER_DAYS.indexOf(b.day);
+        if (dayDiff !== 0) return dayDiff;
+        return a.time.localeCompare(b.time);
+      });
+
+      const grouped = {};
+      sorted.forEach(task => {
+        if (!grouped[task.day]) grouped[task.day] = [];
+        grouped[task.day].push(task);
+      });
+
+      container.innerHTML = Object.keys(grouped).map((day, i) => `
+        <div class="glass-card fade-in-up" style="animation-delay:${i * 0.06}s;">
+          <h4 style="margin-bottom:10px; color: var(--accent-2);">${day}</h4>
+          ${grouped[day].map(task => `
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 0; border-bottom:1px solid var(--border);">
+              <label style="display:flex; align-items:center; gap:10px; cursor:pointer; ${task.done ? 'opacity:0.55; text-decoration:line-through;' : ''}">
+                <input type="checkbox" data-task-id="${task.id}" class="planner-check" ${task.done ? 'checked' : ''} />
+                <span>${task.time} — ${task.title}</span>
+              </label>
+              <button type="button" data-delete-id="${task.id}" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:1.1rem; padding:4px 8px;">🗑️</button>
+            </div>
+          `).join('')}
+        </div>
+      `).join('');
+
+      container.querySelectorAll('.planner-check').forEach(cb => {
+        cb.addEventListener('change', () => togglePlannerTask(cb.dataset.taskId));
+      });
+      container.querySelectorAll('[data-delete-id]').forEach(btn => {
+        btn.addEventListener('click', () => deletePlannerTask(btn.dataset.deleteId));
+      });
     }
 
     function applyAppConfigToUI() {
@@ -1328,6 +1484,7 @@
       document.getElementById('google-signup-btn').addEventListener('click', triggerGoogleLogin);
       document.getElementById('edit-profile-toggle').addEventListener('click', toggleEditProfile);
       document.getElementById('save-profile-btn').addEventListener('click', saveProfileEdits);
+      document.getElementById('planner-add-btn').addEventListener('click', addPlannerTask);
       document.getElementById('logout-btn').addEventListener('click', handleLogout);
       document.getElementById('back-to-subjects').addEventListener('click', () => setActiveScreen('screen-subjects'));
       document.getElementById('send-ai').addEventListener('click', sendAiMessage);
@@ -1352,13 +1509,14 @@
       document.querySelectorAll('[data-target]').forEach(item => {
         item.addEventListener('click', () => {
           const target = item.dataset.target;
-          if (['screen-dashboard', 'screen-subjects', 'screen-ai', 'screen-profile', 'screen-books'].includes(target) && !state.user) {
+          if (['screen-dashboard', 'screen-subjects', 'screen-ai', 'screen-profile', 'screen-books', 'screen-planner'].includes(target) && !state.user) {
             showMessage('❌ يجب تسجيل الدخول أولاً', 'error');
             setActiveScreen('screen-auth');
             return;
           }
           setActiveScreen(target);
           if (target === 'screen-books') renderBooksScreen();
+          if (target === 'screen-planner') renderPlannerScreen();
         });
       });
     }
