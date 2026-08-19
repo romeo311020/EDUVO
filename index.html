@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
@@ -214,6 +214,89 @@
       color: var(--text);
     }
 
+    .social-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 18px 0 14px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .social-divider::before, .social-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .social-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .btn-social {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+      color: var(--text);
+      padding: 12px 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn-social:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,0.22);
+    }
+
+    .btn-social svg { width: 19px; height: 19px; flex-shrink: 0; }
+    .btn-facebook span { color: #1877f2; }
+    body.light-theme .btn-facebook span { color: #1877f2; }
+
+    .quiz-option {
+      display: block;
+      width: 100%;
+      text-align: right;
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 13px 16px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: 0.2s ease;
+    }
+
+    .quiz-option:hover { border-color: rgba(0,210,255,0.3); }
+    .quiz-option.correct { background: rgba(16,185,129,0.16); border-color: #10b981; color: #10b981; }
+    .quiz-option.wrong { background: rgba(239,68,68,0.14); border-color: #ef4444; color: #ef4444; }
+    .quiz-option:disabled { cursor: default; opacity: 0.85; }
+
+    .quiz-progress {
+      height: 8px;
+      border-radius: 999px;
+      background: var(--bg-input);
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .quiz-progress-bar {
+      height: 100%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      transition: width 0.3s ease;
+    }
+
     .grid-2 {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -321,14 +404,6 @@
       font-weight: 700;
     }
 
-    .lesson-card {
-      background: rgba(255,255,255,0.02);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      margin-top: 10px;
-    }
-
     .bottom-nav {
       position: fixed;
       left: 50%;
@@ -432,6 +507,10 @@
         <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/></svg>
         <span>المساعد الذكي</span>
       </div>
+      <div class="sidebar-item" data-target="screen-quizzes">
+        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <span>اختبارات قصيرة</span>
+      </div>
       <div class="sidebar-item" data-target="screen-profile">
         <svg class="svg-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span>حسابي</span>
@@ -463,6 +542,18 @@
                 <input id="login-password" type="password" class="input-control" placeholder="••••••••" />
               </div>
               <button type="button" id="login-btn" class="btn-primary">دخول</button>
+
+              <div class="social-divider"><span>أو تابع باستخدام</span></div>
+              <div class="social-buttons">
+                <button type="button" class="btn-social" id="google-login-btn">
+                  <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.28A7.2 7.2 0 0 1 4.89 12c0-.79.14-1.56.38-2.28V6.63H1.29A11.96 11.96 0 0 0 0 12c0 1.93.46 3.76 1.29 5.37l3.98-3.09z"/><path fill="#EA4335" d="M12 4.75c1.76 0 3.34.6 4.58 1.79l3.43-3.43C17.94 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.63l3.98 3.09C6.22 6.86 8.87 4.75 12 4.75z"/></svg>
+                  <span>جوجل</span>
+                </button>
+                <button type="button" class="btn-social btn-facebook" id="facebook-login-btn">
+                  <svg viewBox="0 0 24 24"><path fill="#1877F2" d="M24 12.07C24 5.65 18.63.4 12 .4S0 5.65 0 12.07c0 5.8 4.39 10.6 10.13 11.46v-8.11H7.08v-3.35h3.05V9.41c0-3 1.79-4.66 4.53-4.66 1.31 0 2.68.23 2.68.23v2.94h-1.51c-1.49 0-1.96.92-1.96 1.87v2.24h3.33l-.53 3.35h-2.8v8.11C19.61 22.67 24 17.87 24 12.07z"/></svg>
+                  <span>فيسبوك</span>
+                </button>
+              </div>
             </form>
 
             <form id="signup-form" class="auth-form">
@@ -477,9 +568,9 @@
               <div class="input-group">
                 <label>الصف الدراسي</label>
                 <select id="signup-grade" class="input-control">
-                  <option value="1">الصف الأول الثانوي</option>
-                  <option value="2">الصف الثاني الثانوي</option>
-                  <option value="3">الصف الثالث الثانوي</option>
+                  <option value="الصف الأول الثانوي">الصف الأول الثانوي</option>
+                  <option value="الصف الثاني الثانوي - باكالوريا">الصف الثاني الثانوي - باكالوريا</option>
+                  <option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option>
                 </select>
               </div>
               <div class="input-group">
@@ -491,6 +582,18 @@
                 <input id="signup-confirm" type="password" class="input-control" placeholder="••••••••" />
               </div>
               <button type="button" id="signup-btn" class="btn-primary">إنشاء الحساب</button>
+
+              <div class="social-divider"><span>أو تابع باستخدام</span></div>
+              <div class="social-buttons">
+                <button type="button" class="btn-social" id="google-signup-btn">
+                  <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.28A7.2 7.2 0 0 1 4.89 12c0-.79.14-1.56.38-2.28V6.63H1.29A11.96 11.96 0 0 0 0 12c0 1.93.46 3.76 1.29 5.37l3.98-3.09z"/><path fill="#EA4335" d="M12 4.75c1.76 0 3.34.6 4.58 1.79l3.43-3.43C17.94 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.63l3.98 3.09C6.22 6.86 8.87 4.75 12 4.75z"/></svg>
+                  <span>جوجل</span>
+                </button>
+                <button type="button" class="btn-social btn-facebook" id="facebook-signup-btn">
+                  <svg viewBox="0 0 24 24"><path fill="#1877F2" d="M24 12.07C24 5.65 18.63.4 12 .4S0 5.65 0 12.07c0 5.8 4.39 10.6 10.13 11.46v-8.11H7.08v-3.35h3.05V9.41c0-3 1.79-4.66 4.53-4.66 1.31 0 2.68.23 2.68.23v2.94h-1.51c-1.49 0-1.96.92-1.96 1.87v2.24h3.33l-.53 3.35h-2.8v8.11C19.61 22.67 24 17.87 24 12.07z"/></svg>
+                  <span>فيسبوك</span>
+                </button>
+              </div>
             </form>
           </div>
         </div>
@@ -507,8 +610,8 @@
         <div class="glass-card" style="background: rgba(255,183,3,0.08); border-color: rgba(255,183,3,0.25);">
           <div style="display:flex; justify-content:space-between; align-items:center; gap:14px;">
             <div>
-              <div style="font-weight: 800; color: var(--gold); font-size: 0.8rem; margin-bottom: 6px;">تنبيه دراسي / الإعلانات</div>
-              <div id="dashboard-alert" style="color: var(--text); line-height: 1.7;">جاري تحميل الإعلانات...</div>
+              <div style="font-weight: 800; color: var(--gold); font-size: 0.8rem; margin-bottom: 6px;">تنبيه دراسي</div>
+              <div id="dashboard-alert" style="color: var(--text); line-height: 1.7;">راجع وحدتي اليوم في الرياضيات واللغة العربية قبل الساعة 8 مساءً.</div>
             </div>
             <div style="font-size: 2rem;">⏰</div>
           </div>
@@ -525,6 +628,45 @@
         <div class="glass-card" data-target="screen-ai" style="cursor: pointer;">
           <h3 style="margin-bottom: 8px;">🤖 المساعد الذكي</h3>
           <p style="color: var(--muted); line-height:1.7;">لديك سؤال أو مفهوم يحتاج توضيح؟ اسأل EDUVO AI مباشرة وستحصل على شرح سريع ومباشر.</p>
+        </div>
+
+        <div class="glass-card" data-target="screen-quizzes" style="cursor: pointer;">
+          <h3 style="margin-bottom: 8px;">📝 اختبارات قصيرة</h3>
+          <p style="color: var(--muted); line-height:1.7;">اختبر نفسك بأسئلة سريعة في أي مادة وشوف نتيجتك فورًا.</p>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="margin-bottom: 12px;">الإرشادات العامة</h3>
+          <div style="display:grid; gap:12px;">
+            <div style="padding:14px 16px; border-radius:12px; background: rgba(28,114,216,0.08); border:1px solid rgba(0,210,255,0.14);">
+              <strong style="display:block; margin-bottom:4px;">نقطة تركيز اليوم</strong>
+              <span style="color: var(--muted);">مراجعة أسئلة التطبيق في الفيزياء خلال 30 دقيقة.</span>
+            </div>
+            <div style="padding:14px 16px; border-radius:12px; background: rgba(28,114,216,0.08); border:1px solid rgba(0,210,255,0.14);">
+              <strong style="display:block; margin-bottom:4px;">خطة الدراسة</strong>
+              <span style="color: var(--muted);">من 6:00 إلى 7:00: رياضيات • من 7:30 إلى 8:15: لغة عربية.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="margin-bottom: 14px;">المسار التعليمي</h3>
+          <div style="display:grid; gap:12px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div style="width:12px; height:12px; border-radius:50%; background: var(--accent-2);"></div>
+              <div style="flex:1;">
+                <strong>المرحلة الحالية</strong>
+                <div style="color: var(--muted);">الوحدة الثالثة: الجبر والتطبيقات</div>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div style="width:12px; height:12px; border-radius:50%; background: var(--gold);"></div>
+              <div style="flex:1;">
+                <strong>الأهداف اليوم</strong>
+                <div style="color: var(--muted);">إكمال 4 تمارين و1 اختبار قصير</div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -556,6 +698,13 @@
         </div>
       </section>
 
+      <section id="screen-quizzes" class="screen">
+        <div class="header">
+          <h2>اختبارات قصيرة 📝</h2>
+        </div>
+        <div id="quiz-container"></div>
+      </section>
+
       <section id="screen-profile" class="screen">
         <div class="header">
           <h2>حسابي 👤</h2>
@@ -566,6 +715,30 @@
           <h3 id="profile-name">اسم الطالب</h3>
           <p id="profile-phone" style="color: var(--muted); margin-top: 6px;">0500000000</p>
           <p id="profile-grade" style="color: var(--accent-2); font-weight:700; margin-top: 6px;">الصف الثالث الثانوي</p>
+          <button type="button" id="edit-profile-toggle" class="btn-secondary" style="margin-top: 16px; width: auto; padding: 10px 22px;">تعديل البيانات</button>
+
+          <div id="edit-profile-form" style="display:none; text-align:right; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border);">
+            <div class="input-group">
+              <label>الاسم الثلاثي</label>
+              <input id="edit-profile-name" type="text" class="input-control" />
+            </div>
+            <div class="input-group">
+              <label>الصف الدراسي</label>
+              <select id="edit-profile-grade" class="input-control">
+                <option value="الصف الأول الثانوي">الصف الأول الثانوي</option>
+                <option value="الصف الثاني الثانوي - باكالوريا">الصف الثاني الثانوي - باكالوريا</option>
+                <option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option>
+              </select>
+            </div>
+            <button type="button" id="save-profile-btn" class="btn-primary">حفظ التغييرات</button>
+          </div>
+        </div>
+
+        <div class="glass-card" data-target="screen-quizzes" style="cursor: pointer;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span>📝 اختباراتي القصيرة</span>
+            <span>←</span>
+          </div>
         </div>
 
         <div class="glass-card">
@@ -631,45 +804,101 @@
     const SESSION_KEY = 'eduvo_session_v1';
     const SETTINGS_KEY = 'eduvo_settings_v1';
 
-    let globalData = {
-      subjects: [],
-      teachers: [],
-      announcements: [],
-      users: []
+    // ضع بيانات حساباتك هنا (Google Cloud Console و Facebook Developers)
+    const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+    const FACEBOOK_APP_ID = 'YOUR_FACEBOOK_APP_ID';
+
+    // رابط الـ Worker الخاص بالمساعد الذكي (شوف ملف INSTRUCTIONS.md لإعداده)
+    const AI_ENDPOINT = 'https://YOUR-WORKER-URL.workers.dev';
+
+    let googleSdkLoading = false;
+    let facebookSdkLoading = false;
+
+    const subjects = [
+      {
+        id: 'math',
+        name: 'الرياضيات',
+        icon: '📐',
+        description: 'أساسيات الجبر، المعادلات، والهندسة مع شرح مبسط ومراجعة سريعة.',
+        teachers: [
+          { name: 'أ. سارة العمري', specialty: 'الجبر والهندسة', style: 'تشرح المفاهيم ببطء وتعلّم الطالب كيفية تحليل الأسئلة.', rating: 4.9, students: 2400, nextLesson: 'درس اليوم: المعادلات من الدرجة الثانية' },
+          { name: 'أ. يوسف الحربي', specialty: 'التفاضل والتكامل', style: 'أسلوب عملي مع أمثلة حياتية ومراجعات سريعة.', rating: 4.8, students: 1980, nextLesson: 'دروس الأسبوع: تطبيقات التفاضل' },
+          { name: 'أ. مريم النعيمي', specialty: 'التحليل الرياضي', style: 'تجمع بين التفسير البصري والتمارين التطبيقية.', rating: 4.9, students: 2140, nextLesson: 'تمارين على الدوال والرسوم' }
+        ]
+      },
+      {
+        id: 'physics',
+        name: 'الفيزياء',
+        icon: '⚛️',
+        description: 'شرح مبسط للحركة، القوة، والدوائر الكهربائية مع أسئلة متنوعة.',
+        teachers: [
+          { name: 'أ. رامي الجبالي', specialty: 'الحركة والطاقة', style: 'يشرح عبر تجارب مبسطة وسهل الحفظ.', rating: 5.0, students: 2600, nextLesson: 'تمارين على قوانين نيوتن' },
+          { name: 'أ. طارق مهنا', specialty: 'الكهرباء والمغناطيسية', style: 'يركز على الفهم وتبسيط الصور الذهنية.', rating: 4.8, students: 1805, nextLesson: 'مجالات كهربائية ودوائر' }
+        ]
+      },
+      {
+        id: 'chem',
+        name: 'الكيمياء',
+        icon: '🧪',
+        description: 'تعلم الروابط، التفاعلات، والذرات مع شرح عملي ومذكرات مختصرة.',
+        teachers: [
+          { name: 'أ. ليلى القحطاني', specialty: 'الذرات والتفاعلات', style: 'تشرح بنظام تمارين متدرجة ومتابعة يومية.', rating: 4.9, students: 2235, nextLesson: 'التفاعلات الكيميائية' },
+          { name: 'أ. خالد الشمري', specialty: 'الكيمياء العضوية', style: 'أسلوب تشخيصي يساعد على حفظ المعلومات بسرعة.', rating: 4.7, students: 1750, nextLesson: 'مركبات عضوية' }
+        ]
+      },
+      {
+        id: 'arabic',
+        name: 'العربية',
+        icon: '📖',
+        description: 'نحو، إعراب، تحليل نصوص، وكتابة مواضيع بأسلوب منظم.',
+        teachers: [
+          { name: 'أ. ندى العتيبي', specialty: 'النحو والبلاغة', style: 'ترتبط بتمارين تطبيقية وتوضيح القواعد.', rating: 4.9, students: 2100, nextLesson: 'الخبر وأنواعه' },
+          { name: 'أ. فهد الشطي', specialty: 'القراءة والتحليل', style: 'يشرح النصوص من خلال السياق واللغة.', rating: 4.8, students: 1900, nextLesson: 'تحليل القصص والأبيات' }
+        ]
+      },
+      {
+        id: 'biology',
+        name: 'الأحياء',
+        icon: '🧬',
+        description: 'مفاهيم الخلايا، النظام العصبي، جزيئات الحياة، مع خرائط ذهنية.',
+        teachers: [
+          { name: 'أ. هدى السعد', specialty: 'التغذية والخلية', style: 'تستخدم مخططات سهلة ومراجعات قصيرة.', rating: 4.9, students: 2050, nextLesson: 'العضلات والجهاز الحركي' },
+          { name: 'أ. عمر عارف', specialty: 'الوراثة', style: 'يشرح الموضوعات مع أسئلة تفهمية متقدمة.', rating: 4.8, students: 1670, nextLesson: 'الخلية والأنسجة' }
+        ]
+      }
+    ];
+
+    const quizBank = {
+      math: [
+        { q: 'ما ناتج حل المعادلة: 2س + 4 = 10؟', options: ['س = 2', 'س = 3', 'س = 4', 'س = 6'], correct: 1 },
+        { q: 'ما هو محيط مربع طول ضلعه 5 سم؟', options: ['10 سم', '15 سم', '20 سم', '25 سم'], correct: 2 },
+        { q: 'ناتج (3² + 4²) يساوي؟', options: ['12', '25', '49', '7'], correct: 1 }
+      ],
+      physics: [
+        { q: 'وحدة قياس القوة في النظام الدولي هي؟', options: ['الجول', 'النيوتن', 'الواط', 'الأمبير'], correct: 1 },
+        { q: 'ما هو قانون نيوتن الثاني؟', options: ['ق = ك × ت', 'ق = ك ÷ ت', 'ق = ك + ت', 'ق = ك - ت'], correct: 0 },
+        { q: 'السرعة هي: المسافة مقسومة على؟', options: ['الكتلة', 'الزمن', 'القوة', 'الطاقة'], correct: 1 }
+      ],
+      chem: [
+        { q: 'الرمز الكيميائي للأكسجين هو؟', options: ['O', 'Ox', 'O2', 'Og'], correct: 0 },
+        { q: 'عدد البروتونات في الذرة يحدد؟', options: ['الكتلة الذرية', 'العدد الذري', 'عدد النيوترونات', 'الشحنة الكلية'], correct: 1 },
+        { q: 'الرابطة التي تنتج من مشاركة إلكترونات تسمى؟', options: ['أيونية', 'تساهمية', 'فلزية', 'هيدروجينية'], correct: 1 }
+      ],
+      arabic: [
+        { q: 'الفعل المضارع من "كتب" هو؟', options: ['كاتب', 'يكتب', 'اكتب', 'مكتوب'], correct: 1 },
+        { q: 'الجملة الاسمية تبدأ بـ؟', options: ['فعل', 'اسم', 'حرف جر', 'ظرف'], correct: 1 },
+        { q: 'المبتدأ والخبر ركنا الجملة؟', options: ['الفعلية', 'الاسمية', 'الشرطية', 'الاستفهامية'], correct: 1 }
+      ],
+      biology: [
+        { q: 'الوحدة الأساسية لبناء جسم الكائن الحي هي؟', options: ['العضو', 'الخلية', 'النسيج', 'الجهاز'], correct: 1 },
+        { q: 'عملية البناء الضوئي تحدث في؟', options: ['الميتوكوندريا', 'النواة', 'البلاستيدات الخضراء', 'الريبوسوم'], correct: 2 },
+        { q: 'الجهاز المسؤول عن نقل الدم هو؟', options: ['الجهاز الهضمي', 'الجهاز العصبي', 'الجهاز الدوري', 'الجهاز التنفسي'], correct: 2 }
+      ]
     };
 
-    const state = { user: null };
+    const quizState = { subjectId: null, index: 0, score: 0, answered: false };
 
-    async function fetchExternalData() {
-      try {
-        const response = await fetch('data.json');
-        if (response.ok) {
-          const data = await response.json();
-          globalData = data;
-          localStorage.setItem('eduvo_subjects', JSON.stringify(data.subjects || []));
-          localStorage.setItem('eduvo_teachers', JSON.stringify(data.teachers || []));
-          localStorage.setItem('eduvo_announcements', JSON.stringify(data.announcements || []));
-          if (data.users && data.users.length > 0) {
-            const existingUsers = getUsers();
-            const merged = [...existingUsers];
-            data.users.forEach(u => {
-              if (!merged.some(m => m.email === u.email || m.phone === u.phone)) {
-                merged.push(u);
-              }
-            });
-            saveUsers(merged);
-          }
-        }
-      } catch (err) {
-        console.warn("لم يتم العثور على data.json المحلي، يتم الاعتماد على LocalStorage", err);
-        globalData.subjects = JSON.parse(localStorage.getItem('eduvo_subjects') || '[]');
-        globalData.teachers = JSON.parse(localStorage.getItem('eduvo_teachers') || '[]');
-        globalData.announcements = JSON.parse(localStorage.getItem('eduvo_announcements') || '[]');
-      }
-      
-      renderSubjects();
-      renderAnnouncements();
-    }
+    const state = { user: null };
 
     function getUsers() {
       try { return JSON.parse(localStorage.getItem(USERS_KEY) || '[]'); }
@@ -724,7 +953,7 @@
 
     function isValidPhone(phone) {
       const digits = sanitizePhone(phone);
-      return /^(010|011|012|015)\d{8}$/.test(digits) || digits.length >= 8;
+      return /^(010|011|012|015)\d{8}$/.test(digits);
     }
 
     function authTab(tab) {
@@ -747,33 +976,15 @@
       if (layoutSelect) layoutSelect.value = settings.layout;
     }
 
-    function renderAnnouncements() {
-      const alertBox = document.getElementById('dashboard-alert');
-      if (!alertBox) return;
-      if (globalData.announcements && globalData.announcements.length > 0) {
-        const ann = globalData.announcements[0];
-        alertBox.innerHTML = `<strong>${ann.title}</strong>: ${ann.content}`;
-      } else {
-        alertBox.textContent = 'لا توجد إعلانات جديدة حالياً.';
-      }
-    }
-
     function renderSubjects() {
       const container = document.getElementById('subjects-grid');
       if (!container) return;
-      
-      const subjects = globalData.subjects || [];
-      if (subjects.length === 0) {
-        container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:var(--muted); padding:20px;">لا توجد مواد دراسية متوفرة حالياً.</div>';
-        return;
-      }
-
       container.innerHTML = subjects.map(subject => `
         <div class="subject-card" data-subject-id="${subject.id}">
-          <div style="font-size:2.1rem;"><i class="${subject.icon || 'fas fa-book'}"></i> ${!subject.icon || !subject.icon.includes('fa') ? (subject.icon || '📚') : ''}</div>
+          <div style="font-size:2.1rem;">${subject.icon}</div>
           <div style="font-size:1.2rem; font-weight:800;">${subject.name}</div>
-          <div style="color: var(--muted); line-height:1.8;">${subject.description || ''}</div>
-          <div style="font-size:0.8rem; color: var(--accent-2); font-weight:700; margin-top:8px;">المعلم: ${subject.teacher || 'غير محدد'}</div>
+          <div style="color: var(--muted); line-height:1.8;">${subject.description}</div>
+          <div style="font-size:0.8rem; color: var(--accent-2); font-weight:700;">${subject.teachers.length} معلم/معلمة متاح</div>
         </div>
       `).join('');
 
@@ -783,58 +994,43 @@
     }
 
     function showSubjectDetails(subjectId) {
-      const subjects = globalData.subjects || [];
-      const teachers = globalData.teachers || [];
-      const subject = subjects.find(item => String(item.id) === String(subjectId));
+      const subject = subjects.find(item => item.id === subjectId);
       const container = document.getElementById('subject-detail-content');
       const title = document.getElementById('subject-detail-title');
       if (!subject || !container || !title) return;
 
       title.textContent = subject.name;
-      
-      const relatedTeachers = teachers.filter(t => t.subject === subject.name || t.name === subject.teacher);
-      
-      const lessonsHtml = (subject.lessons && subject.lessons.length > 0) ? subject.lessons.map(les => `
-        <div class="lesson-card">
-          <div style="font-weight:800; font-size:1.05rem; margin-bottom:6px;">📺 ${les.title}</div>
-          <div style="color:var(--muted); font-size:0.85rem; margin-bottom:8px;">المدة: ${les.duration || 'غير محددة'}</div>
-          ${les.videoUrl ? `<iframe src="${les.videoUrl}" style="width:100%; height:200px; border-radius:12px; border:none;" allowfullscreen></iframe>` : ''}
-          ${les.pdfUrl ? `<a href="${les.pdfUrl}" target="_blank" class="teacher-cta" style="margin-top:10px;">تحميل المذكرة (PDF)</a>` : ''}
-        </div>
-      `).join('') : '<div style="color:var(--muted);">لا توجد دروس مضافة لهذه المادة بعد.</div>';
-
       container.innerHTML = `
         <div class="subject-feature">
-          <div class="subject-feature-icon"><i class="${subject.icon || 'fas fa-book'}"></i> ${!subject.icon || !subject.icon.includes('fa') ? (subject.icon || '📚') : ''}</div>
+          <div class="subject-feature-icon">${subject.icon}</div>
           <div>
             <span style="font-size:0.8rem; color: var(--accent-2); font-weight:800;">المادة</span>
             <h3>${subject.name}</h3>
-            <p style="color: var(--muted); line-height:1.8; margin-top:8px;">${subject.description || ''}</p>
+            <p style="color: var(--muted); line-height:1.8; margin-top:8px;">${subject.description}</p>
           </div>
         </div>
-
         <div class="glass-card">
-          <h4 style="margin-bottom: 12px;">مدرس المادة</h4>
+          <h4 style="margin-bottom: 12px;">أفضل المدرسين والمعلمين</h4>
           <div class="teacher-grid">
-            ${relatedTeachers.length > 0 ? relatedTeachers.map(teacher => `
+            ${subject.teachers.map(teacher => `
               <div class="teacher-card">
                 <div class="teacher-head">
-                  <img class="teacher-photo" src="${teacher.image || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(teacher.name)}" alt="${teacher.name}" />
+                  <img class="teacher-photo" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=500&q=80" alt="${teacher.name}" />
                   <div>
                     <div class="teacher-name">${teacher.name}</div>
                     <div class="teacher-meta">
-                      <span>${teacher.subject}</span>
+                      <span>⭐ ${teacher.rating}</span>
+                      <span>${teacher.students} طالب</span>
                     </div>
                   </div>
                 </div>
+                <p><strong>${teacher.specialty}</strong></p>
+                <p>${teacher.style}</p>
+                <p>${teacher.nextLesson}</p>
+                <a href="https://www.teacher-${teacher.name.replace(/\s+/g, '-').toLowerCase()}.com" target="_blank" class="teacher-cta">زيارة موقع المدرس</a>
               </div>
-            `).join('') : `<div style="color:var(--muted);">${subject.teacher || 'لم يتم تحديد مدرس بشكل تفصيلي'}</div>`}
+            `).join('')}
           </div>
-        </div>
-
-        <div class="glass-card">
-          <h4 style="margin-bottom: 12px;">الدروس والمحاضرات</h4>
-          ${lessonsHtml}
         </div>
       `;
 
@@ -854,12 +1050,133 @@
 
     function updateUserProfile() {
       if (!state.user) return;
-      const name = state.user.fullName || state.user.name || 'اسم الطالب';
+      const name = state.user.fullName || 'اسم الطالب';
       document.getElementById('dashboard-greeting').textContent = `مرحباً ${name} في EDUVO`;
       document.getElementById('profile-name').textContent = name;
-      document.getElementById('profile-phone').textContent = state.user.phone || state.user.email || '';
-      document.getElementById('profile-grade').textContent = state.user.grade ? `الصف ${state.user.grade}` : 'الصف الدراسي';
+      document.getElementById('profile-phone').textContent = state.user.phone;
+      document.getElementById('profile-grade').textContent = state.user.grade;
       document.getElementById('profile-avatar').textContent = name.trim().charAt(0) || 'ع';
+    }
+
+    function decodeJwtPayload(token) {
+      try {
+        const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+        const json = decodeURIComponent(
+          atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
+        );
+        return JSON.parse(json);
+      } catch {
+        return null;
+      }
+    }
+
+    function loginOrCreateSocialUser(fullName, email, provider) {
+      if (!email) {
+        showMessage('❌ تعذر الحصول على البريد الإلكتروني من الحساب', 'error');
+        return;
+      }
+
+      const users = getUsers();
+      let user = users.find(item => item.email === email && item.provider === provider);
+
+      if (!user) {
+        user = {
+          id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+          fullName: fullName || 'مستخدم EDUVO',
+          email,
+          phone: email,
+          grade: '',
+          provider,
+          createdAt: new Date().toISOString()
+        };
+        users.push(user);
+        saveUsers(users);
+      }
+
+      state.user = user;
+      saveSession(user);
+      updateUserProfile();
+      showMessage('✅ تم تسجيل الدخول بنجاح', 'success');
+      setActiveScreen('screen-dashboard');
+    }
+
+    function handleGoogleCredentialResponse(response) {
+      const payload = decodeJwtPayload(response.credential);
+      if (!payload) {
+        showMessage('❌ حدث خطأ أثناء تسجيل الدخول بجوجل', 'error');
+        return;
+      }
+      loginOrCreateSocialUser(payload.name, payload.email, 'google');
+    }
+
+    function doGoogleLogin() {
+      google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: handleGoogleCredentialResponse
+      });
+      google.accounts.id.prompt((notification) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          showMessage('❌ تعذر فتح نافذة جوجل، تأكد من ضبط Client ID الصحيح', 'error');
+        }
+      });
+    }
+
+    function triggerGoogleLogin() {
+      if (window.google && window.google.accounts && window.google.accounts.id) {
+        doGoogleLogin();
+        return;
+      }
+      if (googleSdkLoading) return;
+      googleSdkLoading = true;
+
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.onload = () => { googleSdkLoading = false; doGoogleLogin(); };
+      script.onerror = () => {
+        googleSdkLoading = false;
+        showMessage('❌ تعذر تحميل خدمة تسجيل الدخول بجوجل', 'error');
+      };
+      document.head.appendChild(script);
+    }
+
+    function doFacebookLogin() {
+      FB.login((response) => {
+        if (response.authResponse) {
+          FB.api('/me', { fields: 'name,email' }, (userInfo) => {
+            loginOrCreateSocialUser(userInfo.name, userInfo.email, 'facebook');
+          });
+        }
+      }, { scope: 'public_profile,email' });
+    }
+
+    function triggerFacebookLogin() {
+      if (window.FB) {
+        doFacebookLogin();
+        return;
+      }
+      if (facebookSdkLoading) return;
+      facebookSdkLoading = true;
+
+      window.fbAsyncInit = function () {
+        FB.init({ appId: FACEBOOK_APP_ID, cookie: true, xfbml: false, version: 'v19.0' });
+        facebookSdkLoading = false;
+        doFacebookLogin();
+      };
+
+      (function (d, s, id) {
+        if (d.getElementById(id)) return;
+        const fjs = d.getElementsByTagName(s)[0];
+        const js = d.createElement(s);
+        js.id = id;
+        js.src = 'https://connect.facebook.net/ar_AR/sdk.js';
+        js.onerror = () => {
+          facebookSdkLoading = false;
+          showMessage('❌ تعذر تحميل خدمة تسجيل الدخول بفيسبوك', 'error');
+        };
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
     }
 
     function handleSignup() {
@@ -869,12 +1186,12 @@
       const password = document.getElementById('signup-password').value.trim();
       const confirm = document.getElementById('signup-confirm').value.trim();
 
-      if (name.split(/\s+/).length < 2) {
-        showMessage('❌ الرجاء إدخال الاسم الكامل', 'error');
+      if (name.split(/\s+/).length < 3) {
+        showMessage('❌ الرجاء إدخال الاسم الثلاثي الكامل', 'error');
         return;
       }
       if (!isValidPhone(phone)) {
-        showMessage('❌ رقم الموبايل غير صحيح', 'error');
+        showMessage('❌ رقم الموبايل غير صحيح. مثال: 01027675035', 'error');
         return;
       }
       if (password.length < 6) {
@@ -914,8 +1231,8 @@
       const phone = sanitizePhone(document.getElementById('login-phone').value);
       const password = document.getElementById('login-password').value.trim();
 
-      if (!phone) {
-        showMessage('❌ أدخل رقم الموبايل', 'error');
+      if (!isValidPhone(phone)) {
+        showMessage('❌ رقم الموبايل غير صحيح. مثال: 01027675035', 'error');
         return;
       }
       if (!password) {
@@ -924,8 +1241,7 @@
       }
 
       const users = getUsers();
-      const match = users.find(item => (item.phone === phone || item.email === phone) && (item.password === password || password === 'admin' || item.role === 'admin'));
-      
+      const match = users.find(item => item.phone === phone && item.password === password);
       if (!match) {
         showMessage('❌ رقم الموبايل أو كلمة المرور غير صحيحة', 'error');
         return;
@@ -947,6 +1263,142 @@
       setActiveScreen('screen-auth');
     }
 
+    function renderQuizSubjects() {
+      const container = document.getElementById('quiz-container');
+      if (!container) return;
+      container.innerHTML = `
+        <div class="grid-2">
+          ${subjects.map(subject => `
+            <div class="subject-card" data-quiz-subject="${subject.id}">
+              <div style="font-size:2.1rem;">${subject.icon}</div>
+              <div style="font-size:1.2rem; font-weight:800;">${subject.name}</div>
+              <div style="color: var(--muted); line-height:1.8;">${quizBank[subject.id].length} أسئلة سريعة</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      document.querySelectorAll('[data-quiz-subject]').forEach(card => {
+        card.addEventListener('click', () => startQuiz(card.dataset.quizSubject));
+      });
+    }
+
+    function startQuiz(subjectId) {
+      quizState.subjectId = subjectId;
+      quizState.index = 0;
+      quizState.score = 0;
+      quizState.answered = false;
+      renderQuizQuestion();
+    }
+
+    function renderQuizQuestion() {
+      const container = document.getElementById('quiz-container');
+      const questions = quizBank[quizState.subjectId];
+      const question = questions[quizState.index];
+      const subject = subjects.find(item => item.id === quizState.subjectId);
+      const progress = Math.round((quizState.index / questions.length) * 100);
+
+      container.innerHTML = `
+        <div class="glass-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <span style="font-weight:800; color: var(--accent-2);">${subject.name}</span>
+            <span style="color: var(--muted); font-size:0.85rem;">سؤال ${quizState.index + 1} من ${questions.length}</span>
+          </div>
+          <div class="quiz-progress"><div class="quiz-progress-bar" style="width:${progress}%;"></div></div>
+          <h3 style="margin-bottom:18px; line-height:1.8;">${question.q}</h3>
+          <div id="quiz-options">
+            ${question.options.map((opt, i) => `<button type="button" class="quiz-option" data-option="${i}">${opt}</button>`).join('')}
+          </div>
+        </div>
+      `;
+
+      document.querySelectorAll('.quiz-option').forEach(btn => {
+        btn.addEventListener('click', () => handleQuizAnswer(Number(btn.dataset.option)));
+      });
+    }
+
+    function handleQuizAnswer(selectedIndex) {
+      if (quizState.answered) return;
+      quizState.answered = true;
+
+      const question = quizBank[quizState.subjectId][quizState.index];
+      const buttons = document.querySelectorAll('.quiz-option');
+      buttons.forEach(btn => btn.disabled = true);
+      buttons[question.correct].classList.add('correct');
+
+      if (selectedIndex === question.correct) {
+        quizState.score += 1;
+      } else {
+        buttons[selectedIndex].classList.add('wrong');
+      }
+
+      setTimeout(() => {
+        quizState.index += 1;
+        quizState.answered = false;
+        if (quizState.index < quizBank[quizState.subjectId].length) {
+          renderQuizQuestion();
+        } else {
+          renderQuizResult();
+        }
+      }, 900);
+    }
+
+    function renderQuizResult() {
+      const container = document.getElementById('quiz-container');
+      const total = quizBank[quizState.subjectId].length;
+      const subject = subjects.find(item => item.id === quizState.subjectId);
+      const percent = Math.round((quizState.score / total) * 100);
+
+      container.innerHTML = `
+        <div class="glass-card" style="text-align:center; padding: 32px 20px;">
+          <div style="font-size: 2.6rem; margin-bottom: 10px;">${percent >= 70 ? '🎉' : '💪'}</div>
+          <h3 style="margin-bottom: 8px;">نتيجتك في ${subject.name}</h3>
+          <div style="font-size: 2.2rem; font-weight: 800; color: var(--accent-2); margin-bottom: 6px;">${quizState.score} / ${total}</div>
+          <p style="color: var(--muted); margin-bottom: 22px;">${percent >= 70 ? 'أداء ممتاز، استمر!' : 'راجع الدرس وحاول مرة أخرى.'}</p>
+          <div style="display:flex; gap:10px;">
+            <button type="button" class="btn-secondary" id="quiz-retry-btn">إعادة المحاولة</button>
+            <button type="button" class="btn-primary" id="quiz-back-btn">اختبار مادة أخرى</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('quiz-retry-btn').addEventListener('click', () => startQuiz(quizState.subjectId));
+      document.getElementById('quiz-back-btn').addEventListener('click', renderQuizSubjects);
+    }
+
+    function toggleEditProfile() {
+      const form = document.getElementById('edit-profile-form');
+      const isOpen = form.style.display === 'block';
+      if (!isOpen && state.user) {
+        document.getElementById('edit-profile-name').value = state.user.fullName || '';
+        document.getElementById('edit-profile-grade').value = state.user.grade || '';
+      }
+      form.style.display = isOpen ? 'none' : 'block';
+    }
+
+    function saveProfileEdits() {
+      if (!state.user) return;
+      const name = document.getElementById('edit-profile-name').value.trim();
+      const grade = document.getElementById('edit-profile-grade').value;
+
+      if (name.split(/\s+/).length < 3) {
+        showMessage('❌ الرجاء إدخال الاسم الثلاثي الكامل', 'error');
+        return;
+      }
+
+      const users = getUsers();
+      const index = users.findIndex(item => item.id === state.user.id);
+      if (index !== -1) {
+        users[index].fullName = name;
+        users[index].grade = grade;
+        saveUsers(users);
+        state.user = users[index];
+        saveSession(state.user);
+        updateUserProfile();
+        document.getElementById('edit-profile-form').style.display = 'none';
+        showMessage('✅ تم تحديث بياناتك بنجاح', 'success');
+      }
+    }
+
     function setupNavigation() {
       document.querySelectorAll('.auth-tab').forEach(button => {
         button.addEventListener('click', () => authTab(button.dataset.authTab));
@@ -954,6 +1406,12 @@
 
       document.getElementById('login-btn').addEventListener('click', handleLogin);
       document.getElementById('signup-btn').addEventListener('click', handleSignup);
+      document.getElementById('google-login-btn').addEventListener('click', triggerGoogleLogin);
+      document.getElementById('google-signup-btn').addEventListener('click', triggerGoogleLogin);
+      document.getElementById('facebook-login-btn').addEventListener('click', triggerFacebookLogin);
+      document.getElementById('facebook-signup-btn').addEventListener('click', triggerFacebookLogin);
+      document.getElementById('edit-profile-toggle').addEventListener('click', toggleEditProfile);
+      document.getElementById('save-profile-btn').addEventListener('click', saveProfileEdits);
       document.getElementById('logout-btn').addEventListener('click', handleLogout);
       document.getElementById('back-to-subjects').addEventListener('click', () => setActiveScreen('screen-subjects'));
       document.getElementById('send-ai').addEventListener('click', sendAiMessage);
@@ -978,22 +1436,30 @@
       document.querySelectorAll('[data-target]').forEach(item => {
         item.addEventListener('click', () => {
           const target = item.dataset.target;
-          if (['screen-dashboard', 'screen-subjects', 'screen-ai', 'screen-profile'].includes(target) && !state.user) {
+          if (['screen-dashboard', 'screen-subjects', 'screen-ai', 'screen-profile', 'screen-quizzes'].includes(target) && !state.user) {
             showMessage('❌ يجب تسجيل الدخول أولاً', 'error');
             setActiveScreen('screen-auth');
             return;
           }
           setActiveScreen(target);
+          if (target === 'screen-quizzes') renderQuizSubjects();
         });
       });
     }
 
-    function sendAiMessage() {
+    async function sendAiMessage() {
       const input = document.getElementById('ai-input');
       const value = input.value.trim();
       if (!value) return;
 
+      if (AI_ENDPOINT.includes('YOUR-WORKER-URL')) {
+        showMessage('❌ لم يتم إعداد رابط المساعد الذكي بعد', 'error');
+        return;
+      }
+
       const box = document.getElementById('chat-box');
+      const sendBtn = document.getElementById('send-ai');
+
       const userBubble = document.createElement('div');
       userBubble.className = 'chat-bubble chat-user';
       userBubble.textContent = value;
@@ -1001,33 +1467,36 @@
 
       const answerBubble = document.createElement('div');
       answerBubble.className = 'chat-bubble chat-ai';
-      answerBubble.textContent = 'أقوم بتحليل سؤالك الآن...';
+      answerBubble.textContent = 'جارِ التفكير...';
       box.appendChild(answerBubble);
+
       input.value = '';
+      input.disabled = true;
+      sendBtn.disabled = true;
       box.scrollTop = box.scrollHeight;
 
-      const answers = {
-        الرياضيات: 'في الرياضيات، ابدأ بتحديد نوع السؤال ثم استخدم القاعدة المناسبة. إذا كانت معادلة، قم بعزل المتغير ثم تحقق من الإجابة.',
-        فيزياء: 'في الفيزياء، ركّز على القوانين الأساسية مثل الحركة والطاقة. اكتب القيم المعطاة ثم اختر القانون المناسب.',
-        كيمياء: 'في الكيمياء، راجع الروابط، الذرات، والتفاعلات. غالباً الإجابة تظهر عند مقارنة نوع الرابطة أو العدد الذري.',
-        عربية: 'في العربية، اقرأ السؤال جيداً وحدد نوع المطلوب: نحو، بلاغة، أو تحليل نص. ثم أجب حسب القاعدة الواضحة.',
-        أحياء: 'في الأحياء، ركّز على الوظيفة والخلايا والعلاقات بين الأجزاء. الربط بين كل جزء بدوره يساعدك في الفهم.',
-        default: 'يمكنك تقسيم السؤال إلى ثلاث خطوات: ما الذي يُسأل؟ ما المعلومات المعطاة؟ ما القاعدة المناسبة؟ هذا يسهل الوصول إلى الإجابة بشكل صحيح.'
-      };
+      try {
+        const response = await fetch(AI_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: value })
+        });
 
-      let reply = answers.default;
-      const text = value.toLowerCase();
-      for (const key in answers) {
-        if (key !== 'default' && text.includes(key.toLowerCase())) {
-          reply = answers[key];
-          break;
+        const data = await response.json();
+
+        if (!response.ok || data.error) {
+          answerBubble.textContent = '❌ ' + (data.error || 'حصل خطأ، حاول تاني.');
+        } else {
+          answerBubble.textContent = data.reply || 'لم أستطع إيجاد إجابة، حاول صياغة السؤال بشكل مختلف.';
         }
-      }
-
-      setTimeout(() => {
-        answerBubble.textContent = reply;
+      } catch (err) {
+        answerBubble.textContent = '❌ تعذر الاتصال بالمساعد الذكي، تحقق من الإنترنت وحاول مرة أخرى.';
+      } finally {
+        input.disabled = false;
+        sendBtn.disabled = false;
+        input.focus();
         box.scrollTop = box.scrollHeight;
-      }, 700);
+      }
     }
 
     function restoreSession() {
@@ -1035,11 +1504,9 @@
         const saved = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
         if (saved) {
           const users = getUsers();
-          const match = users.find(item => item.phone === saved.phone || item.email === saved.email);
+          const match = users.find(item => item.phone === saved.phone);
           if (match) {
             state.user = match;
-          } else {
-            state.user = saved;
           }
         }
       } catch {
@@ -1048,7 +1515,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      fetchExternalData();
+      renderSubjects();
       setupNavigation();
       applySettings();
       authTab('login');
