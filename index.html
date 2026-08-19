@@ -804,12 +804,21 @@
     const SESSION_KEY = 'eduvo_session_v1';
     const SETTINGS_KEY = 'eduvo_settings_v1';
 
-    // ضع بيانات حساباتك هنا (Google Cloud Console و Facebook Developers)
-    const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
-    const FACEBOOK_APP_ID = 'YOUR_FACEBOOK_APP_ID';
+    // كل البيانات القابلة للتغيير (Client IDs وغيرها) بقت في data.json
+    // مفيش أي بيانات حساسة هنا في index.html خالص
+    let appConfig = { googleClientId: '', facebookAppId: '', aiEndpoint: '' };
 
-    // رابط الـ Worker الخاص بالمساعد الذكي (شوف ملف INSTRUCTIONS.md لإعداده)
-    const AI_ENDPOINT = 'https://YOUR-WORKER-URL.workers.dev';
+    async function loadAppConfig() {
+      try {
+        const res = await fetch('data.json', { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          appConfig = { ...appConfig, ...data };
+        }
+      } catch (err) {
+        console.warn('تعذر تحميل data.json — تأكد إنه في نفس مجلد index.html', err);
+      }
+    }
 
     let googleSdkLoading = false;
     let facebookSdkLoading = false;
@@ -897,6 +906,99 @@
     };
 
     const quizState = { subjectId: null, index: 0, score: 0, answered: false };
+
+    const aiKnowledge = {
+      math: [
+        { keywords: ['معادلة', 'المعادلات', 'مجهول'], reply: 'لحل معادلة من الدرجة الأولى: اجمع كل حدود المجهول في طرف والأعداد في الطرف الآخر، ثم اقسم على معامل المجهول. مثال: 2س + 4 = 10 → 2س = 6 → س = 3.' },
+        { keywords: ['هندسة', 'مثلث', 'زاوية', 'محيط', 'مساحة'], reply: 'في الهندسة: محيط المستطيل = 2×(الطول+العرض)، مساحته = الطول×العرض. مجموع زوايا أي مثلث = 180°. اكتب المعطيات على شكل رسم يساعدك تشوف العلاقة بسهولة.' },
+        { keywords: ['تفاضل', 'مشتقة'], reply: 'المشتقة بتقيس معدل تغيّر الدالة. القاعدة الأساسية: مشتقة س^ن = ن×س^(ن-1). ابدأ دايمًا بتبسيط الدالة قبل ما تشتق.' },
+        { keywords: ['تكامل'], reply: 'التكامل هو عكس التفاضل. تكامل س^ن = س^(ن+1)/(ن+1) + ثابت. لا تنسَ إضافة ثابت التكامل (+C) في التكامل غير المحدود.' },
+        { keywords: ['كسر', 'كسور'], reply: 'لجمع أو طرح الكسور لازم تتحد المقامات أولاً (بإيجاد المضاعف المشترك الأصغر)، وبعدين تجمع أو تطرح البسوط فقط.' },
+        { keywords: ['نسبة مئوية', 'نسبة%', '%'], reply: 'النسبة المئوية = (الجزء ÷ الكل) × 100. لو عايز تحسب جزء من نسبة: القيمة = (النسبة ÷ 100) × الكل.' }
+      ],
+      physics: [
+        { keywords: ['نيوتن', 'قانون الحركة', 'قوة'], reply: 'قانون نيوتن الثاني: القوة = الكتلة × التسارع (ق = ك×ت). كل ما زادت الكتلة، احتجت قوة أكبر لنفس التسارع.' },
+        { keywords: ['سرعة', 'تسارع', 'حركة'], reply: 'السرعة = المسافة ÷ الزمن. التسارع = التغير في السرعة ÷ الزمن. لو السرعة ثابتة، التسارع = صفر.' },
+        { keywords: ['طاقة', 'شغل'], reply: 'الشغل = القوة × المسافة في اتجاه القوة. الطاقة الحركية = ½×الكتلة×(السرعة)². الطاقة لا تفنى ولا تستحدث، بس بتتحول من شكل لآخر.' },
+        { keywords: ['كهرباء', 'دائرة', 'مقاومة', 'تيار'], reply: 'قانون أوم: الجهد = التيار × المقاومة (ف = ت×م). في التوصيل على التوالي المقاومة الكلية = مجموع المقاومات. في التوازي، مقلوب المقاومة الكلية = مجموع مقلوب كل مقاومة.' },
+        { keywords: ['ضوء', 'انعكاس', 'انكسار'], reply: 'قانون الانعكاس: زاوية السقوط = زاوية الانعكاس. الانكسار بيحصل لما الضوء ينتقل بين وسطين مختلفي الكثافة، والسرعة والاتجاه بيتغيروا.' }
+      ],
+      chem: [
+        { keywords: ['رابطة', 'تساهمية', 'أيونية'], reply: 'الرابطة التساهمية بتحصل بمشاركة إلكترونات بين ذرتين لا فلزيتين. الرابطة الأيونية بتحصل بانتقال إلكترون من فلز إلى لا فلز، فبيتكون أيون موجب وأيون سالب.' },
+        { keywords: ['ذرة', 'عدد ذري', 'عدد كتلي', 'بروتون', 'إلكترون'], reply: 'العدد الذري = عدد البروتونات في النواة، وهو اللي بيحدد نوع العنصر. العدد الكتلي = عدد البروتونات + عدد النيوترونات.' },
+        { keywords: ['تفاعل', 'موازنة معادلة'], reply: 'لموازنة معادلة كيميائية: تأكد إن عدد ذرات كل عنصر متساوي في الطرفين، وده بضبط المعاملات (الأرقام قبل الصيغ) مش الأرقام السفلية داخل الصيغة.' },
+        { keywords: ['حمض', 'قاعدة', 'رقم هيدروجيني', 'ph'], reply: 'الحمض بيطلق أيونات هيدروجين موجبة (H+) في الماء. الرقم الهيدروجيني (pH) من 0 إلى 14: أقل من 7 حمضي، 7 متعادل، أكبر من 7 قاعدي.' },
+        { keywords: ['جدول دوري', 'عنصر'], reply: 'الجدول الدوري مرتب حسب العدد الذري تصاعديًا. العناصر في نفس المجموعة (العمود) لها نفس عدد إلكترونات التكافؤ، فبيكون لها خواص كيميائية متشابهة.' }
+      ],
+      arabic: [
+        { keywords: ['فعل', 'مضارع', 'ماضي', 'أمر'], reply: 'الفعل الماضي يدل على حدث انتهى (كتبَ). المضارع يدل على حدث حاضر أو مستقبل (يكتبُ) ويبدأ بحرف من "أنيت". فعل الأمر يطلب حدوث الفعل (اكتبْ).' },
+        { keywords: ['جملة اسمية', 'مبتدأ', 'خبر'], reply: 'الجملة الاسمية تبدأ باسم، وتتكون من مبتدأ (الاسم الأول) وخبر (يكمل المعنى). مثال: "الطالبُ مجتهدٌ" — الطالب مبتدأ، مجتهد خبر.' },
+        { keywords: ['جملة فعلية', 'فاعل', 'مفعول'], reply: 'الجملة الفعلية تبدأ بفعل، وتتكون من فعل وفاعل (من قام بالفعل)، وقد يأتي بعدها مفعول به (وقع عليه الفعل). مثال: "أكل الولدُ التفاحةَ".' },
+        { keywords: ['إعراب'], reply: 'لإعراب أي كلمة: حدد نوعها (اسم/فعل/حرف) ثم موقعها في الجملة (فاعل، مفعول، مبتدأ...) ثم العلامة الإعرابية المناسبة (ضمة، فتحة، كسرة، سكون).' },
+        { keywords: ['بلاغة', 'تشبيه', 'استعارة', 'كناية'], reply: 'التشبيه: مقارنة بين شيئين بأداة تشبيه ووجه شبه. الاستعارة: تشبيه محذوف أحد طرفيه. الكناية: تعبير يُقصد به معنى غير المعنى الحرفي المباشر.' }
+      ],
+      biology: [
+        { keywords: ['خلية', 'نواة', 'غشاء'], reply: 'الخلية هي الوحدة الأساسية للكائن الحي. النواة تحتوي المادة الوراثية (DNA) وتتحكم في نشاط الخلية. الغشاء الخلوي ينظم دخول وخروج المواد.' },
+        { keywords: ['بناء ضوئي', 'بلاستيدة خضراء'], reply: 'البناء الضوئي بيحصل في البلاستيدات الخضراء، وبيحول ثاني أكسيد الكربون والماء وضوء الشمس إلى جلوكوز وأكسجين.' },
+        { keywords: ['جهاز دوري', 'قلب', 'دم'], reply: 'الجهاز الدوري مسؤول عن نقل الدم والأكسجين والغذاء لكل خلايا الجسم عن طريق القلب والأوعية الدموية.' },
+        { keywords: ['وراثة', 'جين', 'صفة سائدة', 'صفة متنحية'], reply: 'الصفة السائدة تظهر حتى لو موجودة نسخة واحدة من الجين المسؤول عنها. الصفة المتنحية تحتاج نسختين من الجين عشان تظهر.' },
+        { keywords: ['جهاز عصبي', 'خلية عصبية', 'عصبون'], reply: 'الجهاز العصبي بيتكون من المخ والحبل الشوكي والأعصاب، وبينقل الإشارات الكهربائية بين الخلايا العصبية (العصبونات) بسرعة كبيرة.' }
+      ]
+    };
+
+    function tryCalculate(text) {
+      const cleaned = text.replace(/[×xX]/g, '*').replace(/÷/g, '/');
+      const arithMatch = cleaned.match(/^[\s\d+\-*/().]+$/);
+      if (arithMatch && /\d/.test(cleaned) && /[+\-*/]/.test(cleaned)) {
+        try {
+          const result = Function('"use strict"; return (' + cleaned + ')')();
+          if (typeof result === 'number' && isFinite(result)) {
+            return `الناتج = ${Number(result.toFixed(6)).toString().replace(/\.0+$/, '')}`;
+          }
+        } catch { /* ليست عملية حسابية صحيحة */ }
+      }
+      return null;
+    }
+
+    function trySolveLinearEquation(text) {
+      const normalized = text.replace(/×/g, '*').replace(/÷/g, '/');
+      const match = normalized.match(/(-?\d*\.?\d*)\s*([a-zA-Zأ-ي])\s*([+-]\s*\d+\.?\d*)?\s*=\s*(-?\d+\.?\d*)/);
+      if (!match) return null;
+
+      let [, coefRaw, , addRaw, rhsRaw] = match;
+      const coef = coefRaw === '' || coefRaw === '-' ? (coefRaw === '-' ? -1 : 1) : parseFloat(coefRaw);
+      const add = addRaw ? parseFloat(addRaw.replace(/\s/g, '')) : 0;
+      const rhs = parseFloat(rhsRaw);
+
+      if (coef === 0 || isNaN(coef) || isNaN(rhs)) return null;
+
+      const x = (rhs - add) / coef;
+      return `حل المعادلة: المجهول = ${Number(x.toFixed(4)).toString().replace(/\.0+$/, '')}`;
+    }
+
+    function generateSmartReply(rawText) {
+      const calcResult = tryCalculate(rawText);
+      if (calcResult) return calcResult;
+
+      const eqResult = trySolveLinearEquation(rawText);
+      if (eqResult) return eqResult;
+
+      const text = rawText.toLowerCase();
+      const greetings = ['السلام عليكم', 'مرحبا', 'اهلا', 'أهلا', 'هاي', 'ازيك'];
+      if (greetings.some(g => text.includes(g))) {
+        return 'أهلاً بيك! اسألني عن أي موضوع في الرياضيات، الفيزياء، الكيمياء، العربية، أو الأحياء، أو اكتبلي عملية حسابية وهحلها لك.';
+      }
+
+      for (const subjectId in aiKnowledge) {
+        for (const item of aiKnowledge[subjectId]) {
+          if (item.keywords.some(k => text.includes(k))) {
+            return item.reply;
+          }
+        }
+      }
+
+      return 'قسّم سؤالك لثلاث خطوات: (1) ما المطلوب بالضبط؟ (2) ما المعطيات المتاحة؟ (3) ما القانون أو القاعدة المناسبة؟ لو حددت مادة السؤال (رياضيات، فيزياء، كيمياء، عربي، أحياء) هقدر أساعدك بشكل أدق. تقدر كمان تكتب معادلة أو عملية حسابية وهحلها لك مباشرة.';
+    }
 
     const state = { user: null };
 
@@ -1111,17 +1213,21 @@
 
     function doGoogleLogin() {
       google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
+        client_id: appConfig.googleClientId,
         callback: handleGoogleCredentialResponse
       });
       google.accounts.id.prompt((notification) => {
         if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-          showMessage('❌ تعذر فتح نافذة جوجل، تأكد من ضبط Client ID الصحيح', 'error');
+          showMessage('❌ تعذر فتح نافذة جوجل، تأكد من ضبط googleClientId في data.json وإضافة دومين موقعك في Google Cloud Console', 'error');
         }
       });
     }
 
     function triggerGoogleLogin() {
+      if (!appConfig.googleClientId) {
+        showMessage('❌ لم يتم ضبط googleClientId في data.json بعد', 'error');
+        return;
+      }
       if (window.google && window.google.accounts && window.google.accounts.id) {
         doGoogleLogin();
         return;
@@ -1152,6 +1258,10 @@
     }
 
     function triggerFacebookLogin() {
+      if (!appConfig.facebookAppId) {
+        showMessage('❌ لم يتم ضبط facebookAppId في data.json بعد', 'error');
+        return;
+      }
       if (window.FB) {
         doFacebookLogin();
         return;
@@ -1160,7 +1270,7 @@
       facebookSdkLoading = true;
 
       window.fbAsyncInit = function () {
-        FB.init({ appId: FACEBOOK_APP_ID, cookie: true, xfbml: false, version: 'v19.0' });
+        FB.init({ appId: appConfig.facebookAppId, cookie: true, xfbml: false, version: 'v19.0' });
         facebookSdkLoading = false;
         doFacebookLogin();
       };
@@ -1447,18 +1557,12 @@
       });
     }
 
-    async function sendAiMessage() {
+    function sendAiMessage() {
       const input = document.getElementById('ai-input');
       const value = input.value.trim();
       if (!value) return;
 
-      if (AI_ENDPOINT.includes('YOUR-WORKER-URL')) {
-        showMessage('❌ لم يتم إعداد رابط المساعد الذكي بعد', 'error');
-        return;
-      }
-
       const box = document.getElementById('chat-box');
-      const sendBtn = document.getElementById('send-ai');
 
       const userBubble = document.createElement('div');
       userBubble.className = 'chat-bubble chat-user';
@@ -1471,32 +1575,31 @@
       box.appendChild(answerBubble);
 
       input.value = '';
-      input.disabled = true;
-      sendBtn.disabled = true;
       box.scrollTop = box.scrollHeight;
 
-      try {
-        const response = await fetch(AI_ENDPOINT, {
+      // لو الـ aiEndpoint متفعّل في data.json مستقبلاً (ذكاء اصطناعي حقيقي)، استخدمه بدل الرد المحلي
+      if (appConfig.aiEndpoint) {
+        fetch(appConfig.aiEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: value })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok || data.error) {
-          answerBubble.textContent = '❌ ' + (data.error || 'حصل خطأ، حاول تاني.');
-        } else {
-          answerBubble.textContent = data.reply || 'لم أستطع إيجاد إجابة، حاول صياغة السؤال بشكل مختلف.';
-        }
-      } catch (err) {
-        answerBubble.textContent = '❌ تعذر الاتصال بالمساعد الذكي، تحقق من الإنترنت وحاول مرة أخرى.';
-      } finally {
-        input.disabled = false;
-        sendBtn.disabled = false;
-        input.focus();
-        box.scrollTop = box.scrollHeight;
+        })
+          .then(res => res.json())
+          .then(data => {
+            answerBubble.textContent = data.reply || generateSmartReply(value);
+            box.scrollTop = box.scrollHeight;
+          })
+          .catch(() => {
+            answerBubble.textContent = generateSmartReply(value);
+            box.scrollTop = box.scrollHeight;
+          });
+        return;
       }
+
+      setTimeout(() => {
+        answerBubble.textContent = generateSmartReply(value);
+        box.scrollTop = box.scrollHeight;
+      }, 500);
     }
 
     function restoreSession() {
@@ -1514,7 +1617,8 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadAppConfig();
       renderSubjects();
       setupNavigation();
       applySettings();
