@@ -171,6 +171,17 @@
       "website": "https://kamalelmarakby.com/",
       "style": "",
       "nextLesson": "الدرس القادم قريباً"
+    },
+    {
+      "id": "dzu25n4fs",
+      "name": "محمد صلاح",
+      "specialty": "لغة عربية",
+      "subjectId": "arabic",
+      "rating": 4.9,
+      "students": 1000,
+      "website": "https://bassthalk.com/",
+      "style": "",
+      "nextLesson": "الدرس القادم قريباً"
     }
   ],
   "profiles": []
