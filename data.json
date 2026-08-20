@@ -189,7 +189,7 @@
     {
       "id": "lecture-otj3x9qgg",
       "teacherName": "أ. محمد صلاح",
-      "teacherImage": "https://i.postimg.cc/d1FZYbjK/Screenshot-2026-08-20-140526.png",
+      "teacherImage": "https://i.postimg.cc/5yY7SHKk/9w-XEad-JBSJJzv6bvw-DL2Lh-HJBVi-PQHe-Rv-NHVa-YA9.jpg",
       "lectureTitle": "المحاضرة التأسيسية في النحو 2027| بكالوريا وثانوية عامة مع أ. محمد صلاح",
       "subject": "العربية",
       "duration": "3:13:7",
@@ -199,6 +199,20 @@
       "description": "",
       "published": true,
       "createdAt": "2026-08-20T11:07:58.499Z"
+    },
+    {
+      "id": "lecture-z4pd5uxxl",
+      "teacherName": "أ محمد صلاح",
+      "teacherImage": "https://i.postimg.cc/5yY7SHKk/9w-XEad-JBSJJzv6bvw-DL2Lh-HJBVi-PQHe-Rv-NHVa-YA9.jpg",
+      "lectureTitle": "المحاضرة التأسيسية في البلاغة 2027| بكالوريا وثانوية عامة مع أ. محمد صلاح",
+      "subject": "العربية",
+      "duration": "2:49:32",
+      "category": "تأسيس",
+      "embedUrl": "https://www.youtube.com/embed/xpndcdEmJVs?si=fllOL5ibd4GP8lfE",
+      "thumbnail": "https://i.postimg.cc/vByhNS1T/Screenshot-2026-08-20-141259.png",
+      "description": "",
+      "published": true,
+      "createdAt": "2026-08-20T11:17:12.356Z"
     }
   ],
   "profiles": []
