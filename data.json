@@ -185,6 +185,21 @@
       "description": "كتاب التاريخ ل الصف الثاني الباكروليا 2026"
     }
   ],
-  "freeCourses": [],
+  "freeCourses": [
+    {
+      "id": "lecture-otj3x9qgg",
+      "teacherName": "أ. محمد صلاح",
+      "teacherImage": "https://i.postimg.cc/d1FZYbjK/Screenshot-2026-08-20-140526.png",
+      "lectureTitle": "المحاضرة التأسيسية في النحو 2027| بكالوريا وثانوية عامة مع أ. محمد صلاح",
+      "subject": "العربية",
+      "duration": "3:13:7",
+      "category": "تأسيس في النحو",
+      "embedUrl": "https://www.youtube.com/embed/1l6-MzGJ5DA?si=bGt1jjMWKLQz0mVw",
+      "thumbnail": "",
+      "description": "",
+      "published": true,
+      "createdAt": "2026-08-20T11:07:58.499Z"
+    }
+  ],
   "profiles": []
 }
