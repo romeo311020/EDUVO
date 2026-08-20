@@ -6,10 +6,8 @@
     "supportEmail": "support@eduvo.com",
     "supportPhone": "+20 100 000 0000"
   },
-
   "googleClientId": "158260704766-3j0udrn6iap31k6ojs7tu522ijn4v88s.apps.googleusercontent.com",
   "aiEndpoint": "",
-
   "subjects": [
     {
       "id": "math",
@@ -42,25 +40,140 @@
       "description": "مفاهيم الخلايا، النظام العصبي، جزيئات الحياة، مع خرائط ذهنية."
     }
   ],
-
   "teachers": [
-    { "id": "t-math-1", "name": "أ. سارة العمري", "subjectId": "math", "specialty": "الجبر والهندسة", "style": "تشرح المفاهيم ببطء وتعلّم الطالب كيفية تحليل الأسئلة.", "rating": 4.9, "students": 2400, "website": "", "photo": "", "nextLesson": "درس اليوم: المعادلات من الدرجة الثانية" },
-    { "id": "t-math-2", "name": "أ. يوسف الحربي", "subjectId": "math", "specialty": "التفاضل والتكامل", "style": "أسلوب عملي مع أمثلة حياتية ومراجعات سريعة.", "rating": 4.8, "students": 1980, "website": "", "photo": "", "nextLesson": "دروس الأسبوع: تطبيقات التفاضل" },
-    { "id": "t-math-3", "name": "أ. مريم النعيمي", "subjectId": "math", "specialty": "التحليل الرياضي", "style": "تجمع بين التفسير البصري والتمارين التطبيقية.", "rating": 4.9, "students": 2140, "website": "", "photo": "", "nextLesson": "تمارين على الدوال والرسوم" },
-
-    { "id": "t-physics-1", "name": "أ. رامي الجبالي", "subjectId": "physics", "specialty": "الحركة والطاقة", "style": "يشرح عبر تجارب مبسطة وسهل الحفظ.", "rating": 5.0, "students": 2600, "website": "", "photo": "", "nextLesson": "تمارين على قوانين نيوتن" },
-    { "id": "t-physics-2", "name": "أ. طارق مهنا", "subjectId": "physics", "specialty": "الكهرباء والمغناطيسية", "style": "يركز على الفهم وتبسيط الصور الذهنية.", "rating": 4.8, "students": 1805, "website": "", "photo": "", "nextLesson": "مجالات كهربائية ودوائر" },
-
-    { "id": "t-chem-1", "name": "أ. ليلى القحطاني", "subjectId": "chem", "specialty": "الذرات والتفاعلات", "style": "تشرح بنظام تمارين متدرجة ومتابعة يومية.", "rating": 4.9, "students": 2235, "website": "", "photo": "", "nextLesson": "التفاعلات الكيميائية" },
-    { "id": "t-chem-2", "name": "أ. خالد الشمري", "subjectId": "chem", "specialty": "الكيمياء العضوية", "style": "أسلوب تشخيصي يساعد على حفظ المعلومات بسرعة.", "rating": 4.7, "students": 1750, "website": "", "photo": "", "nextLesson": "مركبات عضوية" },
-
-    { "id": "t-arabic-1", "name": "أ. ندى العتيبي", "subjectId": "arabic", "specialty": "النحو والبلاغة", "style": "ترتبط بتمارين تطبيقية وتوضيح القواعد.", "rating": 4.9, "students": 2100, "website": "", "photo": "", "nextLesson": "الخبر وأنواعه" },
-    { "id": "t-arabic-2", "name": "أ. فهد الشطي", "subjectId": "arabic", "specialty": "القراءة والتحليل", "style": "يشرح النصوص من خلال السياق واللغة.", "rating": 4.8, "students": 1900, "website": "", "photo": "", "nextLesson": "تحليل القصص والأبيات" },
-
-    { "id": "t-bio-1", "name": "أ. هدى السعد", "subjectId": "biology", "specialty": "التغذية والخلية", "style": "تستخدم مخططات سهلة ومراجعات قصيرة.", "rating": 4.9, "students": 2050, "website": "", "photo": "", "nextLesson": "العضلات والجهاز الحركي" },
-    { "id": "t-bio-2", "name": "أ. عمر عارف", "subjectId": "biology", "specialty": "الوراثة", "style": "يشرح الموضوعات مع أسئلة تفهمية متقدمة.", "rating": 4.8, "students": 1670, "website": "", "photo": "", "nextLesson": "الخلية والأنسجة" }
+    {
+      "id": "t-math-1",
+      "name": "أ. سارة العمري",
+      "subjectId": "math",
+      "specialty": "الجبر والهندسة",
+      "style": "تشرح المفاهيم ببطء وتعلّم الطالب كيفية تحليل الأسئلة.",
+      "rating": 4.9,
+      "students": 2400,
+      "website": "",
+      "photo": "",
+      "nextLesson": "درس اليوم: المعادلات من الدرجة الثانية"
+    },
+    {
+      "id": "t-math-2",
+      "name": "أ. يوسف الحربي",
+      "subjectId": "math",
+      "specialty": "التفاضل والتكامل",
+      "style": "أسلوب عملي مع أمثلة حياتية ومراجعات سريعة.",
+      "rating": 4.8,
+      "students": 1980,
+      "website": "",
+      "photo": "",
+      "nextLesson": "دروس الأسبوع: تطبيقات التفاضل"
+    },
+    {
+      "id": "t-math-3",
+      "name": "أ. مريم النعيمي",
+      "subjectId": "math",
+      "specialty": "التحليل الرياضي",
+      "style": "تجمع بين التفسير البصري والتمارين التطبيقية.",
+      "rating": 4.9,
+      "students": 2140,
+      "website": "",
+      "photo": "",
+      "nextLesson": "تمارين على الدوال والرسوم"
+    },
+    {
+      "id": "t-physics-1",
+      "name": "أ. رامي الجبالي",
+      "subjectId": "physics",
+      "specialty": "الحركة والطاقة",
+      "style": "يشرح عبر تجارب مبسطة وسهل الحفظ.",
+      "rating": 5,
+      "students": 2600,
+      "website": "",
+      "photo": "",
+      "nextLesson": "تمارين على قوانين نيوتن"
+    },
+    {
+      "id": "t-physics-2",
+      "name": "أ. طارق مهنا",
+      "subjectId": "physics",
+      "specialty": "الكهرباء والمغناطيسية",
+      "style": "يركز على الفهم وتبسيط الصور الذهنية.",
+      "rating": 4.8,
+      "students": 1805,
+      "website": "",
+      "photo": "",
+      "nextLesson": "مجالات كهربائية ودوائر"
+    },
+    {
+      "id": "t-chem-1",
+      "name": "أ. ليلى القحطاني",
+      "subjectId": "chem",
+      "specialty": "الذرات والتفاعلات",
+      "style": "تشرح بنظام تمارين متدرجة ومتابعة يومية.",
+      "rating": 4.9,
+      "students": 2235,
+      "website": "",
+      "photo": "",
+      "nextLesson": "التفاعلات الكيميائية"
+    },
+    {
+      "id": "t-chem-2",
+      "name": "أ. خالد الشمري",
+      "subjectId": "chem",
+      "specialty": "الكيمياء العضوية",
+      "style": "أسلوب تشخيصي يساعد على حفظ المعلومات بسرعة.",
+      "rating": 4.7,
+      "students": 1750,
+      "website": "",
+      "photo": "",
+      "nextLesson": "مركبات عضوية"
+    },
+    {
+      "id": "t-arabic-1",
+      "name": "أ. ندى العتيبي",
+      "subjectId": "arabic",
+      "specialty": "النحو والبلاغة",
+      "style": "ترتبط بتمارين تطبيقية وتوضيح القواعد.",
+      "rating": 4.9,
+      "students": 2100,
+      "website": "",
+      "photo": "",
+      "nextLesson": "الخبر وأنواعه"
+    },
+    {
+      "id": "t-arabic-2",
+      "name": "أ. فهد الشطي",
+      "subjectId": "arabic",
+      "specialty": "القراءة والتحليل",
+      "style": "يشرح النصوص من خلال السياق واللغة.",
+      "rating": 4.8,
+      "students": 1900,
+      "website": "",
+      "photo": "",
+      "nextLesson": "تحليل القصص والأبيات"
+    },
+    {
+      "id": "t-bio-1",
+      "name": "أ. هدى السعد",
+      "subjectId": "biology",
+      "specialty": "التغذية والخلية",
+      "style": "تستخدم مخططات سهلة ومراجعات قصيرة.",
+      "rating": 4.9,
+      "students": 2050,
+      "website": "",
+      "photo": "",
+      "nextLesson": "العضلات والجهاز الحركي"
+    },
+    {
+      "id": "t-bio-2",
+      "name": "أ. عمر عارف",
+      "subjectId": "biology",
+      "specialty": "الوراثة",
+      "style": "يشرح الموضوعات مع أسئلة تفهمية متقدمة.",
+      "rating": 4.8,
+      "students": 1670,
+      "website": "",
+      "photo": "",
+      "nextLesson": "الخلية والأنسجة"
+    }
   ],
-
   "books": [
     {
       "id": "book-math-1",
@@ -79,8 +192,6 @@
       "description": "ارفع ملف PDF على استضافة خارجية وضع رابطه هنا من لوحة التحكم."
     }
   ],
-
   "freeCourses": [],
-
   "profiles": []
 }
