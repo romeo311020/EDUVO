@@ -281,6 +281,48 @@
       "description": "الكورس التأسيسي في البرمجة لطلاب أولى ثانوي بكالوريا دفعة 2027",
       "published": true,
       "createdAt": "2026-08-20T23:43:11.079Z"
+    },
+    {
+      "id": "lecture-tjv30c4cr",
+      "teacherName": "المهندس كمال المراكبي",
+      "teacherImage": "https://i.postimg.cc/PxnfVzqN/images-(4).jpg",
+      "lectureTitle": "المحاضرة الثانية | كورس تأسيسي برمجة بكالوريا 2027 - أساسيات البرمجة من الصفر | المنهج الجديد",
+      "subject": "برمجة و ذكاء اصطناعي",
+      "duration": "39:05",
+      "category": "تأسيس",
+      "embedUrl": "https://www.youtube.com/embed/P5exsaqpceU?si=Ag-0Lopverb_31sD",
+      "thumbnail": "https://i.postimg.cc/tgWdSPhH/Screenshot-2026-08-21-024531.png",
+      "description": "الكورس التأسيسي في البرمجة لطلاب أولى ثانوي بكالوريا دفعة 2027",
+      "published": true,
+      "createdAt": "2026-08-20T23:48:28.687Z"
+    },
+    {
+      "id": "lecture-b2wfm5azg",
+      "teacherName": "المهندس كمال المراكبي",
+      "teacherImage": "https://i.postimg.cc/PxnfVzqN/images-(4).jpg",
+      "lectureTitle": "المحاضرة الثالثة | كورس تأسيسي برمجة بكالوريا 2027 - أساسيات البرمجة من الصفر | المنهج الجديد",
+      "subject": "برمجة و ذكاء اصطناعي",
+      "duration": "54:21",
+      "category": "تأسيس",
+      "embedUrl": "https://www.youtube.com/embed/R55Y9FtU9yM?si=WneKJIjyYZ5KWOjK\" title=",
+      "thumbnail": "https://i.postimg.cc/ncXDSBJK/Screenshot-2026-08-21-024908.png",
+      "description": "الكورس التأسيسي في البرمجة لطلاب أولى ثانوي بكالوريا دفعة 2027",
+      "published": true,
+      "createdAt": "2026-08-20T23:51:43.527Z"
+    },
+    {
+      "id": "lecture-7pjmh7evr",
+      "teacherName": "المهندس كمال المراكبي",
+      "teacherImage": "https://i.postimg.cc/PxnfVzqN/images-(4).jpg",
+      "lectureTitle": "كورس تأسيس برمجة تانيه بكالوريا 2027 | المحاضره الرابعه | برمجه تانيه بكالوريا 2027",
+      "subject": "برمجة و ذكاء اصطناعي",
+      "duration": "40:00",
+      "category": "تأسيس",
+      "embedUrl": "https://www.youtube.com/embed/lQ9JxHAGv08?si=rKq0znAbw8sIANst",
+      "thumbnail": "https://i.postimg.cc/rwCFfwKS/Screenshot-2026-08-21-025242.png",
+      "description": "الكورس التأسيسي في البرمجة لطلاب أولى ثانوي بكالوريا دفعة 2027",
+      "published": true,
+      "createdAt": "2026-08-20T23:54:26.255Z"
     }
   ],
   "profiles": []
