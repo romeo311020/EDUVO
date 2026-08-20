@@ -208,6 +208,18 @@
       "photo": "https://i.postimg.cc/prmj9zcH/images.jpg",
       "style": "**مستر إنجلشاوي 🇬🇧📚**\nمدرس لغة إنجليزية يساعد الطلاب على فهم القواعد، وتطوير حصيلة الكلمات، والتدرب على القراءة وحل الأسئلة بطريقة مبسطة ومنظمة.",
       "nextLesson": "الدرس القادم قريباً"
+    },
+    {
+      "id": "g10h05d32",
+      "name": "الدكتور كيرلس القس - كيكه",
+      "specialty": "مادة الفيزياء",
+      "subjectId": "physics",
+      "rating": 4.9,
+      "students": 1000,
+      "website": "https://www.doctorinphysics.com/",
+      "photo": "https://i.postimg.cc/cLy3HKRs/images-(1).jpg",
+      "style": "الدكتور كيرلس القس، وهو أحد أشهر مادة الفيزياء لطلاب الثانوية العامة  وبكالوريا",
+      "nextLesson": "الدرس القادم قريباً"
     }
   ],
   "profiles": []
