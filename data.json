@@ -141,20 +141,20 @@
   ],
   "books": [
     {
-      "id": "vb1d93sek",
-      "title": "كتاب برمجة _ كتاب المدرسة",
-      "subjectId": "برمجة-و-ذكاء-اصطناعي",
-      "subjectName": "برمجة و ذكاء اصطناعي",
-      "url": "",
-      "description": "كتاب برمجه ل الصف الثاني الباكروليا"
-    },
-    {
       "id": "hqd72hx28",
       "title": "مازمه الشرح الخاصة ب مستر محمد صلاح _ كورس تاسيس ف النحو",
       "subjectId": "arabic",
       "subjectName": "العربية",
       "url": "https://api.bassthalk.com/books/vi5TB9gyAjcsBauAnXUgSg981ZHBmtjmXJg08bEK.pdf?_gl=1*1yiqz2n*_gcl_au*MTMyODAwMzIxOS4xNzg1MDg1ODI1",
       "description": "الملف ده خاص بطلاب \"البــكالوريا\" اللي المستر بيشرح منه في المحاضرة التأسيسية، علشان تقدروا تصوّروا الملزمة وتتابعوا مع المستر. ❤️"
+    },
+    {
+      "id": "8znnnqcvl",
+      "title": "كتاب برمجة _ كتاب المدرسة",
+      "subjectId": "برمجة-و-ذكاء-اصطناعي",
+      "subjectName": "برمجة و ذكاء اصطناعي",
+      "url": "https://drive.google.com/file/d/1nvTIpgmOogO1vV0f73G6-2eXdBhl-f8q/view?usp=sharing",
+      "description": "كتاب برمجه و ذكاء اصطناعي الصف الثاني الباكروليا - كتاب المدرسة 2026"
     }
   ],
   "app": {
