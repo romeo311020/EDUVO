@@ -220,6 +220,18 @@
       "photo": "https://i.postimg.cc/cLy3HKRs/images-(1).jpg",
       "style": "الدكتور كيرلس القس، وهو أحد أشهر مادة الفيزياء لطلاب الثانوية العامة  وبكالوريا",
       "nextLesson": "الدرس القادم قريباً"
+    },
+    {
+      "id": "mvsjuiz0q",
+      "name": "مستر مينا دياب",
+      "specialty": "الجبر و الهندسة",
+      "subjectId": "math",
+      "rating": 4.9,
+      "students": 1000,
+      "website": "https://romeo311020.github.io/mina-diad/",
+      "photo": "https://i.postimg.cc/cHpRVyTv/mina-diab.png",
+      "style": "مستر مينا دياب 📐📚\nمدرس رياضيات يهتم بتبسيط المفاهيم والقوانين، وتدريب الطلاب على حل المسائل وفهم الأفكار بطريقة منظمة، مع التركيز على الاستعداد الجيد للامتحانات.",
+      "nextLesson": "الدرس القادم قريباً"
     }
   ],
   "profiles": []
