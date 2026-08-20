@@ -267,6 +267,20 @@
       "description": "شرح درس تكنولوجيا المعلومات والتحول الاجتماعي",
       "published": true,
       "createdAt": "2026-08-20T23:30:52.351Z"
+    },
+    {
+      "id": "lecture-m8rkbpde6",
+      "teacherName": "المهندس كمال المراكبي",
+      "teacherImage": "https://i.postimg.cc/PxnfVzqN/images-(4).jpg",
+      "lectureTitle": "المحاضرة الأولى من الكورس التأسيسي في البرمجة لطلاب أولى ثانوي بكالوريا دفعة 2027",
+      "subject": "برمجة و ذكاء اصطناعي",
+      "duration": "50:21",
+      "category": "تأسيس",
+      "embedUrl": "https://www.youtube.com/embed/Xg4Gx0uBnzE?si=p4tkM7Yn4dWefNV4",
+      "thumbnail": "https://i.postimg.cc/SRWwmJFb/Screenshot-2026-08-21-023830.png",
+      "description": "الكورس التأسيسي في البرمجة لطلاب أولى ثانوي بكالوريا دفعة 2027",
+      "published": true,
+      "createdAt": "2026-08-20T23:43:11.079Z"
     }
   ],
   "profiles": []
