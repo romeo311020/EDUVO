@@ -215,6 +215,14 @@
       "subjectName": "الفيزياء",
       "url": "https://ellibrary.moe.gov.eg/EgyptianBaccalaureate/SpecializedSubjects/Medicine-LifeSciences/Physics/",
       "description": "الصف الثاني الباكروليا - كتاب المدرسة"
+    },
+    {
+      "id": "5xlu3u4zq",
+      "title": "الكيمياء - كتاب المدرسة",
+      "subjectId": "chem",
+      "subjectName": "الكيمياء",
+      "url": "https://ellibrary.moe.gov.eg/EgyptianBaccalaureate/SpecializedSubjects/Engineering-ComputerScience/Chemistry/",
+      "description": "الصف الثاني الباكروليا - كتاب المدرسة"
     }
   ],
   "freeCourses": [
