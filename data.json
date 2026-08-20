@@ -253,6 +253,20 @@
       "description": "",
       "published": true,
       "createdAt": "2026-08-20T11:17:12.356Z"
+    },
+    {
+      "id": "lecture-e4n7ttj6o",
+      "teacherName": "المهندس كمال المراكبي",
+      "teacherImage": "https://i.postimg.cc/PxnfVzqN/images-(4).jpg",
+      "lectureTitle": "الدرس الاول برمجه ثانيه بكالوريا 2027 | شرح درس تكنولوجيا المعلومات والتحول الاجتماعي",
+      "subject": "برمجة و ذكاء اصطناعي",
+      "duration": "1:02:11",
+      "category": "الدرس الاول برمجه",
+      "embedUrl": "https://www.youtube.com/embed/pqwRmKuYc58?si=ebyAZ8V7C2mGsMwq",
+      "thumbnail": "https://i.postimg.cc/gJ4zmSvv/Screenshot-2026-08-21-022744.png",
+      "description": "شرح درس تكنولوجيا المعلومات والتحول الاجتماعي",
+      "published": true,
+      "createdAt": "2026-08-20T23:30:52.351Z"
     }
   ],
   "profiles": []
