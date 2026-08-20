@@ -15,7 +15,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg: #07111f;
@@ -106,21 +106,37 @@
 
     .screen.active {
       display: block;
-      animation: screenFadeIn 0.4s ease;
+      animation: screenFadeIn 0.25s ease;
     }
 
     @keyframes screenFadeIn {
-      from { opacity: 0; transform: translateY(10px); }
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(16px); }
+      from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     .fade-in-up {
-      animation: fadeInUp 0.5s ease both;
+      animation: fadeInUp 0.3s ease both;
+    }
+
+    /* على الموبايل: إلغاء التأخير المتتابع بين الكروت (بيبطّئ الأجهزة الأضعف)، والاكتفاء بظهور سريع وموحّد */
+    @media (max-width: 980px) {
+      .fade-in-up {
+        animation-duration: 0.2s;
+        animation-delay: 0s !important;
+      }
+    }
+
+    /* احترام إعداد "تقليل الحركة" في نظام تشغيل الطالب */
+    @media (prefers-reduced-motion: reduce) {
+      .fade-in-up, .screen.active, .glass-card, .sidebar, .subject-card, .teacher-card {
+        animation: none !important;
+        transition: none !important;
+      }
     }
 
     .glass-card {
@@ -489,14 +505,25 @@
         max-width: 300px;
         z-index: 300;
         transform: translateX(100%);
-        transition: transform 0.3s ease;
+        transition: transform 0.25s ease;
         box-shadow: -14px 0 40px rgba(0,0,0,0.5);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: #0a1526;
       }
       .sidebar.mobile-open { transform: translateX(0); }
       .main-content { padding-bottom: 30px; }
       #mobile-menu-btn { display: flex; }
       #sidebar-close-btn { display: block; }
       .teacher-grid, .grid-2 { grid-template-columns: 1fr; }
+
+      /* بلور الزجاج تقيل على معالجات الموبايل الضعيفة، فبنستبدله بخلفية صلبة قريبة من نفس الشكل */
+      .glass-card, .global-search-wrap, .global-search-results, .modal-box {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: rgba(13, 22, 38, 0.97);
+      }
+      .modal-overlay { backdrop-filter: none; -webkit-backdrop-filter: none; }
     }
 
     @media (max-width: 560px) {
