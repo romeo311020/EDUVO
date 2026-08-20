@@ -513,6 +513,10 @@
                     <svg class="svg-icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
                     <span>إدارة الكتب</span>
                 </div>
+                <div class="nav-item" onclick="switchView('view-courses', this)">
+                    <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                    <span>الكورسات المجانية</span>
+                </div>
                 <div class="nav-item" onclick="switchView('view-students', this)">
                     <svg class="svg-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     <span>إدارة الطلاب</span>
@@ -755,6 +759,82 @@
                 </div>
             </section>
 
+            <section id="view-courses" class="view-panel">
+                <h2>إدارة الكورسات المجانية 🎓</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">
+                    أضف رابط Embed للمحاضرة (مثل رابط تضمين من يوتيوب أو أي منصة فيديو تدعم الـ Embed).
+                </p>
+
+                <div class="stat-card">
+                    <h3 id="course-form-title" style="margin-bottom: 16px;">➕ إضافة محاضرة جديدة</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+                        <div class="github-field">
+                            <label>اسم المدرس *</label>
+                            <input type="text" id="course-teacher-name" placeholder="مستر مينا دياب">
+                        </div>
+                        <div class="github-field">
+                            <label>رابط صورة المدرس</label>
+                            <input type="url" id="course-teacher-image" placeholder="https://example.com/photo.jpg">
+                        </div>
+                        <div class="github-field">
+                            <label>اسم المحاضرة *</label>
+                            <input type="text" id="course-lecture-title" placeholder="مراجعة الوحدة الأولى">
+                        </div>
+                        <div class="github-field">
+                            <label>المادة *</label>
+                            <select id="course-subject">
+                                <option value="">-- اختر المادة --</option>
+                            </select>
+                        </div>
+                        <div class="github-field">
+                            <label>مدة المحاضرة</label>
+                            <input type="text" id="course-duration" placeholder="45 دقيقة">
+                        </div>
+                        <div class="github-field">
+                            <label>التصنيف</label>
+                            <input type="text" id="course-category" placeholder="مراجعات / شرح / حل أسئلة">
+                        </div>
+                        <div class="github-field">
+                            <label>Embed URL *</label>
+                            <input type="url" id="course-embed-url" placeholder="https://www.youtube.com/embed/xxxxxxxx">
+                        </div>
+                        <div class="github-field">
+                            <label>رابط الصورة المصغرة (Thumbnail)</label>
+                            <input type="url" id="course-thumbnail" placeholder="https://example.com/thumb.jpg">
+                        </div>
+                    </div>
+                    <div class="github-field" style="margin-top: 12px;">
+                        <label>وصف مختصر للمحاضرة</label>
+                        <textarea id="course-description" rows="3" placeholder="وصف قصير يظهر للطالب..."></textarea>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px; margin-top: 12px;">
+                        <input type="checkbox" id="course-published" checked style="width:18px; height:18px;">
+                        <label for="course-published" style="margin:0;">نشر المحاضرة (تظهر للطلاب فورًا)</label>
+                    </div>
+                    <div class="github-actions" style="margin-top: 16px;">
+                        <button type="button" class="btn btn-primary" id="course-save-btn" onclick="saveCourseFromForm()">➕ إضافة المحاضرة</button>
+                        <button type="button" class="btn btn-secondary" id="course-cancel-edit-btn" onclick="cancelEditCourse()" style="display:none;">إلغاء التعديل</button>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 20px; margin-bottom: 12px;">المحاضرات الحالية</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>المحاضرة</th>
+                                <th>المدرس</th>
+                                <th>المادة</th>
+                                <th>الحالة</th>
+                                <th>العمليات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="courses-tbody">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
             <section id="view-students" class="view-panel">
                 <h2>قائمة الطلاب 👨‍🎓</h2>
                 <div class="table-container">
@@ -892,6 +972,7 @@
                 subjects: [],
                 teachers: [],
                 books: [],
+                freeCourses: [],
                 profiles: []
             },
             githubConfig: {
@@ -917,6 +998,7 @@
             safe.subjects = Array.isArray(safe.subjects) ? safe.subjects : [];
             safe.teachers = Array.isArray(safe.teachers) ? safe.teachers : [];
             safe.books = Array.isArray(safe.books) ? safe.books : [];
+            safe.freeCourses = Array.isArray(safe.freeCourses) ? safe.freeCourses : [];
             safe.profiles = Array.isArray(safe.profiles) ? safe.profiles : [];
             return safe;
         }
@@ -1321,9 +1403,11 @@
         function populateSubjectSelect() {
             const teacherSelect = document.getElementById('teacher-subject');
             const bookSelect = document.getElementById('book-subject');
+            const courseSelect = document.getElementById('course-subject');
 
             if (teacherSelect) teacherSelect.innerHTML = '<option value="">-- اختر المادة --</option>';
             if (bookSelect) bookSelect.innerHTML = '<option value="">-- اختر المادة (اختياري) --</option>';
+            if (courseSelect) courseSelect.innerHTML = '<option value="">-- اختر المادة --</option>';
 
             (state.data.subjects || []).forEach(subject => {
                 if (teacherSelect) {
@@ -1337,6 +1421,12 @@
                     option2.value = subject.id || subject.name;
                     option2.textContent = subject.name;
                     bookSelect.appendChild(option2);
+                }
+                if (courseSelect) {
+                    const option3 = document.createElement('option');
+                    option3.value = subject.name;
+                    option3.textContent = subject.name;
+                    courseSelect.appendChild(option3);
                 }
             });
         }
@@ -1550,6 +1640,180 @@
             `).join('');
         }
 
+        // ===== الكورسات المجانية =====
+        let editingCourseId = null;
+
+        function readCourseForm() {
+            return {
+                teacherName: document.getElementById('course-teacher-name')?.value.trim() || '',
+                teacherImage: document.getElementById('course-teacher-image')?.value.trim() || '',
+                lectureTitle: document.getElementById('course-lecture-title')?.value.trim() || '',
+                subject: document.getElementById('course-subject')?.value.trim() || '',
+                duration: document.getElementById('course-duration')?.value.trim() || '',
+                category: document.getElementById('course-category')?.value.trim() || '',
+                embedUrl: document.getElementById('course-embed-url')?.value.trim() || '',
+                thumbnail: document.getElementById('course-thumbnail')?.value.trim() || '',
+                description: document.getElementById('course-description')?.value.trim() || '',
+                published: document.getElementById('course-published')?.checked !== false
+            };
+        }
+
+        function isValidUrl(value) {
+            if (!value) return false;
+            try {
+                const parsed = new URL(value);
+                return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+            } catch {
+                return false;
+            }
+        }
+
+        function clearCourseForm() {
+            document.getElementById('course-teacher-name').value = '';
+            document.getElementById('course-teacher-image').value = '';
+            document.getElementById('course-lecture-title').value = '';
+            document.getElementById('course-subject').value = '';
+            document.getElementById('course-duration').value = '';
+            document.getElementById('course-category').value = '';
+            document.getElementById('course-embed-url').value = '';
+            document.getElementById('course-thumbnail').value = '';
+            document.getElementById('course-description').value = '';
+            document.getElementById('course-published').checked = true;
+        }
+
+        function saveCourseFromForm() {
+            const data = readCourseForm();
+
+            // ===== Validation =====
+            if (!data.lectureTitle) {
+                showAlert('❌ اسم المحاضرة مطلوب', 'error');
+                return;
+            }
+            if (!data.teacherName) {
+                showAlert('❌ اسم المدرس مطلوب', 'error');
+                return;
+            }
+            if (!data.subject) {
+                showAlert('❌ اختر المادة', 'error');
+                return;
+            }
+            if (!data.embedUrl || !isValidUrl(data.embedUrl)) {
+                showAlert('❌ رابط Embed غير صحيح أو مفقود', 'error');
+                return;
+            }
+            if (data.teacherImage && !isValidUrl(data.teacherImage)) {
+                showAlert('❌ رابط صورة المدرس غير صحيح', 'error');
+                return;
+            }
+            if (data.thumbnail && !isValidUrl(data.thumbnail)) {
+                showAlert('❌ رابط الصورة المصغرة غير صحيح', 'error');
+                return;
+            }
+
+            if (!state.data.freeCourses) state.data.freeCourses = [];
+
+            if (editingCourseId) {
+                const index = state.data.freeCourses.findIndex(c => c.id === editingCourseId);
+                if (index > -1) {
+                    state.data.freeCourses[index] = { ...state.data.freeCourses[index], ...data };
+                }
+                showAlert('✅ تم تحديث المحاضرة بنجاح', 'success');
+            } else {
+                state.data.freeCourses.push({
+                    id: 'lecture-' + Math.random().toString(36).substr(2, 9),
+                    ...data,
+                    createdAt: new Date().toISOString()
+                });
+                showAlert('✅ تمت إضافة المحاضرة بنجاح', 'success');
+            }
+
+            cancelEditCourse();
+            saveDataLocally();
+            syncEditorFromState();
+            renderCourses();
+        }
+
+        function editCourse(courseId) {
+            const course = (state.data.freeCourses || []).find(c => c.id === courseId);
+            if (!course) return;
+
+            editingCourseId = courseId;
+            populateSubjectSelect();
+
+            document.getElementById('course-teacher-name').value = course.teacherName || '';
+            document.getElementById('course-teacher-image').value = course.teacherImage || '';
+            document.getElementById('course-lecture-title').value = course.lectureTitle || '';
+            document.getElementById('course-subject').value = course.subject || '';
+            document.getElementById('course-duration').value = course.duration || '';
+            document.getElementById('course-category').value = course.category || '';
+            document.getElementById('course-embed-url').value = course.embedUrl || '';
+            document.getElementById('course-thumbnail').value = course.thumbnail || '';
+            document.getElementById('course-description').value = course.description || '';
+            document.getElementById('course-published').checked = course.published !== false;
+
+            document.getElementById('course-form-title').textContent = '✏️ تعديل المحاضرة';
+            document.getElementById('course-save-btn').textContent = '💾 حفظ التعديلات';
+            document.getElementById('course-cancel-edit-btn').style.display = 'inline-block';
+
+            document.getElementById('view-courses').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function cancelEditCourse() {
+            editingCourseId = null;
+            clearCourseForm();
+            document.getElementById('course-form-title').textContent = '➕ إضافة محاضرة جديدة';
+            document.getElementById('course-save-btn').textContent = '➕ إضافة المحاضرة';
+            document.getElementById('course-cancel-edit-btn').style.display = 'none';
+        }
+
+        function deleteCourse(courseId) {
+            if (!confirm('هل تريد حقاً حذف هذه المحاضرة؟')) return;
+            const index = (state.data.freeCourses || []).findIndex(c => c.id === courseId);
+            if (index > -1) {
+                state.data.freeCourses.splice(index, 1);
+                saveDataLocally();
+                syncEditorFromState();
+                renderCourses();
+                showAlert('✅ تم حذف المحاضرة بنجاح', 'success');
+            }
+        }
+
+        function toggleCoursePublished(courseId) {
+            const course = (state.data.freeCourses || []).find(c => c.id === courseId);
+            if (!course) return;
+            course.published = !course.published;
+            saveDataLocally();
+            syncEditorFromState();
+            renderCourses();
+            showAlert(course.published ? '✅ تم نشر المحاضرة' : '⛔ تم إخفاء المحاضرة', 'success');
+        }
+
+        function renderCourses() {
+            const tbody = document.getElementById('courses-tbody');
+            if (!tbody) return;
+
+            const courses = state.data.freeCourses || [];
+
+            if (!courses.length) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-muted); padding: 20px;">لا توجد محاضرات مضافة بعد</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = courses.map(course => `
+                <tr>
+                    <td><strong>${course.lectureTitle}</strong></td>
+                    <td>${course.teacherName}</td>
+                    <td>${course.subject || '—'}</td>
+                    <td>${course.published !== false ? '<span style="color:#10b981;">✅ منشور</span>' : '<span style="color: var(--status-suspended);">⛔ مخفي</span>'}</td>
+                    <td style="white-space:nowrap;">
+                        <button class="btn btn-secondary" onclick="editCourse('${course.id}')" title="تعديل">✏️</button>
+                        <button class="btn btn-secondary" onclick="toggleCoursePublished('${course.id}')" title="إظهار/إخفاء">👁️</button>
+                        <button class="btn btn-danger" onclick="deleteCourse('${course.id}')" title="حذف">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
         // ===== الطلاب =====
         function renderStudents() {
             const tbody = document.getElementById('all-students-tbody');
@@ -1685,6 +1949,7 @@
             renderSubjects();
             renderTeachers();
             renderBooks();
+            renderCourses();
         }
 
         function renderRecentTable() {
