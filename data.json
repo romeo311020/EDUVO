@@ -191,6 +191,30 @@
       "subjectName": "العربية",
       "url": "https://ellibrary.moe.gov.eg/EgyptianBaccalaureate/CoreSubjects/Arabic/",
       "description": "الصف الثاني الباكروليا - كتاب المدرسة 2026"
+    },
+    {
+      "id": "czb4rkyvi",
+      "title": "اللغة الأجنبية الأولى- اللغة الإنجليزية  - كتاب المدرسة",
+      "subjectId": "انجليزي",
+      "subjectName": "انجليزي",
+      "url": "https://ellibrary.moe.gov.eg/EgyptianBaccalaureate/CoreSubjects/FirstForeignLanguage/english/",
+      "description": "الصف الثاني الباكروليا - كتاب الدرسة"
+    },
+    {
+      "id": "2o9713o98",
+      "title": "الرياضيات - كتاب المدرسة",
+      "subjectId": "math",
+      "subjectName": "الرياضيات",
+      "url": "https://ellibrary.moe.gov.eg/EgyptianBaccalaureate/SpecializedSubjects/Medicine-LifeSciences/Mathematics/",
+      "description": "الصف الثاني الباكروليا - كتاب المدرسة"
+    },
+    {
+      "id": "n8ubidv6r",
+      "title": "الفيزياء- كتاب المدرسة",
+      "subjectId": "physics",
+      "subjectName": "الفيزياء",
+      "url": "https://ellibrary.moe.gov.eg/EgyptianBaccalaureate/SpecializedSubjects/Medicine-LifeSciences/Physics/",
+      "description": "الصف الثاني الباكروليا - كتاب المدرسة"
     }
   ],
   "freeCourses": [
