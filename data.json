@@ -157,6 +157,102 @@
       "photo": "https://i.postimg.cc/k431nMTp/images-(3).jpg",
       "style": "لو الأنجليزي مقلقك عبقري لغه هيلحقك\nمستر أحمد طارق هيساعدك بخبرة كبيرة، أفكار مبتكرة، واستراتيجيات مراجعة ذكية توصلك لأعلى الدرجات",
       "nextLesson": "الدرس القادم قريباً"
+    },
+    {
+      "id": "oj8c0o18q",
+      "name": "محمد عبد المعبود",
+      "specialty": "الفيزياء",
+      "subjectId": "physics",
+      "rating": 4.9,
+      "students": 1000,
+      "website": "https://abdelmaaboud.com/",
+      "photo": "https://i.postimg.cc/Bb2gnyh3/images-(4).jpg",
+      "style": "محمد عبدالمعبود، خبرة تتجاوز 27 سنة في تدريس الفيزياء للثانوية العامة، وآلاف الطلاب حققوا التفوق والدرجات النهائية.",
+      "nextLesson": "الدرس القادم قريباً"
+    },
+    {
+      "id": "odcnz4kqn",
+      "name": "م/ محمود مجدي",
+      "specialty": "الفيزياء",
+      "subjectId": "physics",
+      "rating": 4.9,
+      "students": 1000,
+      "website": "https://mahmoud-magdy.com/",
+      "photo": "https://i.postimg.cc/V6Q0kN2J/images-(5).jpg",
+      "style": "محمود مجدي: يقدم محتوى قوي ومبسط يناسب فهم كافة مستويات الطلاب.",
+      "nextLesson": "الدرس القادم قريباً"
+    },
+    {
+      "id": "v5ayrntlt",
+      "name": "محمد عبد الجواد",
+      "specialty": "الكيمياء",
+      "subjectId": "chem",
+      "rating": 4.9,
+      "students": 1000,
+      "website": "https://magacademy.co/",
+      "photo": "https://i.postimg.cc/Pf6f6xKw/images-(6).jpg",
+      "style": "يتميز الدانتيله بسلاسة وقدرته على توصيل النصوص المعقدة بطريقة مبسطة.",
+      "nextLesson": "الدرس القادم قريباً"
+    },
+    {
+      "id": "ab919mhyf",
+      "name": "الاسطرة  خالد صقر",
+      "specialty": "الكمياء",
+      "subjectId": "chem",
+      "rating": 4.9,
+      "students": 1000,
+      "website": "https://khaled-sakr.com/",
+      "photo": "https://i.postimg.cc/4dYGqvW7/images-(7).jpg",
+      "style": "الاسطورة - عرف شهادته وشرحه المفصل الذي يغطي جميع الأجزاء التجريبية",
+      "nextLesson": "الدرس القادم قريباً"
+    },
+    {
+      "id": "jrrdez64i",
+      "name": "الدكتور أحمد الجوهري",
+      "specialty": "الأحياء",
+      "subjectId": "biology",
+      "rating": 4.9,
+      "students": 1000,
+      "website": "https://ahmed-elgohary.com/",
+      "photo": "https://i.postimg.cc/xdKMHHKw/images-(8).jpg",
+      "style": "أكبر منصة تعليمية مصممة خصيصًا لطلاب المرحلة الثانوية العامة والأزهرية في مادتي العلوم وعلوم الأرض والعلوم المتكاملة",
+      "nextLesson": "الدرس القادم قريباً"
+    },
+    {
+      "id": "9b5gdv4b3",
+      "name": "مستر محمد أيمن",
+      "specialty": "الأحياء",
+      "subjectId": "biology",
+      "rating": 4.9,
+      "students": 1000,
+      "website": "https://mohammed-ayman.com/",
+      "photo": "https://i.postimg.cc/6qSyF5rz/images-(9).jpg",
+      "style": "مستر محمد أيمن : معروف بتبسيط المعلومة وأسلوب الشرح الممتع",
+      "nextLesson": "الدرس القادم قريباً"
+    },
+    {
+      "id": "nwgqury25",
+      "name": "مُستر أحمد السقا",
+      "specialty": "برمجة و ذكاء اصطناعي",
+      "subjectId": "برمجة-و-ذكاء-اصطناعي",
+      "rating": 4.9,
+      "students": 1000,
+      "website": "https://mrahmedelsaka.com/",
+      "photo": "https://i.postimg.cc/Zq2dWq2K/images-(13).jpg",
+      "style": ": يقدم دروساً مُبسطة وتفاعلية لتعليم برامج الهواة",
+      "nextLesson": "الدرس القادم قريباً"
+    },
+    {
+      "id": "sle3spdio",
+      "name": "مهندس محمد غنيم",
+      "specialty": "برمجه و ذكاء اصطناعي",
+      "subjectId": "برمجة-و-ذكاء-اصطناعي",
+      "rating": 4.9,
+      "students": 1000,
+      "website": "https://codingwithghonaim.com/",
+      "photo": "https://i.postimg.cc/1RpRQB9t/images-(10).jpg",
+      "style": "خبير في شرح مناهج البرمجة والذكاء الصناعي والكورسات المتقدمة لطلاب المرحلة الثانوية",
+      "nextLesson": "الدرس القادم قريباً"
     }
   ],
   "books": [
