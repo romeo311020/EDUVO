@@ -253,6 +253,30 @@
       "photo": "https://i.postimg.cc/1RpRQB9t/images-(10).jpg",
       "style": "خبير في شرح مناهج البرمجة والذكاء الصناعي والكورسات المتقدمة لطلاب المرحلة الثانوية",
       "nextLesson": "الدرس القادم قريباً"
+    },
+    {
+      "id": "ozjhtuyfp",
+      "name": "المورخ أحمد عادل",
+      "specialty": "تاريخ",
+      "subjectId": "تاريخ",
+      "rating": 4.9,
+      "students": 1000,
+      "website": "https://mr-ahmed-adel.com/",
+      "photo": "https://i.postimg.cc/4yzVkTWr/images-(12).jpg",
+      "style": "صاحب قناة \"كلام مؤرخين\" ومنصة بسّطتهالك",
+      "nextLesson": "الدرس القادم قريباً"
+    },
+    {
+      "id": "hry0uhqu9",
+      "name": "مصطفى عرفة",
+      "specialty": "تاريخ",
+      "subjectId": "تاريخ",
+      "rating": 4.9,
+      "students": 1000,
+      "website": "https://www.youtube.com/@-mostafaarafa4617",
+      "photo": "https://i.postimg.cc/MGKtW92T/images-(11).jpg",
+      "style": "شرح تفصيلي وأسلوب قريب - مجاني",
+      "nextLesson": "الدرس القادم قريباً"
     }
   ],
   "books": [
