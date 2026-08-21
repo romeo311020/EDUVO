@@ -323,6 +323,20 @@
       "description": "الكورس التأسيسي في البرمجة لطلاب أولى ثانوي بكالوريا دفعة 2027",
       "published": true,
       "createdAt": "2026-08-20T23:54:26.255Z"
+    },
+    {
+      "id": "lecture-k223apjm0",
+      "teacherName": "دكتور كيرلس - كيكه",
+      "teacherImage": "https://i.postimg.cc/cLy3HKRs/images-(1).jpg",
+      "lectureTitle": "المحاضرة التأسيسية الأولي في الفيزياء بكالوريا وعام وازهر/ الكورس التأسيسي 2027 / دكتور كيرلس فيزياء",
+      "subject": "الفيزياء",
+      "duration": "1:14:34",
+      "category": "تأسيس",
+      "embedUrl": "https://www.youtube.com/embed/wcO2dRxFdU4?si=2OkYtA9ZhtqWJuvF",
+      "thumbnail": "https://i.postimg.cc/pLZ5pZY5/Screenshot-2026-08-21-025529.png",
+      "description": "لكورس التأسيسي  في الفزياء 2027 / دكتور كيرلس فيزياء",
+      "published": true,
+      "createdAt": "2026-08-21T00:01:32.807Z"
     }
   ],
   "profiles": []
