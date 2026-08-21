@@ -2,10 +2,22 @@
 // يسمح بتثبيت التطبيق (Add to Home Screen) وبفتح الصفحات اللي زارها الطالب قبل كده حتى بدون إنترنت.
 // ملحوظة: البيانات الحيّة (data.json، المساعد الذكي، تسجيل الدخول بجوجل) لازالت تحتاج اتصال إنترنت فعلي.
 
-const CACHE_NAME = 'eduvo-cache-v1';
+const CACHE_NAME = 'eduvo-cache-v2';
 const CORE_ASSETS = [
   './index.html',
   './manifest.json',
+  './css/styles.css',
+  './js/app.js',
+  './screens/auth.html',
+  './screens/dashboard.html',
+  './screens/subjects.html',
+  './screens/subject-detail.html',
+  './screens/ai.html',
+  './screens/books.html',
+  './screens/planner.html',
+  './screens/courses.html',
+  './screens/lecture.html',
+  './screens/profile.html',
   './icons/icon-192.png',
   './icons/icon-512.png'
 ];
