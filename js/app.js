@@ -1,6 +1,6 @@
 // تحميل كل شاشة (قسم) من ملفها المنفصل جوه screens/ وحقنها داخل الحاوية الفاضية في index.html
 const SCREEN_NAMES = ['auth', 'dashboard', 'subjects', 'subject-detail', 'ai', 'books', 'planner', 'courses', 'lecture', 'profile'];
-
+ 
 async function loadScreens() {
   await Promise.all(SCREEN_NAMES.map(async (name) => {
     const el = document.getElementById('screen-' + name);
@@ -15,15 +15,15 @@ async function loadScreens() {
     }
   }));
 }
-
+ 
 const USERS_KEY = 'eduvo_users_v1';
     const SESSION_KEY = 'eduvo_session_v1';
     const SETTINGS_KEY = 'eduvo_settings_v1';
-
+ 
     // كل البيانات القابلة للتغيير (Client ID، المواد، المدرسين، الكتب) بقت في data.json
     // مفيش أي بيانات حساسة أو محتوى ثابت هنا في index.html خالص
-    let appConfig = { googleClientId: '', aiEndpoint: '', subjects: [], teachers: [], books: [], freeCourses: [], app: {} };
-
+    let appConfig = { googleClientId: '', aiEndpoint: '', supabaseUrl: '', supabaseAnonKey: '', subjects: [], teachers: [], books: [], freeCourses: [], app: {} };
+ 
     async function loadAppConfig() {
       try {
         const res = await fetch('data.json', { cache: 'no-store' });
@@ -40,14 +40,14 @@ const USERS_KEY = 'eduvo_users_v1';
         console.warn('تعذر تحميل data.json — تأكد إنه في نفس مجلد index.html', err);
       }
     }
-
+ 
     let googleSdkLoading = false;
-
+ 
     // بيانات المواد والمدرسين بقت في data.json
     let subjects = [];
-
+ 
     // بيانات الكتب بقت في data.json (appConfig.books)
-
+ 
     const aiKnowledge = {
       math: [
         { keywords: ['معادلة', 'المعادلات', 'مجهول'], reply: 'لحل معادلة من الدرجة الأولى: اجمع كل حدود المجهول في طرف والأعداد في الطرف الآخر، ثم اقسم على معامل المجهول. مثال: 2س + 4 = 10 → 2س = 6 → س = 3.' },
@@ -86,7 +86,7 @@ const USERS_KEY = 'eduvo_users_v1';
         { keywords: ['جهاز عصبي', 'خلية عصبية', 'عصبون'], reply: 'الجهاز العصبي بيتكون من المخ والحبل الشوكي والأعصاب، وبينقل الإشارات الكهربائية بين الخلايا العصبية (العصبونات) بسرعة كبيرة.' }
       ]
     };
-
+ 
     function tryCalculate(text) {
       const cleaned = text.replace(/[×xX]/g, '*').replace(/÷/g, '/');
       const arithMatch = cleaned.match(/^[\s\d+\-*/().]+$/);
@@ -100,36 +100,36 @@ const USERS_KEY = 'eduvo_users_v1';
       }
       return null;
     }
-
+ 
     function trySolveLinearEquation(text) {
       const normalized = text.replace(/×/g, '*').replace(/÷/g, '/');
       const match = normalized.match(/(-?\d*\.?\d*)\s*([a-zA-Zأ-ي])\s*([+-]\s*\d+\.?\d*)?\s*=\s*(-?\d+\.?\d*)/);
       if (!match) return null;
-
+ 
       let [, coefRaw, , addRaw, rhsRaw] = match;
       const coef = coefRaw === '' || coefRaw === '-' ? (coefRaw === '-' ? -1 : 1) : parseFloat(coefRaw);
       const add = addRaw ? parseFloat(addRaw.replace(/\s/g, '')) : 0;
       const rhs = parseFloat(rhsRaw);
-
+ 
       if (coef === 0 || isNaN(coef) || isNaN(rhs)) return null;
-
+ 
       const x = (rhs - add) / coef;
       return `حل المعادلة: المجهول = ${Number(x.toFixed(4)).toString().replace(/\.0+$/, '')}`;
     }
-
+ 
     function generateSmartReply(rawText) {
       const calcResult = tryCalculate(rawText);
       if (calcResult) return calcResult;
-
+ 
       const eqResult = trySolveLinearEquation(rawText);
       if (eqResult) return eqResult;
-
+ 
       const text = rawText.toLowerCase();
       const greetings = ['السلام عليكم', 'مرحبا', 'اهلا', 'أهلا', 'هاي', 'ازيك'];
       if (greetings.some(g => text.includes(g))) {
         return 'أهلاً بيك! اسألني عن أي موضوع في الرياضيات، الفيزياء، الكيمياء، العربية، أو الأحياء، أو اكتبلي عملية حسابية وهحلها لك.';
       }
-
+ 
       for (const subjectId in aiKnowledge) {
         for (const item of aiKnowledge[subjectId]) {
           if (item.keywords.some(k => text.includes(k))) {
@@ -137,39 +137,39 @@ const USERS_KEY = 'eduvo_users_v1';
           }
         }
       }
-
+ 
       return 'قسّم سؤالك لثلاث خطوات: (1) ما المطلوب بالضبط؟ (2) ما المعطيات المتاحة؟ (3) ما القانون أو القاعدة المناسبة؟ لو حددت مادة السؤال (رياضيات، فيزياء، كيمياء، عربي، أحياء) هقدر أساعدك بشكل أدق. تقدر كمان تكتب معادلة أو عملية حسابية وهحلها لك مباشرة.';
     }
-
+ 
     const state = { user: null };
-
+ 
     function getUsers() {
       try { return JSON.parse(localStorage.getItem(USERS_KEY) || '[]'); }
       catch { return []; }
     }
-
+ 
     function saveUsers(data) {
       localStorage.setItem(USERS_KEY, JSON.stringify(data));
     }
-
+ 
     function getSettings() {
       const defaults = { theme: 'dark', language: 'ar', layout: 'mobile' };
       try { return { ...defaults, ...JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}') }; }
       catch { return defaults; }
     }
-
+ 
     function saveSettings(data) {
       localStorage.setItem(SETTINGS_KEY, JSON.stringify(data));
     }
-
+ 
     function saveSession(user) {
       localStorage.setItem(SESSION_KEY, JSON.stringify(user));
     }
-
+ 
     function clearSession() {
       localStorage.removeItem(SESSION_KEY);
     }
-
+ 
     function showMessage(message, type = 'success') {
       const existing = document.querySelector('.toast');
       if (existing) existing.remove();
@@ -189,16 +189,16 @@ const USERS_KEY = 'eduvo_users_v1';
       document.body.appendChild(toast);
       setTimeout(() => toast.remove(), 2600);
     }
-
+ 
     function sanitizePhone(value) {
       return (value || '').replace(/[^0-9]/g, '');
     }
-
+ 
     function isValidPhone(phone) {
       const digits = sanitizePhone(phone);
       return /^(010|011|012|015)\d{8}$/.test(digits);
     }
-
+ 
     function authTab(tab) {
       const loginForm = document.getElementById('login-form');
       const signupForm = document.getElementById('signup-form');
@@ -209,7 +209,7 @@ const USERS_KEY = 'eduvo_users_v1';
       loginForm.style.display = tab === 'login' ? 'block' : 'none';
       signupForm.style.display = tab === 'signup' ? 'block' : 'none';
     }
-
+ 
     function applySettings() {
       const settings = getSettings();
       document.body.classList.toggle('light-theme', settings.theme === 'light');
@@ -218,7 +218,7 @@ const USERS_KEY = 'eduvo_users_v1';
       if (themeSelect) themeSelect.value = settings.theme;
       if (layoutSelect) layoutSelect.value = settings.layout;
     }
-
+ 
     function renderSubjects() {
       const container = document.getElementById('subjects-grid');
       if (!container) return;
@@ -230,18 +230,18 @@ const USERS_KEY = 'eduvo_users_v1';
           <div style="font-size:0.8rem; color: var(--accent-2); font-weight:700;">${subject.teachers.length} معلم/معلمة متاح</div>
         </div>
       `).join('');
-
+ 
       document.querySelectorAll('.subject-card').forEach(card => {
         card.addEventListener('click', () => showSubjectDetails(card.dataset.subjectId));
       });
     }
-
+ 
     function showSubjectDetails(subjectId) {
       const subject = subjects.find(item => item.id === subjectId);
       const container = document.getElementById('subject-detail-content');
       const title = document.getElementById('subject-detail-title');
       if (!subject || !container || !title) return;
-
+ 
       title.textContent = subject.name;
       container.innerHTML = `
         <div class="subject-feature">
@@ -276,10 +276,10 @@ const USERS_KEY = 'eduvo_users_v1';
           </div>
         </div>
       `;
-
+ 
       setActiveScreen('screen-subject-detail');
     }
-
+ 
     function setActiveScreen(screenId) {
       document.querySelectorAll('.screen').forEach(screen => screen.classList.toggle('active', screen.id === screenId));
       document.querySelectorAll('.nav-item, .sidebar-item').forEach(item => {
@@ -292,17 +292,17 @@ const USERS_KEY = 'eduvo_users_v1';
       closeGlobalSearchResults();
       closeMobileSidebar();
     }
-
+ 
     function openMobileSidebar() {
       document.querySelector('.sidebar')?.classList.add('mobile-open');
       document.getElementById('sidebar-overlay')?.classList.add('open');
     }
-
+ 
     function closeMobileSidebar() {
       document.querySelector('.sidebar')?.classList.remove('mobile-open');
       document.getElementById('sidebar-overlay')?.classList.remove('open');
     }
-
+ 
     function updateUserProfile() {
       if (!state.user) return;
       const name = state.user.fullName || 'اسم الطالب';
@@ -312,7 +312,7 @@ const USERS_KEY = 'eduvo_users_v1';
       document.getElementById('profile-grade').textContent = state.user.grade;
       document.getElementById('profile-avatar').textContent = name.trim().charAt(0) || 'ع';
     }
-
+ 
     function decodeJwtPayload(token) {
       try {
         const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
@@ -324,17 +324,19 @@ const USERS_KEY = 'eduvo_users_v1';
         return null;
       }
     }
-
+ 
     function loginOrCreateSocialUser(fullName, email, provider) {
       if (!email) {
         showMessage('❌ تعذر الحصول على البريد الإلكتروني من الحساب', 'error');
         return;
       }
-
+ 
       const users = getUsers();
       let user = users.find(item => item.email === email && item.provider === provider);
-
+      let isNewUser = false;
+ 
       if (!user) {
+        isNewUser = true;
         user = {
           id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
           fullName: fullName || 'مستخدم EDUVO',
@@ -347,15 +349,16 @@ const USERS_KEY = 'eduvo_users_v1';
         users.push(user);
         saveUsers(users);
       }
-
+ 
       state.user = user;
       saveSession(user);
       updateUserProfile();
       showMessage('✅ تم تسجيل الدخول بنجاح', 'success');
       setActiveScreen('screen-dashboard');
       ensureRemindersInterval();
+      if (isNewUser) syncStudentToSupabase(user, provider);
     }
-
+ 
     function handleGoogleCredentialResponse(response) {
       const payload = decodeJwtPayload(response.credential);
       if (!payload) {
@@ -364,7 +367,7 @@ const USERS_KEY = 'eduvo_users_v1';
       }
       loginOrCreateSocialUser(payload.name, payload.email, 'google');
     }
-
+ 
     function doGoogleLogin() {
       google.accounts.id.initialize({
         client_id: appConfig.googleClientId,
@@ -376,7 +379,7 @@ const USERS_KEY = 'eduvo_users_v1';
         }
       });
     }
-
+ 
     function triggerGoogleLogin() {
       if (!appConfig.googleClientId) {
         showMessage('❌ لم يتم ضبط googleClientId في data.json بعد', 'error');
@@ -388,7 +391,7 @@ const USERS_KEY = 'eduvo_users_v1';
       }
       if (googleSdkLoading) return;
       googleSdkLoading = true;
-
+ 
       const script = document.createElement('script');
       script.src = 'https://accounts.google.com/gsi/client';
       script.async = true;
@@ -400,14 +403,42 @@ const USERS_KEY = 'eduvo_users_v1';
       };
       document.head.appendChild(script);
     }
-
+ 
+    function syncStudentToSupabase(user, provider) {
+      if (!appConfig.supabaseUrl || !appConfig.supabaseAnonKey) {
+        console.warn('Supabase غير مفعّل بعد (supabaseUrl / supabaseAnonKey فاضيين في data.json) — بيانات الطالب اتحفظت محليًا بس.');
+        return;
+      }
+ 
+      fetch(`${appConfig.supabaseUrl}/rest/v1/students`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': appConfig.supabaseAnonKey,
+          'Authorization': `Bearer ${appConfig.supabaseAnonKey}`,
+          'Prefer': 'resolution=merge-duplicates,return=minimal'
+        },
+        body: JSON.stringify({
+          id: user.id,
+          full_name: user.fullName,
+          phone: user.phone || null,
+          email: user.email || null,
+          grade: user.grade || '',
+          provider: provider || 'phone',
+          status: 'active'
+        })
+      }).catch(err => {
+        console.warn('تعذر مزامنة بيانات الطالب مع Supabase (الطالب لسه محفوظ محليًا وقادر يستخدم الموقع عادي):', err);
+      });
+    }
+ 
     function handleSignup() {
       const name = document.getElementById('signup-name').value.trim();
       const phone = sanitizePhone(document.getElementById('signup-phone').value);
       const grade = document.getElementById('signup-grade').value;
       const password = document.getElementById('signup-password').value.trim();
       const confirm = document.getElementById('signup-confirm').value.trim();
-
+ 
       if (name.split(/\s+/).length < 3) {
         showMessage('❌ الرجاء إدخال الاسم الثلاثي الكامل', 'error');
         return;
@@ -424,13 +455,13 @@ const USERS_KEY = 'eduvo_users_v1';
         showMessage('❌ تأكيد كلمة المرور غير متطابق', 'error');
         return;
       }
-
+ 
       const users = getUsers();
       if (users.some(item => item.phone === phone)) {
         showMessage('❌ هذا الرقم مسجل مسبقاً', 'error');
         return;
       }
-
+ 
       const user = {
         id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
         fullName: name,
@@ -439,7 +470,7 @@ const USERS_KEY = 'eduvo_users_v1';
         password,
         createdAt: new Date().toISOString()
       };
-
+ 
       users.push(user);
       saveUsers(users);
       state.user = user;
@@ -448,12 +479,13 @@ const USERS_KEY = 'eduvo_users_v1';
       showMessage('✅ تم إنشاء الحساب بنجاح', 'success');
       setActiveScreen('screen-dashboard');
       ensureRemindersInterval();
+      syncStudentToSupabase(user, 'phone');
     }
-
+ 
     function handleLogin() {
       const phone = sanitizePhone(document.getElementById('login-phone').value);
       const password = document.getElementById('login-password').value.trim();
-
+ 
       if (!isValidPhone(phone)) {
         showMessage('❌ رقم الموبايل غير صحيح. مثال: 01027675035', 'error');
         return;
@@ -462,14 +494,14 @@ const USERS_KEY = 'eduvo_users_v1';
         showMessage('❌ أدخل كلمة المرور', 'error');
         return;
       }
-
+ 
       const users = getUsers();
       const match = users.find(item => item.phone === phone && item.password === password);
       if (!match) {
         showMessage('❌ رقم الموبايل أو كلمة المرور غير صحيحة', 'error');
         return;
       }
-
+ 
       state.user = match;
       saveSession(match);
       updateUserProfile();
@@ -477,7 +509,7 @@ const USERS_KEY = 'eduvo_users_v1';
       setActiveScreen('screen-dashboard');
       ensureRemindersInterval();
     }
-
+ 
     function handleLogout() {
       state.user = null;
       clearSession();
@@ -486,13 +518,13 @@ const USERS_KEY = 'eduvo_users_v1';
       showMessage('✅ تم تسجيل الخروج', 'success');
       setActiveScreen('screen-auth');
     }
-
+ 
     function renderBooksScreen() {
       const container = document.getElementById('books-container');
       if (!container) return;
-
+ 
       const books = appConfig.books || [];
-
+ 
       if (!books.length) {
         container.innerHTML = `
           <div class="glass-card" style="text-align:center; color: var(--muted);">
@@ -501,12 +533,12 @@ const USERS_KEY = 'eduvo_users_v1';
         `;
         return;
       }
-
+ 
       container.innerHTML = `
         <div class="grid-2">
           ${books.map((book, i) => `
             <div class="glass-card fade-in-up" style="animation-delay:${i * 0.06}s;">
-              <div style="font-size:2rem; margin-bottom:8px;">📘</div>
+              <div style="font-size:2rem; margin-bottom:8px;">📄</div>
               <div style="font-size:1.15rem; font-weight:800; margin-bottom:6px;">${book.title}</div>
               ${book.subjectName ? `<div style="color: var(--accent-2); font-weight:700; font-size:0.85rem; margin-bottom:8px;">${book.subjectName}</div>` : ''}
               ${book.description ? `<p style="color: var(--muted); line-height:1.7; margin-bottom:10px;">${book.description}</p>` : ''}
@@ -518,29 +550,29 @@ const USERS_KEY = 'eduvo_users_v1';
         </div>
       `;
     }
-
+ 
     const PLANNER_DAYS = ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
     const ARABIC_MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-
+ 
     // ===== أدوات مساعدة عامة =====
     function uid() {
       return crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2);
     }
-
+ 
     function todayISO() {
       const d = new Date();
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     }
-
+ 
     function getTodayArabicDay() {
       const map = { 6: 'السبت', 0: 'الأحد', 1: 'الاثنين', 2: 'الثلاثاء', 3: 'الأربعاء', 4: 'الخميس', 5: 'الجمعة' };
       return map[new Date().getDay()];
     }
-
+ 
     function formatArabicDate(date = new Date()) {
       return `${date.getDate()} ${ARABIC_MONTHS[date.getMonth()]} ${date.getFullYear()}`;
     }
-
+ 
     function formatMinutes(totalMinutes) {
       const m = Math.max(0, Math.round(totalMinutes));
       const h = Math.floor(m / 60);
@@ -549,11 +581,11 @@ const USERS_KEY = 'eduvo_users_v1';
       if (rem === 0) return `${h} ساعة`;
       return `${h} ساعة و${rem} دقيقة`;
     }
-
+ 
     function uidKey(base) {
       return `${base}_${state.user ? state.user.id : 'guest'}`;
     }
-
+ 
     // ===== تخزين المهام =====
     function loadPlannerTasks() {
       try {
@@ -563,11 +595,11 @@ const USERS_KEY = 'eduvo_users_v1';
         return [];
       }
     }
-
+ 
     function savePlannerTasks(tasks) {
       localStorage.setItem(uidKey('eduvo_planner'), JSON.stringify(tasks));
     }
-
+ 
     // ===== تخزين الهدف اليومي =====
     function loadDailyGoalMinutes() {
       try {
@@ -577,11 +609,11 @@ const USERS_KEY = 'eduvo_users_v1';
         return 180;
       }
     }
-
+ 
     function saveDailyGoalMinutes(minutes) {
       localStorage.setItem(uidKey('eduvo_goal'), JSON.stringify({ minutes }));
     }
-
+ 
     // ===== تخزين سجل جلسات المذاكرة (لحساب الإحصائيات والسلسلة) =====
     function loadSessions() {
       try {
@@ -591,18 +623,18 @@ const USERS_KEY = 'eduvo_users_v1';
         return [];
       }
     }
-
+ 
     function saveSessions(sessions) {
       localStorage.setItem(uidKey('eduvo_sessions'), JSON.stringify(sessions));
     }
-
+ 
     function logSession(taskId, subjectName, seconds) {
       if (seconds <= 0) return;
       const sessions = loadSessions();
       sessions.push({ date: todayISO(), taskId, subjectName: subjectName || 'عام', seconds });
       saveSessions(sessions);
     }
-
+ 
     // ===== تخزين المهام المكتملة (لكل تاريخ) =====
     function loadCompletions() {
       try {
@@ -612,11 +644,11 @@ const USERS_KEY = 'eduvo_users_v1';
         return [];
       }
     }
-
+ 
     function saveCompletions(list) {
       localStorage.setItem(uidKey('eduvo_completions'), JSON.stringify(list));
     }
-
+ 
     function markTaskCompleted(taskId) {
       const completions = loadCompletions();
       const already = completions.some(c => c.taskId === taskId && c.date === todayISO());
@@ -625,34 +657,34 @@ const USERS_KEY = 'eduvo_users_v1';
         saveCompletions(completions);
       }
     }
-
+ 
     function unmarkTaskCompleted(taskId) {
       const completions = loadCompletions().filter(c => !(c.taskId === taskId && c.date === todayISO()));
       saveCompletions(completions);
     }
-
+ 
     function isTaskCompletedToday(taskId) {
       return loadCompletions().some(c => c.taskId === taskId && c.date === todayISO());
     }
-
+ 
     // ===== أهداف اليوم / التقدم =====
     function getStudySecondsForDate(dateISO) {
       return loadSessions().filter(s => s.date === dateISO).reduce((sum, s) => sum + s.seconds, 0);
     }
-
+ 
     function isGoalMetOnDate(dateISO, goalMinutes) {
       return getStudySecondsForDate(dateISO) >= goalMinutes * 60;
     }
-
+ 
     // ===== سلسلة الإنجاز =====
     function computeStreak() {
       const goalMinutes = loadDailyGoalMinutes();
       const sessions = loadSessions();
       if (!sessions.length) return { current: 0, best: 0 };
-
+ 
       const dateSet = new Set(sessions.map(s => s.date));
       const sortedDates = [...dateSet].sort();
-
+ 
       // أفضل سلسلة عبر كل السجل
       let best = 0, run = 0, prevDate = null;
       sortedDates.forEach(dateStr => {
@@ -666,13 +698,13 @@ const USERS_KEY = 'eduvo_users_v1';
         best = Math.max(best, run);
         prevDate = dateStr;
       });
-
+ 
       // السلسلة الحالية (بالرجوع للخلف من اليوم)
       let current = 0;
       let cursor = new Date();
       const todayMet = isGoalMetOnDate(todayISO(), goalMinutes);
       if (!todayMet) cursor.setDate(cursor.getDate() - 1);
-
+ 
       while (true) {
         const iso = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}-${String(cursor.getDate()).padStart(2, '0')}`;
         if (isGoalMetOnDate(iso, goalMinutes)) {
@@ -682,10 +714,10 @@ const USERS_KEY = 'eduvo_users_v1';
           break;
         }
       }
-
+ 
       return { current, best: Math.max(best, current) };
     }
-
+ 
     // ===== المؤقت النشط (مقاوم لتحديث الصفحة والتنقل) =====
     function loadActiveTimer() {
       try {
@@ -695,7 +727,7 @@ const USERS_KEY = 'eduvo_users_v1';
         return null;
       }
     }
-
+ 
     function saveActiveTimer(timer) {
       if (timer) {
         localStorage.setItem(uidKey('eduvo_active_timer'), JSON.stringify(timer));
@@ -703,7 +735,7 @@ const USERS_KEY = 'eduvo_users_v1';
         localStorage.removeItem(uidKey('eduvo_active_timer'));
       }
     }
-
+ 
     function getRemainingSeconds(timer) {
       if (!timer) return 0;
       if (timer.status === 'running') {
@@ -712,24 +744,24 @@ const USERS_KEY = 'eduvo_users_v1';
       }
       return Math.max(0, timer.remainingAtPause);
     }
-
+ 
     let timerInterval = null;
-
+ 
     function startTimerTick() {
       if (timerInterval) return;
       timerInterval = setInterval(() => {
         const timer = loadActiveTimer();
         if (!timer || timer.status !== 'running') return;
-
+ 
         const remaining = getRemainingSeconds(timer);
         updateTimerDisplay(remaining);
-
+ 
         if (remaining <= 0) {
           finishTask(true);
         }
       }, 1000);
     }
-
+ 
     function updateTimerDisplay(seconds) {
       const el = document.getElementById('timer-display');
       if (!el) return;
@@ -737,7 +769,7 @@ const USERS_KEY = 'eduvo_users_v1';
       const s = seconds % 60;
       el.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
     }
-
+ 
     function openTimerModalForTask(task, timer) {
       document.getElementById('timer-task-title').textContent = task.title;
       const subject = subjects.find(s => s.id === task.subjectId);
@@ -747,12 +779,12 @@ const USERS_KEY = 'eduvo_users_v1';
       document.getElementById('timer-pause-btn').textContent = timer.status === 'running' ? '⏸ إيقاف مؤقت' : '▶ استئناف';
       document.getElementById('timer-modal-overlay').classList.add('open');
     }
-
+ 
     function startTask(taskId) {
       const tasks = loadPlannerTasks();
       const task = tasks.find(t => t.id === taskId);
       if (!task) return;
-
+ 
       let timer = loadActiveTimer();
       if (!timer || timer.taskId !== taskId) {
         timer = {
@@ -769,11 +801,11 @@ const USERS_KEY = 'eduvo_users_v1';
       openTimerModalForTask(task, timer);
       startTimerTick();
     }
-
+ 
     function togglePauseTimer() {
       const timer = loadActiveTimer();
       if (!timer) return;
-
+ 
       if (timer.status === 'running') {
         timer.remainingAtPause = getRemainingSeconds(timer);
         timer.status = 'paused';
@@ -784,11 +816,11 @@ const USERS_KEY = 'eduvo_users_v1';
       saveActiveTimer(timer);
       document.getElementById('timer-pause-btn').textContent = timer.status === 'running' ? '⏸ إيقاف مؤقت' : '▶ استئناف';
     }
-
+ 
     function finishTask(auto = false) {
       const timer = loadActiveTimer();
       if (!timer) return;
-
+ 
       const tasks = loadPlannerTasks();
       const task = tasks.find(t => t.id === timer.taskId);
       if (task) {
@@ -798,36 +830,36 @@ const USERS_KEY = 'eduvo_users_v1';
         logSession(task.id, subject ? subject.name : task.subjectName, elapsedSeconds);
         markTaskCompleted(task.id);
       }
-
+ 
       saveActiveTimer(null);
       document.getElementById('timer-modal-overlay').classList.remove('open');
-
+ 
       updateStreakAfterActivity();
       renderPlannerScreen();
       if (!auto) showMessage('✅ تم تسجيل المذاكرة، أحسنت!', 'success');
     }
-
+ 
     function updateStreakAfterActivity() {
       // إعادة الحساب تتم عند renderPlannerScreen تلقائيًا من خلال computeStreak()
     }
-
+ 
     // ===== نموذج إضافة / تعديل مهمة =====
     let editingTaskId = null;
-
+ 
     function populateTaskSubjectSelect() {
       const select = document.getElementById('task-subject');
       if (!select) return;
       select.innerHTML = '<option value="">بدون مادة محددة</option>' +
         subjects.map(s => `<option value="${s.id}">${s.icon} ${s.name}</option>`).join('');
     }
-
+ 
     function openTaskModal(taskId = null) {
       populateTaskSubjectSelect();
       editingTaskId = taskId;
-
+ 
       const titleEl = document.getElementById('task-modal-title');
       const saveBtn = document.getElementById('task-save-btn');
-
+ 
       if (taskId) {
         const task = loadPlannerTasks().find(t => t.id === taskId);
         if (!task) return;
@@ -853,15 +885,15 @@ const USERS_KEY = 'eduvo_users_v1';
         document.getElementById('task-reminder').value = '10';
         document.getElementById('task-notes').value = '';
       }
-
+ 
       document.getElementById('task-modal-overlay').classList.add('open');
     }
-
+ 
     function closeTaskModal() {
       document.getElementById('task-modal-overlay').classList.remove('open');
       editingTaskId = null;
     }
-
+ 
     function calcDurationMinutes(start, end) {
       const [sh, sm] = start.split(':').map(Number);
       const [eh, em] = end.split(':').map(Number);
@@ -869,7 +901,7 @@ const USERS_KEY = 'eduvo_users_v1';
       if (diff <= 0) diff += 24 * 60;
       return diff;
     }
-
+ 
     function saveTaskFromModal() {
       const subjectId = document.getElementById('task-subject').value;
       const title = document.getElementById('task-title').value.trim();
@@ -879,17 +911,17 @@ const USERS_KEY = 'eduvo_users_v1';
       const endTime = document.getElementById('task-end').value;
       const reminderMinutes = parseInt(document.getElementById('task-reminder').value, 10);
       const notes = document.getElementById('task-notes').value.trim();
-
+ 
       if (!title || !startTime || !endTime) {
         showMessage('❌ أدخل اسم المهمة ووقت البداية والنهاية', 'error');
         return;
       }
-
+ 
       const durationMinutes = calcDurationMinutes(startTime, endTime);
       const subject = subjects.find(s => s.id === subjectId);
-
+ 
       const tasks = loadPlannerTasks();
-
+ 
       if (editingTaskId) {
         const index = tasks.findIndex(t => t.id === editingTaskId);
         if (index !== -1) {
@@ -901,20 +933,20 @@ const USERS_KEY = 'eduvo_users_v1';
           startTime, endTime, durationMinutes, reminderMinutes, notes
         });
       }
-
+ 
       savePlannerTasks(tasks);
       closeTaskModal();
       renderPlannerScreen();
       showMessage(editingTaskId ? '✅ تم حفظ التعديلات' : '✅ تمت إضافة المهمة لجدولك', 'success');
     }
-
+ 
     function deleteTaskById(id) {
       if (!confirm('هل تريد حذف هذه المهمة؟')) return;
       const tasks = loadPlannerTasks().filter(t => t.id !== id);
       savePlannerTasks(tasks);
       renderPlannerScreen();
     }
-
+ 
     function toggleTaskDoneDirect(id) {
       if (isTaskCompletedToday(id)) {
         unmarkTaskCompleted(id);
@@ -923,11 +955,11 @@ const USERS_KEY = 'eduvo_users_v1';
       }
       renderPlannerScreen();
     }
-
+ 
     // ===== التذكيرات =====
     let remindersEnabled = false;
     const firedReminders = new Set();
-
+ 
     function enableReminders() {
       if (!('Notification' in window)) {
         showMessage('⚠️ المتصفح ده مش بيدعم الإشعارات', 'error');
@@ -942,28 +974,28 @@ const USERS_KEY = 'eduvo_users_v1';
         }
       });
     }
-
+ 
     let remindersIntervalStarted = false;
     function ensureRemindersInterval() {
       if (remindersIntervalStarted) return;
       remindersIntervalStarted = true;
       setInterval(checkReminders, 30000);
     }
-
+ 
     function checkReminders() {
       const tasks = getTodayTasksSorted();
       const now = new Date();
-
+ 
       tasks.forEach(task => {
         if (!task.reminderMinutes) return;
         const key = `${task.id}_${todayISO()}`;
         if (firedReminders.has(key)) return;
-
+ 
         const [h, m] = task.startTime.split(':').map(Number);
         const taskStart = new Date();
         taskStart.setHours(h, m, 0, 0);
         const reminderTime = new Date(taskStart.getTime() - task.reminderMinutes * 60000);
-
+ 
         if (now >= reminderTime && now < taskStart) {
           firedReminders.add(key);
           const msg = `🔔 بعد ${task.reminderMinutes} دقائق تبدأ مذاكرة ${task.subjectName || task.title}`;
@@ -975,7 +1007,7 @@ const USERS_KEY = 'eduvo_users_v1';
         }
       });
     }
-
+ 
     // ===== جلب مهام اليوم =====
     function getTodayTasksSorted() {
       const today = getTodayArabicDay();
@@ -983,7 +1015,7 @@ const USERS_KEY = 'eduvo_users_v1';
         .filter(t => t.day === today)
         .sort((a, b) => a.startTime.localeCompare(b.startTime));
     }
-
+ 
     // ===== العرض الرئيسي لصفحة خطتي =====
     function renderPlannerScreen() {
       renderPlannerHeader();
@@ -993,7 +1025,7 @@ const USERS_KEY = 'eduvo_users_v1';
       renderPlannerStats();
       renderStreakCard();
       renderFullPlannerList();
-
+ 
       // إعادة فتح المؤقت لو فيه مهمة نشطة (المؤقت لا يفقد وقته عند التنقل)
       const activeTimer = loadActiveTimer();
       if (activeTimer) {
@@ -1003,7 +1035,7 @@ const USERS_KEY = 'eduvo_users_v1';
         }
       }
     }
-
+ 
     function renderPlannerHeader() {
       const name = state.user ? (state.user.fullName || '').split(' ')[0] : '';
       const greetingEl = document.getElementById('planner-greeting');
@@ -1012,19 +1044,19 @@ const USERS_KEY = 'eduvo_users_v1';
       const today = new Date();
       if (dateEl) dateEl.textContent = `${getTodayArabicDay()}، ${formatArabicDate(today)}`;
     }
-
+ 
     function renderGoalCard() {
       const goalMinutes = loadDailyGoalMinutes();
       const studiedSeconds = getStudySecondsForDate(todayISO());
       const studiedMinutes = studiedSeconds / 60;
       const percent = goalMinutes > 0 ? Math.min(100, Math.round((studiedMinutes / goalMinutes) * 100)) : 0;
-
+ 
       const optionsEl = document.getElementById('goal-options');
       const presets = [60, 120, 180];
       optionsEl.innerHTML = presets.map(p => `
         <button type="button" class="goal-chip ${goalMinutes === p ? 'active' : ''}" data-goal="${p}">${p === 60 ? 'ساعة' : (p / 60) + ' ساعات'}</button>
       `).join('') + `<button type="button" class="goal-chip" id="custom-goal-btn">⚙️ مخصص</button>`;
-
+ 
       optionsEl.querySelectorAll('[data-goal]').forEach(btn => {
         btn.addEventListener('click', () => {
           saveDailyGoalMinutes(parseInt(btn.dataset.goal, 10));
@@ -1039,14 +1071,14 @@ const USERS_KEY = 'eduvo_users_v1';
           renderPlannerScreen();
         }
       });
-
+ 
       document.getElementById('goal-progress-bar').style.width = `${percent}%`;
       const exceeded = studiedMinutes > goalMinutes;
       document.getElementById('goal-progress-text').textContent = exceeded
         ? `🎉 تجاوزت هدفك! ${formatMinutes(studiedMinutes)} من ${formatMinutes(goalMinutes)}`
         : `${formatMinutes(studiedMinutes)} من ${formatMinutes(goalMinutes)} (${percent}%)`;
     }
-
+ 
     function renderTodaySummary() {
       const tasks = getTodayTasksSorted();
       const completedCount = tasks.filter(t => isTaskCompletedToday(t.id)).length;
@@ -1054,7 +1086,7 @@ const USERS_KEY = 'eduvo_users_v1';
       const studiedSeconds = getStudySecondsForDate(todayISO());
       const goalMinutes = loadDailyGoalMinutes();
       const percent = goalMinutes > 0 ? Math.min(100, Math.round((studiedSeconds / 60 / goalMinutes) * 100)) : 0;
-
+ 
       const el = document.getElementById('today-summary');
       el.innerHTML = `
         <div class="summary-tile"><div class="st-num">📚 ${tasks.length}</div><div class="st-label">مهام اليوم</div></div>
@@ -1063,18 +1095,18 @@ const USERS_KEY = 'eduvo_users_v1';
         <div class="summary-tile"><div class="st-num">🎯 ${percent}%</div><div class="st-label">من الهدف اليومي</div></div>
       `;
     }
-
+ 
     function renderTodayTasks() {
       const container = document.getElementById('today-tasks-list');
       const tasks = getTodayTasksSorted();
-
+ 
       if (!tasks.length) {
         container.innerHTML = `<div class="glass-card fade-in-up" style="text-align:center; color: var(--muted);">مفيش مهام مجدولة النهاردة. دوس "مهمة جديدة" وابدأ خطتك.</div>`;
         return;
       }
-
+ 
       const activeTimer = loadActiveTimer();
-
+ 
       container.innerHTML = tasks.map((task, i) => {
         const subject = subjects.find(s => s.id === task.subjectId);
         const done = isTaskCompletedToday(task.id);
@@ -1087,7 +1119,7 @@ const USERS_KEY = 'eduvo_users_v1';
         } else {
           actionBtn = `<button type="button" class="btn-primary" data-start-id="${task.id}" style="width:auto; padding:8px 16px;">▶ ابدأ المذاكرة</button>`;
         }
-
+ 
         return `
           <div class="task-card fade-in-up ${done ? 'done' : ''}" style="animation-delay:${i * 0.05}s;">
             <div style="display:flex; gap:14px; align-items:center;">
@@ -1106,7 +1138,7 @@ const USERS_KEY = 'eduvo_users_v1';
           </div>
         `;
       }).join('');
-
+ 
       container.querySelectorAll('[data-start-id]').forEach(btn => btn.addEventListener('click', () => startTask(btn.dataset.startId)));
       container.querySelectorAll('[data-resume-id]').forEach(btn => btn.addEventListener('click', () => {
         const timer = loadActiveTimer();
@@ -1117,20 +1149,20 @@ const USERS_KEY = 'eduvo_users_v1';
       container.querySelectorAll('[data-edit-id]').forEach(btn => btn.addEventListener('click', () => openTaskModal(btn.dataset.editId)));
       container.querySelectorAll('[data-delete-id]').forEach(btn => btn.addEventListener('click', () => deleteTaskById(btn.dataset.deleteId)));
     }
-
+ 
     function renderPlannerStats() {
       const sessions = loadSessions();
       const now = new Date();
       const weekAgo = new Date();
       weekAgo.setDate(now.getDate() - 6);
-
+ 
       const weekSessions = sessions.filter(s => new Date(s.date) >= new Date(weekAgo.toDateString()));
       const weekSeconds = weekSessions.reduce((sum, s) => sum + s.seconds, 0);
-
+ 
       const totalTasksCount = loadPlannerTasks().length;
       const weekCompletions = loadCompletions().filter(c => new Date(c.date) >= new Date(weekAgo.toDateString()));
       const uniqueCompleted = new Set(weekCompletions.map(c => c.taskId)).size;
-
+ 
       const subjectTotals = {};
       sessions.forEach(s => {
         subjectTotals[s.subjectName] = (subjectTotals[s.subjectName] || 0) + s.seconds;
@@ -1139,7 +1171,7 @@ const USERS_KEY = 'eduvo_users_v1';
       Object.keys(subjectTotals).forEach(name => {
         if (subjectTotals[name] > topSeconds) { topSeconds = subjectTotals[name]; topSubject = name; }
       });
-
+ 
       const el = document.getElementById('planner-stats');
       el.innerHTML = `
         <div class="glass-card" style="text-align:center;">
@@ -1160,7 +1192,7 @@ const USERS_KEY = 'eduvo_users_v1';
         </div>
       `;
     }
-
+ 
     function renderStreakCard() {
       const { current, best } = computeStreak();
       const el = document.getElementById('streak-card');
@@ -1180,24 +1212,24 @@ const USERS_KEY = 'eduvo_users_v1';
         </div>
       `;
     }
-
+ 
     function renderFullPlannerList() {
       const container = document.getElementById('planner-list');
       const tasks = loadPlannerTasks();
-
+ 
       if (!tasks.length) {
         container.innerHTML = `<div class="glass-card fade-in-up" style="text-align:center; color: var(--muted);">جدولك فاضي حالياً. أضف أول مهمة من زر "مهمة جديدة" فوق.</div>`;
         return;
       }
-
+ 
       const sorted = [...tasks].sort((a, b) => {
         const dayDiff = PLANNER_DAYS.indexOf(a.day) - PLANNER_DAYS.indexOf(b.day);
         return dayDiff !== 0 ? dayDiff : a.startTime.localeCompare(b.startTime);
       });
-
+ 
       const grouped = {};
       sorted.forEach(t => { (grouped[t.day] = grouped[t.day] || []).push(t); });
-
+ 
       container.innerHTML = Object.keys(grouped).map((day, i) => `
         <div class="glass-card fade-in-up" style="animation-delay:${i * 0.05}s;">
           <h4 style="margin-bottom:10px; color: var(--accent-2);">${day}</h4>
@@ -1215,35 +1247,35 @@ const USERS_KEY = 'eduvo_users_v1';
           }).join('')}
         </div>
       `).join('');
-
+ 
       container.querySelectorAll('[data-edit-id2]').forEach(btn => btn.addEventListener('click', () => openTaskModal(btn.dataset.editId2)));
       container.querySelectorAll('[data-delete-id2]').forEach(btn => btn.addEventListener('click', () => deleteTaskById(btn.dataset.deleteId2)));
     }
-
+ 
     // ===== خطة مقترحة من EDUVO AI =====
     const pendingAiPlans = {};
-
+ 
     function tryGenerateStudyPlan(message) {
       if (!message.includes('امتحان')) return null;
-
+ 
       const dayMatch = PLANNER_DAYS.find(d => message.includes(d));
       if (!dayMatch) return null;
-
+ 
       const subjectMatch = subjects.find(s => message.includes(s.name.replace('ال', '')) || message.includes(s.name));
       const lessonsMatch = message.match(/(\d+)\s*دروس|(\d+)\s*درس/);
       const lessonsCount = lessonsMatch ? parseInt(lessonsMatch[1] || lessonsMatch[2], 10) : 2;
-
+ 
       const todayIndex = PLANNER_DAYS.indexOf(getTodayArabicDay());
       const examIndex = PLANNER_DAYS.indexOf(dayMatch);
       let daysUntilExam = examIndex - todayIndex;
       if (daysUntilExam <= 0) daysUntilExam += 7;
-
+ 
       const availableDays = [];
       for (let i = 1; i < daysUntilExam; i++) {
         availableDays.push(PLANNER_DAYS[(todayIndex + i) % 7]);
       }
       if (!availableDays.length) availableDays.push(PLANNER_DAYS[todayIndex]);
-
+ 
       const planDays = [];
       let lessonsLeft = lessonsCount;
       availableDays.forEach((day, i) => {
@@ -1256,7 +1288,7 @@ const USERS_KEY = 'eduvo_users_v1';
         }
         planDays.push({ day, items });
       });
-
+ 
       const planId = uid();
       pendingAiPlans[planId] = {
         subjectId: subjectMatch ? subjectMatch.id : '',
@@ -1264,15 +1296,15 @@ const USERS_KEY = 'eduvo_users_v1';
         examDay: dayMatch,
         days: planDays
       };
-
+ 
       return planId;
     }
-
+ 
     function renderAiPlanCard(planId) {
       const plan = pendingAiPlans[planId];
       if (!plan) return '';
       return `
-        <div style="margin-top:10px; padding:12px; background:rgba(0,210,255,0.06); border:1px solid rgba(0,210,255,0.2); border-radius:12px;">
+        <div style="margin-top:10px; padding:12px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.2); border-radius:12px;">
           <div style="font-weight:800; margin-bottom:8px;">📋 خطة مذاكرة مقترحة ${plan.subjectName ? '(' + plan.subjectName + ')' : ''} قبل امتحان ${plan.examDay}</div>
           ${plan.days.map(d => `
             <div style="margin-bottom:6px;">
@@ -1284,11 +1316,11 @@ const USERS_KEY = 'eduvo_users_v1';
         </div>
       `;
     }
-
+ 
     function addAiPlanToPlanner(planId) {
       const plan = pendingAiPlans[planId];
       if (!plan) return;
-
+ 
       const tasks = loadPlannerTasks();
       plan.days.forEach(d => {
         d.items.forEach(it => {
@@ -1311,18 +1343,18 @@ const USERS_KEY = 'eduvo_users_v1';
           });
         });
       });
-
+ 
       savePlannerTasks(tasks);
       showMessage('✅ تمت إضافة الخطة كاملة إلى جدولك', 'success');
     }
-
+ 
     function applyAppConfigToUI() {
       const alertEl = document.getElementById('dashboard-alert');
       if (alertEl && appConfig.app && appConfig.app.announcement) {
         alertEl.textContent = appConfig.app.announcement;
       }
     }
-
+ 
     // ===== البحث الشامل (Global Search) =====
     function normalizeArabic(str) {
       return (str || '')
@@ -1335,7 +1367,7 @@ const USERS_KEY = 'eduvo_users_v1';
         .trim()
         .toLowerCase();
     }
-
+ 
     function levenshtein(a, b) {
       const m = a.length, n = b.length;
       if (!m) return n;
@@ -1351,44 +1383,44 @@ const USERS_KEY = 'eduvo_users_v1';
       }
       return d[m][n];
     }
-
+ 
     function buildSearchIndex() {
       const index = [];
-
+ 
       subjects.forEach(s => {
         index.push({ type: 'مواد', icon: s.icon, label: s.name, sub: s.description, action: () => { setActiveScreen('screen-subjects'); showSubjectDetails(s.id); } });
         (s.teachers || []).forEach(t => {
           index.push({ type: 'المدرسون', icon: '👨‍🏫', label: t.name, sub: s.name, action: () => { setActiveScreen('screen-subjects'); showSubjectDetails(s.id); } });
         });
       });
-
+ 
       (appConfig.books || []).forEach(b => {
         index.push({ type: 'الكتب', icon: '📖', label: b.title, sub: b.subjectName || '', action: () => setActiveScreen('screen-books') });
       });
-
+ 
       (appConfig.freeCourses || []).filter(c => c.published !== false).forEach(c => {
         index.push({ type: 'كورسات مجانية', icon: '🎓', label: c.lectureTitle, sub: `${c.teacherName} — ${c.subject || ''}`, action: () => openLecture(c.id) });
       });
-
+ 
       loadPlannerTasks().forEach(t => {
         index.push({ type: 'المهام والجدول', icon: '📅', label: t.title, sub: `${t.day} — ${t.startTime}`, action: () => setActiveScreen('screen-planner') });
       });
-
+ 
       return index;
     }
-
+ 
     function searchIndex(query) {
       const normQuery = normalizeArabic(query);
       if (!normQuery) return [];
-
+ 
       const index = buildSearchIndex();
       const results = [];
-
+ 
       index.forEach(entry => {
         const normLabel = normalizeArabic(entry.label);
         const normSub = normalizeArabic(entry.sub);
         let score = -1;
-
+ 
         if (normLabel.includes(normQuery) || normQuery.includes(normLabel)) {
           score = 100 - Math.abs(normLabel.length - normQuery.length);
         } else if (normSub.includes(normQuery)) {
@@ -1400,20 +1432,20 @@ const USERS_KEY = 'eduvo_users_v1';
             score = 40 - minDist * 5;
           }
         }
-
+ 
         if (score > 0) results.push({ ...entry, score });
       });
-
+ 
       return results.sort((a, b) => b.score - a.score);
     }
-
+ 
     let searchDebounceTimer = null;
-
+ 
     function setupGlobalSearch() {
       const input = document.getElementById('global-search-input');
       const resultsBox = document.getElementById('global-search-results');
       if (!input) return;
-
+ 
       input.addEventListener('input', () => {
         clearTimeout(searchDebounceTimer);
         searchDebounceTimer = setTimeout(() => {
@@ -1422,30 +1454,30 @@ const USERS_KEY = 'eduvo_users_v1';
           renderGlobalSearchResults(searchIndex(query), query);
         }, 150);
       });
-
+ 
       document.addEventListener('click', (e) => {
         if (!e.target.closest('#global-topbar')) closeGlobalSearchResults();
       });
     }
-
+ 
     function closeGlobalSearchResults() {
       const box = document.getElementById('global-search-results');
       if (box) box.classList.remove('open');
     }
-
+ 
     function renderGlobalSearchResults(results, query) {
       const box = document.getElementById('global-search-results');
       if (!box) return;
-
+ 
       if (!results.length) {
         box.innerHTML = `<div class="search-empty-state">لا توجد نتائج لـ "${query}"</div>`;
         box.classList.add('open');
         return;
       }
-
+ 
       const grouped = {};
       results.slice(0, 30).forEach(r => { (grouped[r.type] = grouped[r.type] || []).push(r); });
-
+ 
       box.innerHTML = Object.keys(grouped).map(type => `
         <div class="search-group-label">${type}</div>
         ${grouped[type].slice(0, 5).map((r, i) => `
@@ -1458,9 +1490,9 @@ const USERS_KEY = 'eduvo_users_v1';
           </div>
         `).join('')}
       `).join('');
-
+ 
       box.classList.add('open');
-
+ 
       box.querySelectorAll('[data-result-index]').forEach(item => {
         item.addEventListener('click', () => {
           const result = results[parseInt(item.dataset.resultIndex, 10)];
@@ -1470,12 +1502,12 @@ const USERS_KEY = 'eduvo_users_v1';
         });
       });
     }
-
+ 
     // ===== الكورسات المجانية =====
     function courseProgressKey() {
       return uidKey('eduvo_course_progress');
     }
-
+ 
     function loadCourseProgress() {
       try {
         const raw = localStorage.getItem(courseProgressKey());
@@ -1484,35 +1516,35 @@ const USERS_KEY = 'eduvo_users_v1';
         return {};
       }
     }
-
+ 
     function saveCourseProgress(progress) {
       localStorage.setItem(courseProgressKey(), JSON.stringify(progress));
     }
-
+ 
     function setCourseStatus(courseId, status) {
       const progress = loadCourseProgress();
       progress[courseId] = status;
       saveCourseProgress(progress);
     }
-
+ 
     function renderCoursesScreen() {
       const container = document.getElementById('courses-container');
       const courses = (appConfig.freeCourses || []).filter(c => c.published !== false);
-
+ 
       if (!courses.length) {
         container.innerHTML = `<div class="glass-card" style="text-align:center; color: var(--muted);">لا توجد محاضرات مجانية متاحة حاليًا.</div>`;
         return;
       }
-
+ 
       const grouped = {};
       courses.forEach(c => { (grouped[c.teacherName] = grouped[c.teacherName] || []).push(c); });
-
+ 
       const progress = loadCourseProgress();
-
+ 
       container.innerHTML = Object.keys(grouped).map((teacherName, gi) => `
         <div style="margin-bottom: 28px;">
           <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-            <img src="${grouped[teacherName][0].teacherImage || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80'}" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80'" style="width:42px; height:42px; border-radius:50%; object-fit:cover; border:2px solid rgba(0,210,255,0.25);" loading="lazy" />
+            <img src="${grouped[teacherName][0].teacherImage || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80'}" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80'" style="width:42px; height:42px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.25);" loading="lazy" />
             <h4>${teacherName}</h4>
           </div>
           <div class="grid-2">
@@ -1536,33 +1568,33 @@ const USERS_KEY = 'eduvo_users_v1';
           </div>
         </div>
       `).join('');
-
+ 
       container.querySelectorAll('[data-open-lecture]').forEach(btn => {
         btn.addEventListener('click', () => openLecture(btn.dataset.openLecture));
       });
     }
-
+ 
     function openLecture(courseId) {
       const course = (appConfig.freeCourses || []).find(c => String(c.id) === String(courseId));
       if (!course) return;
-
+ 
       const progress = loadCourseProgress();
       if (!progress[courseId] || progress[courseId] === 'new') {
         setCourseStatus(courseId, 'watching');
       }
-
+ 
       setActiveScreen('screen-lecture');
       renderLectureScreen(course);
     }
-
+ 
     function renderLectureScreen(course) {
       const container = document.getElementById('lecture-content');
       const status = loadCourseProgress()[course.id] || 'watching';
-
+ 
       const playerHtml = course.embedUrl
         ? `<div class="lecture-player-chrome"><iframe src="${course.embedUrl}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>`
         : `<div class="glass-card" style="text-align:center; color: var(--muted); padding: 60px 20px;">رابط الفيديو غير متاح حاليًا لهذه المحاضرة.</div>`;
-
+ 
       container.innerHTML = `
         ${playerHtml}
         <div class="glass-card fade-in-up" style="margin-top:16px;">
@@ -1580,7 +1612,7 @@ const USERS_KEY = 'eduvo_users_v1';
           </button>
         </div>
       `;
-
+ 
       const markBtn = document.getElementById('mark-watched-btn');
       if (markBtn && status !== 'watched') {
         markBtn.addEventListener('click', () => {
@@ -1591,7 +1623,7 @@ const USERS_KEY = 'eduvo_users_v1';
         });
       }
     }
-
+ 
     function toggleEditProfile() {
       const form = document.getElementById('edit-profile-form');
       const isOpen = form.style.display === 'block';
@@ -1601,17 +1633,17 @@ const USERS_KEY = 'eduvo_users_v1';
       }
       form.style.display = isOpen ? 'none' : 'block';
     }
-
+ 
     function saveProfileEdits() {
       if (!state.user) return;
       const name = document.getElementById('edit-profile-name').value.trim();
       const grade = document.getElementById('edit-profile-grade').value;
-
+ 
       if (name.split(/\s+/).length < 3) {
         showMessage('❌ الرجاء إدخال الاسم الثلاثي الكامل', 'error');
         return;
       }
-
+ 
       const users = getUsers();
       const index = users.findIndex(item => item.id === state.user.id);
       if (index !== -1) {
@@ -1625,19 +1657,19 @@ const USERS_KEY = 'eduvo_users_v1';
         showMessage('✅ تم تحديث بياناتك بنجاح', 'success');
       }
     }
-
+ 
     function setupNavigation() {
       document.querySelectorAll('.auth-tab').forEach(button => {
         button.addEventListener('click', () => authTab(button.dataset.authTab));
       });
-
+ 
       document.getElementById('login-btn').addEventListener('click', handleLogin);
       document.getElementById('signup-btn').addEventListener('click', handleSignup);
       document.getElementById('google-login-btn').addEventListener('click', triggerGoogleLogin);
       document.getElementById('google-signup-btn').addEventListener('click', triggerGoogleLogin);
       document.getElementById('edit-profile-toggle').addEventListener('click', toggleEditProfile);
       document.getElementById('save-profile-btn').addEventListener('click', saveProfileEdits);
-
+ 
       document.getElementById('open-add-task-btn').addEventListener('click', () => openTaskModal());
       document.getElementById('task-modal-close').addEventListener('click', closeTaskModal);
       document.getElementById('task-save-btn').addEventListener('click', saveTaskFromModal);
@@ -1645,30 +1677,30 @@ const USERS_KEY = 'eduvo_users_v1';
       document.getElementById('timer-finish-btn').addEventListener('click', () => finishTask(false));
       document.getElementById('enable-reminders-btn').addEventListener('click', enableReminders);
       document.getElementById('lecture-back-btn').addEventListener('click', () => setActiveScreen('screen-courses'));
-
+ 
       setupGlobalSearch();
-
+ 
       document.getElementById('logout-btn').addEventListener('click', handleLogout);
       document.getElementById('back-to-subjects').addEventListener('click', () => setActiveScreen('screen-subjects'));
       document.getElementById('send-ai').addEventListener('click', sendAiMessage);
       document.getElementById('ai-input').addEventListener('keydown', (event) => {
         if (event.key === 'Enter') sendAiMessage();
       });
-
+ 
       document.getElementById('theme-select').addEventListener('change', (event) => {
         const settings = getSettings();
         settings.theme = event.target.value;
         saveSettings(settings);
         applySettings();
       });
-
+ 
       document.getElementById('layout-select').addEventListener('change', (event) => {
         const settings = getSettings();
         settings.layout = event.target.value;
         saveSettings(settings);
         applySettings();
       });
-
+ 
       document.querySelectorAll('[data-target]').forEach(item => {
         item.addEventListener('click', () => {
           const target = item.dataset.target;
@@ -1684,27 +1716,27 @@ const USERS_KEY = 'eduvo_users_v1';
         });
       });
     }
-
+ 
     function sendAiMessage() {
       const input = document.getElementById('ai-input');
       const value = input.value.trim();
       if (!value) return;
-
+ 
       const box = document.getElementById('chat-box');
-
+ 
       const userBubble = document.createElement('div');
       userBubble.className = 'chat-bubble chat-user';
       userBubble.textContent = value;
       box.appendChild(userBubble);
-
+ 
       const answerBubble = document.createElement('div');
       answerBubble.className = 'chat-bubble chat-ai';
       answerBubble.textContent = 'جارِ التفكير...';
       box.appendChild(answerBubble);
-
+ 
       input.value = '';
       box.scrollTop = box.scrollHeight;
-
+ 
       // كشف طلبات خطة مذاكرة قبل امتحان (مثال: "عندي امتحان فيزياء يوم الخميس")
       const planId = state.user ? tryGenerateStudyPlan(value) : null;
       if (planId) {
@@ -1713,7 +1745,7 @@ const USERS_KEY = 'eduvo_users_v1';
         box.scrollTop = box.scrollHeight;
         return;
       }
-
+ 
       // لو الـ aiEndpoint متفعّل في data.json مستقبلاً (ذكاء اصطناعي حقيقي)، استخدمه بدل الرد المحلي
       if (appConfig.aiEndpoint) {
         fetch(appConfig.aiEndpoint, {
@@ -1732,13 +1764,13 @@ const USERS_KEY = 'eduvo_users_v1';
           });
         return;
       }
-
+ 
       setTimeout(() => {
         answerBubble.textContent = generateSmartReply(value);
         box.scrollTop = box.scrollHeight;
       }, 500);
     }
-
+ 
     function wireAiPlanButtons(container) {
       container.querySelectorAll('[data-add-plan-id]').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1748,7 +1780,7 @@ const USERS_KEY = 'eduvo_users_v1';
         });
       });
     }
-
+ 
     function restoreSession() {
       try {
         const saved = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
@@ -1763,7 +1795,7 @@ const USERS_KEY = 'eduvo_users_v1';
         state.user = null;
       }
     }
-
+ 
     document.addEventListener('DOMContentLoaded', async () => {
       await loadScreens();
       await loadAppConfig();
@@ -1773,7 +1805,7 @@ const USERS_KEY = 'eduvo_users_v1';
       applySettings();
       authTab('login');
       restoreSession();
-
+ 
       if (state.user) {
         updateUserProfile();
         setActiveScreen('screen-dashboard');
@@ -1782,7 +1814,7 @@ const USERS_KEY = 'eduvo_users_v1';
         setActiveScreen('screen-auth');
       }
     });
-
+ 
     // تسجيل الـ Service Worker لتفعيل التثبيت (Add to Home Screen) والعمل بدون إنترنت للصفحات المزارة
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -1791,3 +1823,4 @@ const USERS_KEY = 'eduvo_users_v1';
         });
       });
     }
+ 
