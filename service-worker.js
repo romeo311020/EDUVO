@@ -1,8 +1,12 @@
 // EDUVO Service Worker
-// يسمح بتثبيت التطبيق (Add to Home Screen) وبفتح الصفحات اللي زارها الطالب قبل كده حتى بدون إنترنت.
-// ملحوظة: البيانات الحيّة (data.json، المساعد الذكي، تسجيل الدخول بجوجل) لازالت تحتاج اتصال إنترنت فعلي.
+// الهدف: التطبيق يفتح بدون إنترنت للصفحات اللي اتزارت قبل كده، لكن أي تحديث (ألوان، خطوط، كود)
+// يوصل فورًا لأي جهاز أول ما يكون عنده إنترنت — من غير ما يفضل عالق على نسخة قديمة مخزنة.
+//
+// ⚠️ مهم: كل مرة تعمل تعديل مهم وترفعه على GitHub، غيّر رقم النسخة (CACHE_NAME) تحت
+// عشان أي جهاز فتح الموقع قبل كده يمسح الكاش القديم ويجيب النسخة الجديدة تلقائيًا.
 
-const CACHE_NAME = 'eduvo-cache-v2';
+const CACHE_NAME = 'eduvo-cache-v3';
+
 const CORE_ASSETS = [
   './index.html',
   './manifest.json',
@@ -26,6 +30,7 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE_ASSETS))
   );
+  // فعّل نسخة الـ Service Worker الجديدة فورًا من غير ما تستنى إغلاق كل التابات القديمة
   self.skipWaiting();
 });
 
@@ -41,34 +46,22 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
 
-  // لا تتدخل في طلبات API الخارجية (جوجل، الذكاء الاصطناعي، إلخ) — خليها تروح للإنترنت مباشرة
+  // لا تتدخل في طلبات خارجية (جوجل، الذكاء الاصطناعي، خطوط، إلخ) — سيبها تروح للإنترنت مباشرة
   if (request.method !== 'GET' || !request.url.startsWith(self.location.origin)) {
     return;
   }
 
-  // data.json: حاول الشبكة أولاً عشان يجيب آخر تحديث، ولو مفيش نت استخدم النسخة المخزنة
-  if (request.url.includes('data.json')) {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-          return response;
-        })
-        .catch(() => caches.match(request))
-    );
-    return;
-  }
-
-  // باقي الملفات: من الكاش أولاً (أسرع)، ولو مش موجودة روح للشبكة وخزّنها
+  // استراتيجية "الشبكة أولاً": حاول تجيب أحدث نسخة من الإنترنت دايمًا، وتجاهل كاش المتصفح العادي
+  // كمان (cache: 'no-store') عشان الملف الجديد يوصل فورًا حتى لو المتصفح نفسه بيحاول يكاش الاستجابة.
+  // لو نجحت: رجّعها للمستخدم وخزّنها كنسخة احتياطية للأوفلاين.
+  // لو فشلت (مفيش إنترنت): رجّع آخر نسخة كانت متخزنة كحل بديل مؤقت بس.
   event.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) return cached;
-      return fetch(request).then((response) => {
+    fetch(request, { cache: 'no-store' })
+      .then((response) => {
         const clone = response.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
         return response;
-      }).catch(() => cached);
-    })
+      })
+      .catch(() => caches.match(request))
   );
 });
