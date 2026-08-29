@@ -1,0 +1,172 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>EDUVO | منصة تعليمية ذكية</title>
+
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0b1629" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="EDUVO" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div id="app-shell">
+    <aside class="sidebar" aria-label="قائمة جانبية">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; padding:8px 6px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="width:42px; height:42px; display:flex; align-items:center; justify-content:center; border-radius:12px; background:linear-gradient(135deg, var(--accent), var(--accent-2)); font-weight:800; color:var(--on-accent);">E</div>
+          <div style="font-size:1.3rem; font-weight:800;">EDUVO</div>
+        </div>
+        <button type="button" id="sidebar-close-btn" onclick="closeMobileSidebar()" style="display:none; background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer;">✕</button>
+      </div>
+
+      <div class="sidebar-item active" data-target="screen-dashboard">
+        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 21v-7h6v7"/></svg>
+        <span>الرئيسية</span>
+      </div>
+      <div class="sidebar-item" data-target="screen-subjects">
+        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>المواد الدراسية</span>
+      </div>
+      <div class="sidebar-item" data-target="screen-ai">
+        <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/></svg>
+        <span>المساعد الذكي</span>
+      </div>
+      <div class="sidebar-item" data-target="screen-books">
+        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>الكتب</span>
+      </div>
+      <div class="sidebar-item" data-target="screen-planner">
+        <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>خطتي</span>
+      </div>
+      <div class="sidebar-item" data-target="screen-courses">
+        <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        <span>كورسات مجانية</span>
+      </div>
+      <div class="sidebar-item" data-target="screen-profile">
+        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>حسابي</span>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div id="global-topbar">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <button type="button" id="mobile-menu-btn" onclick="openMobileSidebar()" aria-label="فتح القائمة">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+          </button>
+          <div class="global-search-wrap" style="flex:1;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="global-search-input" placeholder="ابحث عن مادة، مدرس، كتاب، درس، أو محتوى..." autocomplete="off" />
+          </div>
+        </div>
+        <div id="global-search-results" class="global-search-results"></div>
+      </div>
+
+      <section id="screen-auth" class="screen active"></section>
+      <section id="screen-dashboard" class="screen"></section>
+      <section id="screen-subjects" class="screen"></section>
+      <section id="screen-subject-detail" class="screen"></section>
+      <section id="screen-ai" class="screen"></section>
+      <section id="screen-books" class="screen"></section>
+      <section id="screen-planner" class="screen"></section>
+      <section id="screen-courses" class="screen"></section>
+      <section id="screen-lecture" class="screen"></section>
+      <section id="screen-profile" class="screen"></section>
+    </main>
+
+    <div id="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+  </div>
+
+  <div id="task-modal-overlay" class="modal-overlay">
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 id="task-modal-title">مهمة جديدة</h3>
+        <button type="button" id="task-modal-close" class="modal-close-btn">✕</button>
+      </div>
+      <div class="input-group">
+        <label>المادة</label>
+        <select id="task-subject" class="input-control">
+          <option value="">بدون مادة محددة</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>اسم المهمة</label>
+        <input type="text" id="task-title" class="input-control" placeholder="مثال: مراجعة الوحدة الثالثة" />
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="input-group">
+          <label>اليوم</label>
+          <select id="task-day" class="input-control">
+            <option value="السبت">السبت</option>
+            <option value="الأحد">الأحد</option>
+            <option value="الاثنين">الاثنين</option>
+            <option value="الثلاثاء">الثلاثاء</option>
+            <option value="الأربعاء">الأربعاء</option>
+            <option value="الخميس">الخميس</option>
+            <option value="الجمعة">الجمعة</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>تكرار أسبوعي</label>
+          <select id="task-repeat" class="input-control">
+            <option value="true">أسبوعيًا</option>
+            <option value="false">مرة واحدة</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="input-group">
+          <label>وقت البداية</label>
+          <input type="time" id="task-start" class="input-control" />
+        </div>
+        <div class="input-group">
+          <label>وقت النهاية</label>
+          <input type="time" id="task-end" class="input-control" />
+        </div>
+      </div>
+      <div class="input-group">
+        <label>التذكير قبل الموعد</label>
+        <select id="task-reminder" class="input-control">
+          <option value="0">بدون تذكير</option>
+          <option value="5">5 دقائق</option>
+          <option value="10" selected>10 دقائق</option>
+          <option value="15">15 دقيقة</option>
+          <option value="30">30 دقيقة</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>ملاحظات (اختياري)</label>
+        <textarea id="task-notes" class="input-control" rows="2" placeholder="أي تفاصيل إضافية..."></textarea>
+      </div>
+      <button type="button" class="btn-primary" id="task-save-btn">إضافة إلى الجدول</button>
+    </div>
+  </div>
+
+  <div id="timer-modal-overlay" class="modal-overlay">
+    <div class="modal-box timer-box">
+      <div id="timer-subject-icon" style="font-size:2.4rem; margin-bottom:6px;">📚</div>
+      <div id="timer-task-title" style="font-weight:800; font-size:1.2rem; margin-bottom:4px;"></div>
+      <div id="timer-task-subtitle" style="color:var(--muted); margin-bottom:22px;"></div>
+      <div id="timer-display" class="timer-display">00:00</div>
+      <div style="display:flex; gap:10px; margin-top:26px;">
+        <button type="button" class="btn-secondary" id="timer-pause-btn" style="flex:1;">⏸ إيقاف مؤقت</button>
+        <button type="button" class="btn-primary" id="timer-finish-btn" style="flex:1;">✓ إنهاء المهمة</button>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="js/app.js"></script>
+</body>
+</html>
