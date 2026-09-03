@@ -117,6 +117,55 @@ const USERS_KEY = 'eduvo_users_v1';
       return `حل المعادلة: المجهول = ${Number(x.toFixed(4)).toString().replace(/\.0+$/, '')}`;
     }
 
+    function normalizeAiText(value) {
+      return (value || '')
+        .toLowerCase()
+        .replace(/[إأآا]/g, 'ا')
+        .replace(/ة/g, 'ه')
+        .replace(/ى/g, 'ي')
+        .replace(/[ًٌٍَُِّْـ]/g, '')
+        .replace(/[؟?!،,.:؛]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function detectAiIntent(text) {
+      if (/\b(ليه|لماذا|ازاي|كيف|اشرح|شرح|يعني ايه|ما هو|ما هي|الفرق بين)\b/.test(text)) return 'explain';
+      if (/\b(حل|احسب|اوجد|اجب|الناتج|مساله|تمرين)\b/.test(text)) return 'solve';
+      if (/\b(راجع|مراجعه|ذاكر|خطة|خطي|جدول|امتحان)\b/.test(text)) return 'study';
+      if (/\b(اختبرني|اختبار|سؤال)\b/.test(text)) return 'quiz';
+      return 'explain';
+    }
+
+    function detectAiSubject(text) {
+      const aliases = {
+        math: ['رياضه', 'رياضيات', 'جبر', 'هندسه', 'تفاضل', 'تكامل'],
+        physics: ['فيزياء', 'نيوتن', 'حركه', 'طاقه', 'كهرباء'],
+        chem: ['كيمياء', 'ذره', 'رابطه', 'تفاعل', 'حمض'],
+        arabic: ['عربي', 'لغه عربيه', 'نحو', 'اعراب', 'بلاغه'],
+        biology: ['احياء', 'خلية', 'خليه', 'وراثه', 'جهاز عصبي']
+      };
+
+      return Object.keys(aliases).find(subjectId => aliases[subjectId].some(alias => text.includes(normalizeAiText(alias)))) || null;
+    }
+
+    function buildStudyReply(subjectId) {
+      const subjectNames = { math: 'الرياضيات', physics: 'الفيزياء', chem: 'الكيمياء', arabic: 'العربية', biology: 'الأحياء' };
+      const subjectName = subjectNames[subjectId] || 'المادة';
+      return `خطة مراجعة ${subjectName} لمدة 60 دقيقة:\n\n1) 10 دقائق: راجع القوانين والتعريفات الأساسية.\n2) 25 دقيقة: حل 3 تمارين من السهل إلى الأصعب.\n3) 15 دقيقة: راجع أخطاءك واكتب سبب كل خطأ.\n4) 10 دقائق: اختبر نفسك من غير الرجوع للكتاب.\n\nابدأ بجلسة واحدة الآن، وبعدها زوّد الصعوبة تدريجيًا.`;
+    }
+
+    function buildQuizReply(subjectId) {
+      const quizzes = {
+        math: 'اختبار سريع في الرياضيات: إذا كان 3س + 6 = 18، فما قيمة س؟ اكتب إجابتك وسأراجعها.',
+        physics: 'اختبار سريع في الفيزياء: ما العلاقة بين القوة والكتلة والتسارع حسب قانون نيوتن الثاني؟',
+        chem: 'اختبار سريع في الكيمياء: ما الفرق الأساسي بين الرابطة الأيونية والرابطة التساهمية؟',
+        arabic: 'اختبار سريع في العربية: في جملة "قرأ الطالبُ الدرسَ"، ما إعراب كلمة "الدرسَ"؟',
+        biology: 'اختبار سريع في الأحياء: ما وظيفة النواة داخل الخلية؟'
+      };
+      return quizzes[subjectId] || 'اختبار سريع: اكتب اسم المادة أو الدرس، وسأطرح عليك سؤالًا مناسبًا وأراجع إجابتك.';
+    }
+
     function generateSmartReply(rawText) {
       const calcResult = tryCalculate(rawText);
       if (calcResult) return calcResult;
@@ -124,21 +173,28 @@ const USERS_KEY = 'eduvo_users_v1';
       const eqResult = trySolveLinearEquation(rawText);
       if (eqResult) return eqResult;
 
-      const text = rawText.toLowerCase();
-      const greetings = ['السلام عليكم', 'مرحبا', 'اهلا', 'أهلا', 'هاي', 'ازيك'];
+      const text = normalizeAiText(rawText);
+      const greetings = ['السلام عليكم', 'مرحبا', 'اهلا', 'هاي', 'ازيك'];
       if (greetings.some(g => text.includes(g))) {
         return 'أهلاً بيك! اسألني عن أي موضوع في الرياضيات، الفيزياء، الكيمياء، العربية، أو الأحياء، أو اكتبلي عملية حسابية وهحلها لك.';
       }
 
+      const subjectId = detectAiSubject(text);
+      const intent = detectAiIntent(text);
+      if (intent === 'study') return buildStudyReply(subjectId);
+      if (intent === 'quiz') return buildQuizReply(subjectId);
+
       for (const subjectId in aiKnowledge) {
         for (const item of aiKnowledge[subjectId]) {
-          if (item.keywords.some(k => text.includes(k))) {
+          if (item.keywords.some(k => text.includes(normalizeAiText(k)))) {
+            if (intent === 'solve' && subjectId === 'math') return `خلينا نحلها خطوة خطوة:\n\n${item.reply}`;
+            if (intent === 'explain') return `شرح مبسط:\n\n${item.reply}\n\nمثال سريع: اكتب مسألة من نفس الفكرة، وأنا أطبقها معك.`;
             return item.reply;
           }
         }
       }
 
-      return 'قسّم سؤالك لثلاث خطوات: (1) ما المطلوب بالضبط؟ (2) ما المعطيات المتاحة؟ (3) ما القانون أو القاعدة المناسبة؟ لو حددت مادة السؤال (رياضيات، فيزياء، كيمياء، عربي، أحياء) هقدر أساعدك بشكل أدق. تقدر كمان تكتب معادلة أو عملية حسابية وهحلها لك مباشرة.';
+      return 'أقدر أساعدك في الشرح والحل والمراجعة والاختبارات. جرّب مثلًا: "اشرح قانون نيوتن"، "حل 2س + 4 = 10"، أو "اعمل خطة مراجعة للكيمياء".';
     }
 
     const state = { user: null };
@@ -356,7 +412,6 @@ const USERS_KEY = 'eduvo_users_v1';
       showMessage('✅ تم تسجيل الدخول بنجاح', 'success');
       setActiveScreen('screen-dashboard');
       ensureRemindersInterval();
-      renderDashboardScreen();
       if (isNewUser) syncStudentToSupabase(user, provider);
     }
 
@@ -480,7 +535,6 @@ const USERS_KEY = 'eduvo_users_v1';
       showMessage('✅ تم إنشاء الحساب بنجاح', 'success');
       setActiveScreen('screen-dashboard');
       ensureRemindersInterval();
-      renderDashboardScreen();
       syncStudentToSupabase(user, 'phone');
     }
 
@@ -510,7 +564,6 @@ const USERS_KEY = 'eduvo_users_v1';
       showMessage('✅ تم تسجيل الدخول بنجاح', 'success');
       setActiveScreen('screen-dashboard');
       ensureRemindersInterval();
-      renderDashboardScreen();
     }
 
     function handleLogout() {
@@ -1352,47 +1405,9 @@ const USERS_KEY = 'eduvo_users_v1';
     }
 
     function applyAppConfigToUI() {
-      const alertCard = document.getElementById('dashboard-alert-card');
       const alertEl = document.getElementById('dashboard-alert');
-      if (alertCard && alertEl && appConfig.app && appConfig.app.announcement) {
+      if (alertEl && appConfig.app && appConfig.app.announcement) {
         alertEl.textContent = appConfig.app.announcement;
-        alertCard.style.display = 'block';
-      }
-    }
-
-    function renderDashboardScreen() {
-      const dateEl = document.getElementById('dashboard-date');
-      if (dateEl) dateEl.textContent = `${getTodayArabicDay()}، ${formatArabicDate(new Date())}`;
-
-      const goalMinutes = loadDailyGoalMinutes();
-      const studiedSeconds = getStudySecondsForDate(todayISO());
-      const goalPercent = goalMinutes > 0 ? Math.min(100, Math.round((studiedSeconds / 60 / goalMinutes) * 100)) : 0;
-
-      const todayTasks = state.user ? getTodayTasksSorted() : [];
-      const nextTask = todayTasks.find(t => !isTaskCompletedToday(t.id));
-
-      const streak = state.user ? computeStreak() : { current: 0, best: 0 };
-
-      const statsEl = document.getElementById('dashboard-stats');
-      if (statsEl) {
-        statsEl.innerHTML = `
-          <div class="glass-card" style="text-align:center;">
-            <div style="font-size:0.78rem; color:var(--muted); margin-bottom:6px;">🎯 هدف اليوم</div>
-            <div style="font-size:1.3rem; font-weight:800;">${goalPercent}%</div>
-          </div>
-          <div class="glass-card" style="text-align:center;">
-            <div style="font-size:0.78rem; color:var(--muted); margin-bottom:6px;">📅 مهام اليوم</div>
-            <div style="font-size:1.3rem; font-weight:800;">${todayTasks.length}</div>
-          </div>
-          <div class="glass-card" style="text-align:center;">
-            <div style="font-size:0.78rem; color:var(--muted); margin-bottom:6px;">🔥 سلسلة الإنجاز</div>
-            <div style="font-size:1.3rem; font-weight:800;">${streak.current} يوم</div>
-          </div>
-          <div class="glass-card" style="text-align:center;">
-            <div style="font-size:0.78rem; color:var(--muted); margin-bottom:6px;">📚 المواد المتاحة</div>
-            <div style="font-size:1.3rem; font-weight:800;">${subjects.length}</div>
-          </div>
-        `;
       }
     }
 
@@ -1727,6 +1742,14 @@ const USERS_KEY = 'eduvo_users_v1';
       document.getElementById('ai-input').addEventListener('keydown', (event) => {
         if (event.key === 'Enter') sendAiMessage();
       });
+      document.querySelectorAll('.ai-suggestion').forEach(button => {
+        button.addEventListener('click', () => {
+          const input = document.getElementById('ai-input');
+          input.value = button.dataset.aiPrompt || '';
+          input.focus();
+          sendAiMessage();
+        });
+      });
 
       document.getElementById('theme-select').addEventListener('change', (event) => {
         const settings = getSettings();
@@ -1754,7 +1777,6 @@ const USERS_KEY = 'eduvo_users_v1';
           if (target === 'screen-books') renderBooksScreen();
           if (target === 'screen-planner') renderPlannerScreen();
           if (target === 'screen-courses') renderCoursesScreen();
-          if (target === 'screen-dashboard') renderDashboardScreen();
         });
       });
     }
@@ -1785,25 +1807,6 @@ const USERS_KEY = 'eduvo_users_v1';
         answerBubble.innerHTML = `تمام، جهزتلك خطة مقترحة بناءً على مهامك الحالية: ${renderAiPlanCard(planId)}`;
         wireAiPlanButtons(answerBubble);
         box.scrollTop = box.scrollHeight;
-        return;
-      }
-
-      // لو الـ aiEndpoint متفعّل في data.json مستقبلاً (ذكاء اصطناعي حقيقي)، استخدمه بدل الرد المحلي
-      if (appConfig.aiEndpoint) {
-        fetch(appConfig.aiEndpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: value })
-        })
-          .then(res => res.json())
-          .then(data => {
-            answerBubble.textContent = data.reply || generateSmartReply(value);
-            box.scrollTop = box.scrollHeight;
-          })
-          .catch(() => {
-            answerBubble.textContent = generateSmartReply(value);
-            box.scrollTop = box.scrollHeight;
-          });
         return;
       }
 
@@ -1852,7 +1855,6 @@ const USERS_KEY = 'eduvo_users_v1';
         updateUserProfile();
         setActiveScreen('screen-dashboard');
         ensureRemindersInterval();
-      renderDashboardScreen();
       } else {
         setActiveScreen('screen-auth');
       }
