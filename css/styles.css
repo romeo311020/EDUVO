@@ -1,38 +1,38 @@
 :root {
-      --bg: #0a0a0a;
-      --bg-soft: #111111;
-      --bg-card: rgba(255, 255, 255, 0.035);
-      --bg-card-strong: rgba(20, 20, 20, 0.97);
-      --bg-input: rgba(255, 255, 255, 0.05);
-      --text: #f2f2f2;
-      --muted: #8f8f8f;
-      --border: rgba(255,255,255,0.11);
-      --on-accent: #0a0a0a;
-      --accent: #ffffff;
-      --accent-2: #c9c9c9;
-      --gold: #ffffff;
+      --bg: #081a3d;
+      --bg-soft: #0d2855;
+      --bg-card: rgba(17, 48, 96, 0.76);
+      --bg-card-strong: rgba(11, 36, 77, 0.98);
+      --bg-input: rgba(125, 211, 252, 0.10);
+      --text: #f5fbff;
+      --muted: #a9c1dd;
+      --border: rgba(125, 211, 252, 0.20);
+      --on-accent: #061936;
+      --accent: #38bdf8;
+      --accent-2: #0ea5e9;
+      --gold: #ffb31a;
       --danger: #e5484d;
       --success: #3ecf8e;
-      --shadow: 0 18px 40px rgba(0,0,0,0.5);
+      --shadow: 0 18px 40px rgba(1, 10, 31, 0.42);
       --sidebar-width: 260px;
     }
 
     body.light-theme {
-      --bg: #fafafa;
+      --bg: #f3f8ff;
       --bg-soft: #ffffff;
-      --bg-card: rgba(255,255,255,0.85);
+      --bg-card: rgba(255,255,255,0.94);
       --bg-card-strong: rgba(255,255,255,0.97);
-      --bg-input: #f0f0f0;
-      --text: #111111;
-      --muted: #6b6b6b;
-      --border: rgba(17, 17, 17, 0.10);
+      --bg-input: #eaf4ff;
+      --text: #0b2855;
+      --muted: #5e7694;
+      --border: rgba(14, 77, 146, 0.15);
       --on-accent: #ffffff;
-      --accent: #111111;
-      --accent-2: #3a3a3a;
-      --gold: #111111;
+      --accent: #087fc4;
+      --accent-2: #075caa;
+      --gold: #c97800;
       --danger: #d33a3a;
       --success: #1f9d63;
-      --shadow: 0 16px 34px rgba(0, 0, 0, 0.08);
+      --shadow: 0 16px 34px rgba(18, 67, 116, 0.13);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
@@ -45,8 +45,8 @@
       width: 100%;
       height: 100%;
       background:
-        radial-gradient(circle at top right, rgba(255, 255, 255, 0.04), transparent 22%),
-        radial-gradient(circle at bottom left, rgba(255, 255, 255, 0.03), transparent 25%),
+        radial-gradient(circle at top right, rgba(56, 189, 248, 0.13), transparent 24%),
+        radial-gradient(circle at bottom left, rgba(255, 179, 26, 0.09), transparent 25%),
         var(--bg);
       color: var(--text);
       direction: rtl;
@@ -69,7 +69,7 @@
       width: var(--sidebar-width);
       height: 100vh;
       overflow-y: auto;
-      background: rgba(7, 16, 29, 0.7);
+      background: rgba(7, 29, 67, 0.88);
       border-left: 1px solid var(--border);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
@@ -147,8 +147,8 @@
 
     .glass-card:hover {
       transform: translateY(-3px);
-      border-color: rgba(255,255,255,0.25);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+      border-color: rgba(56, 189, 248, 0.45);
+      box-shadow: 0 12px 30px rgba(1, 10, 31, 0.30);
     }
 
     button, .btn-primary, .btn-secondary, .btn-social {
@@ -186,9 +186,9 @@
     }
 
     .sidebar-item.active, .nav-item.active {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(56, 189, 248, 0.15);
       color: var(--text);
-      border-color: rgba(255, 255, 255, 0.2);
+      border-color: rgba(56, 189, 248, 0.38);
     }
 
     .svg-icon {
@@ -214,8 +214,8 @@
     }
 
     .input-control:focus, select:focus, input:focus {
-      border-color: rgba(255, 255, 255, 0.35);
-      box-shadow: 0 0 0 3px rgba(255,255,255,0.10);
+      border-color: rgba(56, 189, 248, 0.70);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
     }
 
     .input-group {
@@ -246,7 +246,7 @@
     .btn-primary {
       color: var(--on-accent);
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      box-shadow: 0 12px 30px rgba(255,255,255,0.28);
+      box-shadow: 0 12px 30px rgba(14, 165, 233, 0.30);
     }
 
     .btn-primary:hover, .btn-secondary:hover { transform: translateY(-1px); }
@@ -306,7 +306,7 @@
 
     .btn-social:hover {
       transform: translateY(-1px);
-      border-color: rgba(255,255,255,0.22);
+      border-color: rgba(53, 208, 189, 0.36);
     }
 
     .btn-social svg { width: 19px; height: 19px; flex-shrink: 0; }
@@ -329,7 +329,7 @@
 
     .subject-card:hover {
       transform: translateY(-2px);
-      border-color: rgba(255,255,255,0.24);
+      border-color: rgba(53, 208, 189, 0.38);
     }
 
     .subject-details-panel {
@@ -343,8 +343,8 @@
       gap: 16px;
       padding: 18px;
       border-radius: 18px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(53, 208, 189, 0.10);
+      border: 1px solid rgba(53, 208, 189, 0.24);
     }
 
     .subject-feature-icon {
@@ -384,7 +384,7 @@
       height: 58px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid rgba(255,255,255,0.22);
+      border: 2px solid rgba(53, 208, 189, 0.34);
     }
 
     .teacher-name {
@@ -551,7 +551,7 @@
     }
 
     .global-search-wrap:focus-within {
-      border-color: rgba(255,255,255,0.4);
+      border-color: rgba(53, 208, 189, 0.68);
     }
 
     .global-search-wrap svg { width: 20px; height: 20px; color: var(--muted); flex-shrink: 0; }
@@ -603,7 +603,7 @@
       transition: background 0.15s ease;
     }
 
-    .search-result-item:hover { background: rgba(255,255,255,0.08); }
+    .search-result-item:hover { background: rgba(53, 208, 189, 0.11); }
     .search-result-item .sr-icon { font-size: 1.3rem; flex-shrink: 0; }
     .search-result-item .sr-label { font-weight: 700; font-size: 0.9rem; }
     .search-result-item .sr-sub { font-size: 0.75rem; color: var(--muted); }
@@ -647,7 +647,7 @@
     }
 
     .summary-tile {
-      background: rgba(255,255,255,0.03);
+      background: rgba(53, 208, 189, 0.055);
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 14px;
@@ -658,7 +658,7 @@
     .summary-tile .st-label { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
 
     .task-card {
-      background: rgba(255,255,255,0.02);
+      background: rgba(255,255,255,0.035);
       border: 1px solid var(--border);
       border-right: 4px solid var(--accent-2);
       border-radius: 14px;
@@ -827,6 +827,7 @@
       border: 1px solid var(--border);
       font-size: 2rem;
       margin-bottom: 20px;
+      object-fit: cover;
     }
 
     .auth-brand-panel h1 {
