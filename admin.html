@@ -14,25 +14,26 @@
            1. DESIGN SYSTEM & DARK PREMIUM THEME (EDUVO IDENTITY)
            ========================================================================== */
         :root {
-            --bg-main: #060b19;
-            --bg-card: rgba(15, 23, 42, 0.75);
-            --bg-card-solid: #0f172a;
-            --bg-sidebar: #090e1d;
-            --bg-input: #111827;
-            
-            --accent-blue: #1c72d8;
-            --accent-cyan: #00d2ff;
-            --accent-gold: #ffb703;
-            
-            --status-active: #10b981;
+            --bg-main: #0a0a0a;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --bg-card-solid: #141414;
+            --bg-sidebar: #0d0d0d;
+            --bg-input: rgba(255, 255, 255, 0.05);
+
+            --accent-blue: #ffffff;
+            --accent-cyan: #d4d4d4;
+            --accent-gold: #ffffff;
+            --on-accent: #0a0a0a;
+
+            --status-active: #3ecf8e;
             --status-pending: #f59e0b;
             --status-suspended: #ef4444;
             --status-rejected: #6b7280;
 
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --border-glow: rgba(0, 210, 255, 0.25);
+            --text-main: #f2f2f2;
+            --text-muted: #8f8f8f;
+            --border-color: rgba(255, 255, 255, 0.11);
+            --border-glow: rgba(255, 255, 255, 0.2);
             
             --sidebar-width: 260px;
             --radius-sm: 8px;
@@ -40,8 +41,8 @@
             --radius-lg: 20px;
             --radius-full: 9999px;
             
-            --shadow-glow: 0 0 25px rgba(0, 210, 255, 0.12);
-            --shadow-gold: 0 0 20px rgba(255, 183, 3, 0.15);
+            --shadow-glow: 0 0 25px rgba(255, 255, 255, 0.08);
+            --shadow-gold: 0 0 20px rgba(255, 255, 255, 0.08);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -76,7 +77,7 @@
         #admin-login-overlay {
             position: fixed;
             inset: 0;
-            background: radial-gradient(circle at center, #101a36 0%, #060b19 100%);
+            background: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%);
             z-index: 1000;
             display: flex;
             justify-content: center;
@@ -110,8 +111,8 @@
             margin: 0 auto 16px auto;
             font-size: 1.8rem;
             font-weight: 900;
-            color: white;
-            box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+            color: var(--on-accent);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
         }
 
         /* ==========================================================================
@@ -159,7 +160,7 @@
         }
 
         .nav-item:hover, .nav-item.active {
-            background: rgba(0, 210, 255, 0.08);
+            background: rgba(255, 255, 255, 0.08);
             color: var(--accent-cyan);
             border-right: 3px solid var(--accent-cyan);
         }
@@ -350,7 +351,7 @@
 
         .btn-success { background: var(--status-active); color: #000; }
         .btn-danger { background: var(--status-suspended); color: #fff; }
-        .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); color: #fff; }
+        .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); color: var(--on-accent); }
         .btn-secondary { background: var(--bg-input); color: var(--text-main); border: 1px solid var(--border-color); }
 
         .btn:hover { opacity: 0.9; transform: scale(1.02); }
@@ -389,7 +390,7 @@
         .github-field input:focus,
         .github-field textarea:focus {
             border-color: var(--accent-cyan);
-            box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.12);
         }
 
         .github-actions {
@@ -615,7 +616,7 @@
                         </div>
                         <div class="github-field">
                             <label>اللون (Hex)</label>
-                            <input type="text" id="subject-color" placeholder="#1c72d8" value="#1c72d8">
+                            <input type="text" id="subject-color" placeholder="#2a2a2a" value="#2a2a2a">
                         </div>
                     </div>
                     <div class="github-field" style="margin-top: 12px;">
@@ -908,6 +909,28 @@
                 </div>
 
                 <div class="stat-card" style="margin-top: 20px;">
+                    <h3 style="margin-bottom: 16px;">🗄️ قاعدة بيانات الطلاب (Supabase)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px;">
+                        عشان الطلاب اللي بيسجلوا من الموقع يظهروا هنا فعليًا. اتبع خطوات ملف <code>supabase-setup.sql</code> المرفق أولاً.
+                    </p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                        <div class="github-field">
+                            <label>Supabase Project URL</label>
+                            <input type="text" id="app-supabase-url" placeholder="https://xxxxx.supabase.co">
+                        </div>
+                        <div class="github-field">
+                            <label>Supabase Anon Key</label>
+                            <input type="text" id="app-supabase-anon-key" placeholder="eyJhbGciOi...">
+                        </div>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 10px;">
+                        ⚠️ استخدم الـ <strong>anon key</strong> بس وليس الـ service_role key أبداً — الـ anon key مصمم أصلاً ليكون عام وآمن للاستخدام من المتصفح.
+                    </p>
+                    <button type="button" class="btn btn-primary" onclick="saveAppSettings()" style="margin-top: 12px;">💾 حفظ الإعدادات</button>
+                    <button type="button" class="btn btn-secondary" onclick="loadStudentsFromSupabase()" style="margin-top: 12px;">🔄 تحديث قائمة الطلاب الآن</button>
+                </div>
+
+                <div class="stat-card" style="margin-top: 20px;">
                     <h3 style="margin-bottom: 16px;">🔗 ربط مع GitHub</h3>
                     <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 12px;">
                         احفظ جميع التغييرات الخاصة بك تلقائياً في مستودع GitHub الخاص بك
@@ -969,6 +992,8 @@
                 },
                 googleClientId: '',
                 aiEndpoint: '',
+                supabaseUrl: '',
+                supabaseAnonKey: '',
                 subjects: [],
                 teachers: [],
                 books: [],
@@ -995,6 +1020,8 @@
             };
             safe.googleClientId = typeof safe.googleClientId === 'string' ? safe.googleClientId : '';
             safe.aiEndpoint = typeof safe.aiEndpoint === 'string' ? safe.aiEndpoint : '';
+            safe.supabaseUrl = typeof safe.supabaseUrl === 'string' ? safe.supabaseUrl : '';
+            safe.supabaseAnonKey = typeof safe.supabaseAnonKey === 'string' ? safe.supabaseAnonKey : '';
             safe.subjects = Array.isArray(safe.subjects) ? safe.subjects : [];
             safe.teachers = Array.isArray(safe.teachers) ? safe.teachers : [];
             safe.books = Array.isArray(safe.books) ? safe.books : [];
@@ -1272,6 +1299,7 @@
                 populateSubjectSelect();
                 syncEditorFromState();
                 showAlert('✅ تم الدخول بنجاح إلى لوحة الإدارة', 'success');
+                if (state.data.supabaseUrl && state.data.supabaseAnonKey) loadStudentsFromSupabase();
             } catch (err) {
                 console.error('GitHub login error:', err);
                 const message = err && err.message ? err.message : 'فشل تسجيل الدخول باستخدام GitHub';
@@ -1324,6 +1352,7 @@
                     populateSubjectSelect();
                     renderDashboard();
                     loadSettingsIntoForm();
+                    if (state.data.supabaseUrl && state.data.supabaseAnonKey) loadStudentsFromSupabase();
                 } catch (parseErr) {
                     console.warn('تعذر تحليل محتوى الملف كـ JSON صالح', parseErr);
                 }
@@ -1446,7 +1475,7 @@
                 id: name.toLowerCase().replace(/\s+/g, '-'),
                 name,
                 icon,
-                color: color || '#1c72d8',
+                color: color || '#2a2a2a',
                 description: description || '',
                 teachers: []
             };
@@ -1456,7 +1485,7 @@
 
             document.getElementById('subject-name').value = '';
             document.getElementById('subject-icon').value = '';
-            document.getElementById('subject-color').value = '#1c72d8';
+            document.getElementById('subject-color').value = '#2a2a2a';
             document.getElementById('subject-description').value = '';
 
             saveDataLocally();
@@ -1842,11 +1871,13 @@
             if (!confirm('هل تريد حقاً حذف هذا الطالب؟')) return;
             const index = (state.data.profiles || []).findIndex(p => String(p.id || p.email) === String(studentKey));
             if (index > -1) {
+                const student = state.data.profiles[index];
                 state.data.profiles.splice(index, 1);
                 saveDataLocally();
                 syncEditorFromState();
                 renderDashboard();
                 showAlert('✅ تم حذف الطالب بنجاح', 'success');
+                deleteStudentFromSupabase(student.id);
             }
         }
 
@@ -1871,6 +1902,67 @@
                 rejected: '❌ تم رفض الطالب'
             };
             showAlert(statusText[newStatus] || 'تم تحديث الحالة', 'success');
+            updateStudentStatusInSupabase(profiles[index].id, newStatus);
+        }
+
+        // ===== ربط الطلاب مع Supabase =====
+        function supabaseHeaders() {
+            return {
+                'Content-Type': 'application/json',
+                'apikey': state.data.supabaseAnonKey,
+                'Authorization': `Bearer ${state.data.supabaseAnonKey}`
+            };
+        }
+
+        async function loadStudentsFromSupabase() {
+            if (!state.data.supabaseUrl || !state.data.supabaseAnonKey) {
+                showAlert('⚠️ لسه محتاج تحط Supabase Project URL و Anon Key في الإعدادات فوق', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch(
+                    `${state.data.supabaseUrl}/rest/v1/students?select=*&order=created_at.desc`,
+                    { headers: supabaseHeaders() }
+                );
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const rows = await res.json();
+
+                state.data.profiles = rows.map(r => ({
+                    id: r.id,
+                    name: r.full_name,
+                    phone: r.phone,
+                    email: r.email || r.phone,
+                    grade: r.grade,
+                    section: r.provider === 'google' ? 'جوجل' : 'رقم موبايل',
+                    status: r.status || 'active',
+                    createdAt: r.created_at
+                }));
+
+                saveDataLocally();
+                renderDashboard();
+                showAlert(`✅ تم تحديث قائمة الطلاب — عدد الطلاب: ${rows.length}`, 'success');
+            } catch (err) {
+                console.error('Supabase load error:', err);
+                showAlert('❌ تعذر الاتصال بـ Supabase — تأكد من صحة الـ URL والمفتاح وإعدادات RLS', 'error');
+            }
+        }
+
+        function deleteStudentFromSupabase(studentId) {
+            if (!state.data.supabaseUrl || !state.data.supabaseAnonKey || !studentId) return;
+            fetch(`${state.data.supabaseUrl}/rest/v1/students?id=eq.${encodeURIComponent(studentId)}`, {
+                method: 'DELETE',
+                headers: supabaseHeaders()
+            }).catch(err => console.warn('تعذر حذف الطالب من Supabase:', err));
+        }
+
+        function updateStudentStatusInSupabase(studentId, newStatus) {
+            if (!state.data.supabaseUrl || !state.data.supabaseAnonKey || !studentId) return;
+            fetch(`${state.data.supabaseUrl}/rest/v1/students?id=eq.${encodeURIComponent(studentId)}`, {
+                method: 'PATCH',
+                headers: supabaseHeaders(),
+                body: JSON.stringify({ status: newStatus })
+            }).catch(err => console.warn('تعذر تحديث حالة الطالب في Supabase:', err));
         }
 
         function getStatusBadge(status) {
@@ -1891,6 +1983,8 @@
             const announcement = document.getElementById('app-announcement')?.value.trim() || '';
             const googleClientId = document.getElementById('app-google-client-id')?.value.trim() || '';
             const aiEndpoint = document.getElementById('app-ai-endpoint')?.value.trim() || '';
+            const supabaseUrl = document.getElementById('app-supabase-url')?.value.trim() || '';
+            const supabaseAnonKey = document.getElementById('app-supabase-anon-key')?.value.trim() || '';
 
             state.data.app = {
                 ...state.data.app,
@@ -1902,10 +1996,14 @@
             };
             state.data.googleClientId = googleClientId;
             state.data.aiEndpoint = aiEndpoint;
+            state.data.supabaseUrl = supabaseUrl;
+            state.data.supabaseAnonKey = supabaseAnonKey;
 
             saveDataLocally();
             syncEditorFromState();
             showAlert('✅ تم حفظ إعدادات التطبيق بنجاح', 'success');
+
+            if (supabaseUrl && supabaseAnonKey) loadStudentsFromSupabase();
         }
 
         function syncEditorFromState() {
@@ -2031,6 +2129,8 @@
             const appSupportPhone = document.getElementById('app-support-phone');
             const appGoogleClientId = document.getElementById('app-google-client-id');
             const appAiEndpoint = document.getElementById('app-ai-endpoint');
+            const appSupabaseUrl = document.getElementById('app-supabase-url');
+            const appSupabaseAnonKey = document.getElementById('app-supabase-anon-key');
 
             if (appName) appName.value = state.data.app?.name || 'EDUVO';
             if (appVersion) appVersion.value = state.data.app?.version || '1.0.0';
@@ -2039,6 +2139,8 @@
             if (appSupportPhone) appSupportPhone.value = state.data.app?.supportPhone || '';
             if (appGoogleClientId) appGoogleClientId.value = state.data.googleClientId || '';
             if (appAiEndpoint) appAiEndpoint.value = state.data.aiEndpoint || '';
+            if (appSupabaseUrl) appSupabaseUrl.value = state.data.supabaseUrl || '';
+            if (appSupabaseAnonKey) appSupabaseAnonKey.value = state.data.supabaseAnonKey || '';
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -2064,6 +2166,10 @@
             populateSubjectSelect();
             renderDashboard();
             syncEditorFromState();
+
+            if (state.data.supabaseUrl && state.data.supabaseAnonKey) {
+                loadStudentsFromSupabase();
+            }
         });
     </script>
 </body>
