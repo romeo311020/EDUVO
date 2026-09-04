@@ -363,7 +363,7 @@
       "duration": "3:13:7",
       "category": "تأسيس في النحو",
       "embedUrl": "https://www.youtube.com/embed/1l6-MzGJ5DA?si=bGt1jjMWKLQz0mVw",
-      "thumbnail": "https://i.postimg.cc/d1FZYbjK/Screenshot-2026-08-20-140526.png",
+      "thumbnail": "https://cdn.jsdelivr.net/gh/romeo311020/download-ROMEO-LIVE-TV@main/media/images/1788483444415_______________.png",
       "description": "",
       "published": true,
       "createdAt": "2026-08-20T11:07:58.499Z"
@@ -467,5 +467,7 @@
       "createdAt": "2026-08-21T00:01:32.807Z"
     }
   ],
-  "profiles": []
+  "profiles": [],
+  "supabaseUrl": "",
+  "supabaseAnonKey": ""
 }
