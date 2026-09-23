@@ -13,52 +13,60 @@
       "id": "math",
       "name": "الرياضيات",
       "icon": "📐",
-      "description": "أساسيات الجبر، المعادلات، والهندسة مع شرح مبسط ومراجعة سريعة."
+      "description": "أساسيات الجبر، المعادلات، والهندسة مع شرح مبسط ومراجعة سريعة.",
+      "grade": ""
     },
     {
       "id": "physics",
       "name": "الفيزياء",
       "icon": "⚛️",
-      "description": "شرح مبسط للحركة، القوة، والدوائر الكهربائية مع أسئلة متنوعة."
+      "description": "شرح مبسط للحركة، القوة، والدوائر الكهربائية مع أسئلة متنوعة.",
+      "grade": ""
     },
     {
       "id": "chem",
       "name": "الكيمياء",
       "icon": "🧪",
-      "description": "تعلم الروابط، التفاعلات، والذرات مع شرح عملي ومذكرات مختصرة."
+      "description": "تعلم الروابط، التفاعلات، والذرات مع شرح عملي ومذكرات مختصرة.",
+      "grade": ""
     },
     {
       "id": "arabic",
       "name": "العربية",
       "icon": "📖",
-      "description": "نحو، إعراب، تحليل نصوص، وكتابة مواضيع بأسلوب منظم."
+      "description": "نحو، إعراب، تحليل نصوص، وكتابة مواضيع بأسلوب منظم.",
+      "grade": ""
     },
     {
       "id": "biology",
       "name": "الأحياء",
       "icon": "🧬",
-      "description": "مفاهيم الخلايا، النظام العصبي، جزيئات الحياة، مع خرائط ذهنية."
+      "description": "مفاهيم الخلايا، النظام العصبي، جزيئات الحياة، مع خرائط ذهنية.",
+      "grade": ""
     },
     {
       "id": "برمجة-و-ذكاء-اصطناعي",
       "name": "برمجة و ذكاء اصطناعي",
       "icon": "🤖",
       "color": "#1c72d8",
-      "description": "مادة البرمجه و الذكاء الاصطناعي ل الصف الاول و الثاني الباكروليا"
+      "description": "مادة البرمجه و الذكاء الاصطناعي ل الصف الاول و الثاني الباكروليا",
+      "grade": ""
     },
     {
       "id": "انجليزي",
       "name": "انجليزي",
       "icon": "📚",
       "color": "#1c72d8",
-      "description": "اللغة الإنجليزية 🇬🇧\nمادة تساعدك على تطوير مهارات القراءة والكتابة والاستماع والتحدث، مع دراسة القواعد والكلمات والتدرب على فهم النصوص وحل الأسئلة بطريقة أفضل."
+      "description": "اللغة الإنجليزية 🇬🇧\nمادة تساعدك على تطوير مهارات القراءة والكتابة والاستماع والتحدث، مع دراسة القواعد والكلمات والتدرب على فهم النصوص وحل الأسئلة بطريقة أفضل.",
+      "grade": ""
     },
     {
       "id": "تاريخ",
       "name": "تاريخ",
       "icon": "🏛",
       "color": "#1c72d8",
-      "description": "مادة تساعدك على فهم أهم الأحداث والحضارات والشخصيات التاريخية، وربط الأحداث ببعضها بطريقة سهلة ومنظمة، مع التدريب على تحليل الأسئلة والاستعداد للامتحانات."
+      "description": "مادة تساعدك على فهم أهم الأحداث والحضارات والشخصيات التاريخية، وربط الأحداث ببعضها بطريقة سهلة ومنظمة، مع التدريب على تحليل الأسئلة والاستعداد للامتحانات.",
+      "grade": ""
     }
   ],
   "teachers": [
@@ -286,7 +294,8 @@
       "subjectId": "arabic",
       "subjectName": "العربية",
       "url": "https://api.bassthalk.com/books/vi5TB9gyAjcsBauAnXUgSg981ZHBmtjmXJg08bEK.pdf?_gl=1*1yiqz2n*_gcl_au*MTMyODAwMzIxOS4xNzg1MDg1ODI1",
-      "description": "الملف ده خاص بطلاب \"البــكالوريا\" اللي المستر بيشرح منه في المحاضرة التأسيسية، علشان تقدروا تصوّروا الملزمة وتتابعوا مع المستر. ❤️"
+      "description": "الملف ده خاص بطلاب \"البــكالوريا\" اللي المستر بيشرح منه في المحاضرة التأسيسية، علشان تقدروا تصوّروا الملزمة وتتابعوا مع المستر. ❤️",
+      "grade": ""
     },
     {
       "id": "8znnnqcvl",
@@ -294,7 +303,8 @@
       "subjectId": "برمجة-و-ذكاء-اصطناعي",
       "subjectName": "برمجة و ذكاء اصطناعي",
       "url": "https://drive.google.com/file/d/1nvTIpgmOogO1vV0f73G6-2eXdBhl-f8q/view?usp=sharing",
-      "description": "كتاب برمجه و ذكاء اصطناعي الصف الثاني الباكروليا - كتاب المدرسة 2026"
+      "description": "كتاب برمجه و ذكاء اصطناعي الصف الثاني الباكروليا - كتاب المدرسة 2026",
+      "grade": ""
     },
     {
       "id": "wuaoiiwbl",
@@ -302,7 +312,8 @@
       "subjectId": "تاريخ",
       "subjectName": "تاريخ",
       "url": "https://drive.google.com/file/d/11oY6Sv96DrBTG5ov11_P5TC7naAoqOEQ/view?usp=drivesdk",
-      "description": "كتاب التاريخ ل الصف الثاني الباكروليا 2026"
+      "description": "كتاب التاريخ ل الصف الثاني الباكروليا 2026",
+      "grade": ""
     },
     {
       "id": "jiws41qkz",
@@ -310,7 +321,8 @@
       "subjectId": "arabic",
       "subjectName": "العربية",
       "url": "https://ellibrary.moe.gov.eg/EgyptianBaccalaureate/CoreSubjects/Arabic/",
-      "description": "الصف الثاني الباكروليا - كتاب المدرسة 2026"
+      "description": "الصف الثاني الباكروليا - كتاب المدرسة 2026",
+      "grade": ""
     },
     {
       "id": "czb4rkyvi",
@@ -318,7 +330,8 @@
       "subjectId": "انجليزي",
       "subjectName": "انجليزي",
       "url": "https://ellibrary.moe.gov.eg/EgyptianBaccalaureate/CoreSubjects/FirstForeignLanguage/english/",
-      "description": "الصف الثاني الباكروليا - كتاب الدرسة"
+      "description": "الصف الثاني الباكروليا - كتاب الدرسة",
+      "grade": ""
     },
     {
       "id": "2o9713o98",
@@ -326,7 +339,8 @@
       "subjectId": "math",
       "subjectName": "الرياضيات",
       "url": "https://ellibrary.moe.gov.eg/EgyptianBaccalaureate/SpecializedSubjects/Medicine-LifeSciences/Mathematics/",
-      "description": "الصف الثاني الباكروليا - كتاب المدرسة"
+      "description": "الصف الثاني الباكروليا - كتاب المدرسة",
+      "grade": ""
     },
     {
       "id": "n8ubidv6r",
@@ -334,7 +348,8 @@
       "subjectId": "physics",
       "subjectName": "الفيزياء",
       "url": "https://ellibrary.moe.gov.eg/EgyptianBaccalaureate/SpecializedSubjects/Medicine-LifeSciences/Physics/",
-      "description": "الصف الثاني الباكروليا - كتاب المدرسة"
+      "description": "الصف الثاني الباكروليا - كتاب المدرسة",
+      "grade": ""
     },
     {
       "id": "5xlu3u4zq",
@@ -342,7 +357,8 @@
       "subjectId": "chem",
       "subjectName": "الكيمياء",
       "url": "https://ellibrary.moe.gov.eg/EgyptianBaccalaureate/SpecializedSubjects/Engineering-ComputerScience/Chemistry/",
-      "description": "الصف الثاني الباكروليا - كتاب المدرسة"
+      "description": "الصف الثاني الباكروليا - كتاب المدرسة",
+      "grade": ""
     },
     {
       "id": "bd50oar6q",
@@ -350,7 +366,8 @@
       "subjectId": "انجليزي",
       "subjectName": "انجليزي",
       "url": "https://t.me/CC_N77/1366",
-      "description": "لغة انجليزيه تانيه باركوليا"
+      "description": "لغة انجليزيه تانيه باركوليا",
+      "grade": ""
     },
     {
       "id": "2qqjt9uv3",
@@ -358,7 +375,8 @@
       "subjectId": "arabic",
       "subjectName": "العربية",
       "url": "https://api.bassthalk.com/books/xwDAyL4mV6KFunlUdml4pWHfw84JNvznPu2jv6uU.pdf",
-      "description": ""
+      "description": "",
+      "grade": ""
     }
   ],
   "freeCourses": [
@@ -374,7 +392,8 @@
       "thumbnail": "https://cdn.jsdelivr.net/gh/romeo311020/download-ROMEO-LIVE-TV@main/media/images/1788483444415_______________.png",
       "description": "",
       "published": true,
-      "createdAt": "2026-08-20T11:07:58.499Z"
+      "createdAt": "2026-08-20T11:07:58.499Z",
+      "grade": ""
     },
     {
       "id": "lecture-z4pd5uxxl",
@@ -388,7 +407,8 @@
       "thumbnail": "https://i.postimg.cc/vByhNS1T/Screenshot-2026-08-20-141259.png",
       "description": "",
       "published": true,
-      "createdAt": "2026-08-20T11:17:12.356Z"
+      "createdAt": "2026-08-20T11:17:12.356Z",
+      "grade": ""
     },
     {
       "id": "lecture-e4n7ttj6o",
@@ -402,7 +422,8 @@
       "thumbnail": "https://i.postimg.cc/gJ4zmSvv/Screenshot-2026-08-21-022744.png",
       "description": "شرح درس تكنولوجيا المعلومات والتحول الاجتماعي",
       "published": true,
-      "createdAt": "2026-08-20T23:30:52.351Z"
+      "createdAt": "2026-08-20T23:30:52.351Z",
+      "grade": ""
     },
     {
       "id": "lecture-m8rkbpde6",
@@ -416,7 +437,8 @@
       "thumbnail": "https://i.postimg.cc/SRWwmJFb/Screenshot-2026-08-21-023830.png",
       "description": "الكورس التأسيسي في البرمجة لطلاب أولى ثانوي بكالوريا دفعة 2027",
       "published": true,
-      "createdAt": "2026-08-20T23:43:11.079Z"
+      "createdAt": "2026-08-20T23:43:11.079Z",
+      "grade": ""
     },
     {
       "id": "lecture-tjv30c4cr",
@@ -430,7 +452,8 @@
       "thumbnail": "https://i.postimg.cc/tgWdSPhH/Screenshot-2026-08-21-024531.png",
       "description": "الكورس التأسيسي في البرمجة لطلاب أولى ثانوي بكالوريا دفعة 2027",
       "published": true,
-      "createdAt": "2026-08-20T23:48:28.687Z"
+      "createdAt": "2026-08-20T23:48:28.687Z",
+      "grade": ""
     },
     {
       "id": "lecture-b2wfm5azg",
@@ -444,7 +467,8 @@
       "thumbnail": "https://i.postimg.cc/ncXDSBJK/Screenshot-2026-08-21-024908.png",
       "description": "الكورس التأسيسي في البرمجة لطلاب أولى ثانوي بكالوريا دفعة 2027",
       "published": true,
-      "createdAt": "2026-08-20T23:51:43.527Z"
+      "createdAt": "2026-08-20T23:51:43.527Z",
+      "grade": ""
     },
     {
       "id": "lecture-7pjmh7evr",
@@ -458,7 +482,8 @@
       "thumbnail": "https://i.postimg.cc/rwCFfwKS/Screenshot-2026-08-21-025242.png",
       "description": "الكورس التأسيسي في البرمجة لطلاب أولى ثانوي بكالوريا دفعة 2027",
       "published": true,
-      "createdAt": "2026-08-20T23:54:26.255Z"
+      "createdAt": "2026-08-20T23:54:26.255Z",
+      "grade": ""
     },
     {
       "id": "lecture-k223apjm0",
@@ -472,7 +497,8 @@
       "thumbnail": "https://i.postimg.cc/pLZ5pZY5/Screenshot-2026-08-21-025529.png",
       "description": "لكورس التأسيسي  في الفزياء 2027 / دكتور كيرلس فيزياء",
       "published": true,
-      "createdAt": "2026-08-21T00:01:32.807Z"
+      "createdAt": "2026-08-21T00:01:32.807Z",
+      "grade": ""
     }
   ],
   "profiles": [],
