@@ -393,7 +393,7 @@
       "description": "",
       "published": true,
       "createdAt": "2026-08-20T11:07:58.499Z",
-      "grade": ""
+      "grade": "الصف الثاني الثانوي - باكالوريا"
     },
     {
       "id": "lecture-z4pd5uxxl",
@@ -408,7 +408,7 @@
       "description": "",
       "published": true,
       "createdAt": "2026-08-20T11:17:12.356Z",
-      "grade": ""
+      "grade": "الصف الثاني الثانوي - باكالوريا"
     },
     {
       "id": "lecture-e4n7ttj6o",
@@ -423,7 +423,7 @@
       "description": "شرح درس تكنولوجيا المعلومات والتحول الاجتماعي",
       "published": true,
       "createdAt": "2026-08-20T23:30:52.351Z",
-      "grade": ""
+      "grade": "الصف الثاني الثانوي - باكالوريا"
     },
     {
       "id": "lecture-m8rkbpde6",
@@ -438,7 +438,7 @@
       "description": "الكورس التأسيسي في البرمجة لطلاب أولى ثانوي بكالوريا دفعة 2027",
       "published": true,
       "createdAt": "2026-08-20T23:43:11.079Z",
-      "grade": ""
+      "grade": "الصف الثاني الثانوي - باكالوريا"
     },
     {
       "id": "lecture-tjv30c4cr",
@@ -453,7 +453,7 @@
       "description": "الكورس التأسيسي في البرمجة لطلاب أولى ثانوي بكالوريا دفعة 2027",
       "published": true,
       "createdAt": "2026-08-20T23:48:28.687Z",
-      "grade": ""
+      "grade": "الصف الثاني الثانوي - باكالوريا"
     },
     {
       "id": "lecture-b2wfm5azg",
@@ -468,7 +468,7 @@
       "description": "الكورس التأسيسي في البرمجة لطلاب أولى ثانوي بكالوريا دفعة 2027",
       "published": true,
       "createdAt": "2026-08-20T23:51:43.527Z",
-      "grade": ""
+      "grade": "الصف الثاني الثانوي - باكالوريا"
     },
     {
       "id": "lecture-7pjmh7evr",
@@ -483,7 +483,7 @@
       "description": "الكورس التأسيسي في البرمجة لطلاب أولى ثانوي بكالوريا دفعة 2027",
       "published": true,
       "createdAt": "2026-08-20T23:54:26.255Z",
-      "grade": ""
+      "grade": "الصف الثاني الثانوي - باكالوريا"
     },
     {
       "id": "lecture-k223apjm0",
@@ -498,10 +498,10 @@
       "description": "لكورس التأسيسي  في الفزياء 2027 / دكتور كيرلس فيزياء",
       "published": true,
       "createdAt": "2026-08-21T00:01:32.807Z",
-      "grade": ""
+      "grade": "الصف الثاني الثانوي - باكالوريا"
     }
   ],
   "profiles": [],
-  "supabaseUrl": "",
-  "supabaseAnonKey": ""
+  "supabaseUrl": "https://sqfyqzlsemmeifakruev.supabase.co",
+  "supabaseAnonKey": "sb_publishable_lFdPLzXOF50DYGQUDeYjPA_4WUrCDcW"
 }
