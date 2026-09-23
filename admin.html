@@ -618,6 +618,15 @@
                             <label>اللون (Hex)</label>
                             <input type="text" id="subject-color" placeholder="#2a2a2a" value="#2a2a2a">
                         </div>
+                        <div class="github-field">
+                            <label>الصف الدراسي</label>
+                            <select id="subject-grade">
+                                <option value="">كل الصفوف (بدون تحديد)</option>
+                                <option value="الصف الأول الثانوي">الصف الأول الثانوي</option>
+                                <option value="الصف الثاني الثانوي - باكالوريا">الصف الثاني الثانوي - باكالوريا</option>
+                                <option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="github-field" style="margin-top: 12px;">
                         <label>الوصف</label>
@@ -635,6 +644,7 @@
                             <tr>
                                 <th>المادة</th>
                                 <th>الوصف</th>
+                                <th>الصف</th>
                                 <th>عدد المعلمين</th>
                                 <th>العمليات</th>
                             </tr>
@@ -733,6 +743,15 @@
                             <label>رابط ملف PDF</label>
                             <input type="url" id="book-url" placeholder="https://example.com/book.pdf">
                         </div>
+                        <div class="github-field">
+                            <label>الصف الدراسي</label>
+                            <select id="book-grade">
+                                <option value="">كل الصفوف (بدون تحديد)</option>
+                                <option value="الصف الأول الثانوي">الصف الأول الثانوي</option>
+                                <option value="الصف الثاني الثانوي - باكالوريا">الصف الثاني الثانوي - باكالوريا</option>
+                                <option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="github-field" style="margin-top: 12px;">
                         <label>وصف مختصر عن الكتاب</label>
@@ -750,6 +769,7 @@
                             <tr>
                                 <th>العنوان</th>
                                 <th>المادة</th>
+                                <th>الصف</th>
                                 <th>رابط PDF</th>
                                 <th>العمليات</th>
                             </tr>
@@ -796,6 +816,15 @@
                             <input type="text" id="course-category" placeholder="مراجعات / شرح / حل أسئلة">
                         </div>
                         <div class="github-field">
+                            <label>الصف الدراسي</label>
+                            <select id="course-grade">
+                                <option value="">كل الصفوف (بدون تحديد)</option>
+                                <option value="الصف الأول الثانوي">الصف الأول الثانوي</option>
+                                <option value="الصف الثاني الثانوي - باكالوريا">الصف الثاني الثانوي - باكالوريا</option>
+                                <option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option>
+                            </select>
+                        </div>
+                        <div class="github-field">
                             <label>Embed URL *</label>
                             <input type="url" id="course-embed-url" placeholder="https://www.youtube.com/embed/xxxxxxxx">
                         </div>
@@ -826,6 +855,7 @@
                                 <th>المحاضرة</th>
                                 <th>المدرس</th>
                                 <th>المادة</th>
+                                <th>الصف</th>
                                 <th>الحالة</th>
                                 <th>العمليات</th>
                             </tr>
@@ -1465,6 +1495,7 @@
             const icon = document.getElementById('subject-icon')?.value.trim();
             const color = document.getElementById('subject-color')?.value.trim();
             const description = document.getElementById('subject-description')?.value.trim();
+            const grade = document.getElementById('subject-grade')?.value || '';
 
             if (!name || !icon) {
                 showAlert('❌ أدخل اسم المادة والأيقونة', 'error');
@@ -1477,6 +1508,7 @@
                 icon,
                 color: color || '#2a2a2a',
                 description: description || '',
+                grade,
                 teachers: []
             };
 
@@ -1487,6 +1519,7 @@
             document.getElementById('subject-icon').value = '';
             document.getElementById('subject-color').value = '#2a2a2a';
             document.getElementById('subject-description').value = '';
+            document.getElementById('subject-grade').value = '';
 
             saveDataLocally();
             syncEditorFromState();
@@ -1516,6 +1549,7 @@
                 <tr>
                     <td><strong>${subject.icon} ${subject.name}</strong></td>
                     <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">${subject.description || '—'}</td>
+                    <td>${subject.grade ? `<span style="font-size:0.8rem;">${subject.grade}</span>` : '<span style="color: var(--text-muted); font-size:0.8rem;">كل الصفوف</span>'}</td>
                     <td>${(subject.teachers || []).length}</td>
                     <td>
                         <button class="btn btn-danger" onclick="deleteSubject('${subject.id}')" title="حذف المادة">🗑️ حذف</button>
@@ -1610,6 +1644,7 @@
             const subjectId = document.getElementById('book-subject')?.value.trim();
             const url = document.getElementById('book-url')?.value.trim();
             const description = document.getElementById('book-description')?.value.trim();
+            const grade = document.getElementById('book-grade')?.value || '';
 
             if (!title) {
                 showAlert('❌ أدخل عنوان الكتاب', 'error');
@@ -1624,7 +1659,8 @@
                 subjectId: subjectId || '',
                 subjectName: subject ? subject.name : '',
                 url: url || '',
-                description: description || ''
+                description: description || '',
+                grade
             };
 
             if (!state.data.books) state.data.books = [];
@@ -1634,6 +1670,7 @@
             document.getElementById('book-subject').value = '';
             document.getElementById('book-url').value = '';
             document.getElementById('book-description').value = '';
+            document.getElementById('book-grade').value = '';
 
             saveDataLocally();
             syncEditorFromState();
@@ -1661,6 +1698,7 @@
                 <tr>
                     <td><strong>${book.title}</strong></td>
                     <td>${book.subjectName || '—'}</td>
+                    <td>${book.grade ? `<span style="font-size:0.8rem;">${book.grade}</span>` : '<span style="color: var(--text-muted); font-size:0.8rem;">كل الصفوف</span>'}</td>
                     <td>${book.url ? `<a href="${book.url}" target="_blank" rel="noopener" style="color: var(--accent-cyan);">فتح الرابط ↗</a>` : '<span style="color: var(--status-suspended);">لا يوجد رابط</span>'}</td>
                     <td>
                         <button class="btn btn-danger" onclick="deleteBook('${book.id}')" title="حذف الكتاب">🗑️ حذف</button>
@@ -1683,6 +1721,7 @@
                 embedUrl: document.getElementById('course-embed-url')?.value.trim() || '',
                 thumbnail: document.getElementById('course-thumbnail')?.value.trim() || '',
                 description: document.getElementById('course-description')?.value.trim() || '',
+                grade: document.getElementById('course-grade')?.value || '',
                 published: document.getElementById('course-published')?.checked !== false
             };
         }
@@ -1707,6 +1746,7 @@
             document.getElementById('course-embed-url').value = '';
             document.getElementById('course-thumbnail').value = '';
             document.getElementById('course-description').value = '';
+            document.getElementById('course-grade').value = '';
             document.getElementById('course-published').checked = true;
         }
 
@@ -1778,6 +1818,7 @@
             document.getElementById('course-embed-url').value = course.embedUrl || '';
             document.getElementById('course-thumbnail').value = course.thumbnail || '';
             document.getElementById('course-description').value = course.description || '';
+            document.getElementById('course-grade').value = course.grade || '';
             document.getElementById('course-published').checked = course.published !== false;
 
             document.getElementById('course-form-title').textContent = '✏️ تعديل المحاضرة';
@@ -1824,7 +1865,7 @@
             const courses = state.data.freeCourses || [];
 
             if (!courses.length) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-muted); padding: 20px;">لا توجد محاضرات مضافة بعد</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted); padding: 20px;">لا توجد محاضرات مضافة بعد</td></tr>`;
                 return;
             }
 
@@ -1833,6 +1874,7 @@
                     <td><strong>${course.lectureTitle}</strong></td>
                     <td>${course.teacherName}</td>
                     <td>${course.subject || '—'}</td>
+                    <td>${course.grade ? `<span style="font-size:0.8rem;">${course.grade}</span>` : '<span style="color: var(--text-muted); font-size:0.8rem;">كل الصفوف</span>'}</td>
                     <td>${course.published !== false ? '<span style="color:#10b981;">✅ منشور</span>' : '<span style="color: var(--status-suspended);">⛔ مخفي</span>'}</td>
                     <td style="white-space:nowrap;">
                         <button class="btn btn-secondary" onclick="editCourse('${course.id}')" title="تعديل">✏️</button>
