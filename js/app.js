@@ -43,6 +43,14 @@ const USERS_KEY = 'eduvo_users_v1';
 
     let googleSdkLoading = false;
 
+    // ===== فلترة المحتوى حسب الصف الدراسي =====
+    // عنصر بدون صف محدد (grade فاضي) يظهر لكل الصفوف — يحافظ على المحتوى القديم شغال زي ما هو
+    function matchesStudentGrade(itemGrade) {
+      if (!itemGrade) return true;
+      if (!state.user || !state.user.grade) return true;
+      return itemGrade === state.user.grade;
+    }
+
     // بيانات المواد والمدرسين بقت في data.json
     let subjects = [];
 
@@ -222,7 +230,15 @@ const USERS_KEY = 'eduvo_users_v1';
     function renderSubjects() {
       const container = document.getElementById('subjects-grid');
       if (!container) return;
-      container.innerHTML = subjects.map((subject, i) => `
+
+      const visibleSubjects = subjects.filter(s => matchesStudentGrade(s.grade));
+
+      if (!visibleSubjects.length) {
+        container.innerHTML = `<div class="glass-card" style="text-align:center; color: var(--muted);">لا توجد مواد مضافة لصفك الدراسي حاليًا.</div>`;
+        return;
+      }
+
+      container.innerHTML = visibleSubjects.map((subject, i) => `
         <div class="subject-card fade-in-up" style="animation-delay:${i * 0.06}s;" data-subject-id="${subject.id}">
           <div style="font-size:2.1rem;">${subject.icon}</div>
           <div style="font-size:1.2rem; font-weight:800;">${subject.name}</div>
@@ -357,6 +373,7 @@ const USERS_KEY = 'eduvo_users_v1';
       setActiveScreen('screen-dashboard');
       ensureRemindersInterval();
       renderDashboardScreen();
+      renderSubjects();
       if (isNewUser) syncStudentToSupabase(user, provider);
     }
 
@@ -481,6 +498,7 @@ const USERS_KEY = 'eduvo_users_v1';
       setActiveScreen('screen-dashboard');
       ensureRemindersInterval();
       renderDashboardScreen();
+      renderSubjects();
       syncStudentToSupabase(user, 'phone');
     }
 
@@ -511,6 +529,7 @@ const USERS_KEY = 'eduvo_users_v1';
       setActiveScreen('screen-dashboard');
       ensureRemindersInterval();
       renderDashboardScreen();
+      renderSubjects();
     }
 
     function handleLogout() {
@@ -526,12 +545,12 @@ const USERS_KEY = 'eduvo_users_v1';
       const container = document.getElementById('books-container');
       if (!container) return;
 
-      const books = appConfig.books || [];
+      const books = (appConfig.books || []).filter(b => matchesStudentGrade(b.grade));
 
       if (!books.length) {
         container.innerHTML = `
           <div class="glass-card" style="text-align:center; color: var(--muted);">
-            لا توجد كتب مضافة حالياً. أضف كتبك في ملف data.json.
+            لا توجد كتب مضافة لصفك الدراسي حاليًا.
           </div>
         `;
         return;
@@ -1428,18 +1447,18 @@ const USERS_KEY = 'eduvo_users_v1';
     function buildSearchIndex() {
       const index = [];
 
-      subjects.forEach(s => {
+      subjects.filter(s => matchesStudentGrade(s.grade)).forEach(s => {
         index.push({ type: 'مواد', icon: s.icon, label: s.name, sub: s.description, action: () => { setActiveScreen('screen-subjects'); showSubjectDetails(s.id); } });
         (s.teachers || []).forEach(t => {
           index.push({ type: 'المدرسون', icon: '👨‍🏫', label: t.name, sub: s.name, action: () => { setActiveScreen('screen-subjects'); showSubjectDetails(s.id); } });
         });
       });
 
-      (appConfig.books || []).forEach(b => {
+      (appConfig.books || []).filter(b => matchesStudentGrade(b.grade)).forEach(b => {
         index.push({ type: 'الكتب', icon: '📖', label: b.title, sub: b.subjectName || '', action: () => setActiveScreen('screen-books') });
       });
 
-      (appConfig.freeCourses || []).filter(c => c.published !== false).forEach(c => {
+      (appConfig.freeCourses || []).filter(c => c.published !== false && matchesStudentGrade(c.grade)).forEach(c => {
         index.push({ type: 'كورسات مجانية', icon: '🎓', label: c.lectureTitle, sub: `${c.teacherName} — ${c.subject || ''}`, action: () => openLecture(c.id) });
       });
 
@@ -1570,10 +1589,10 @@ const USERS_KEY = 'eduvo_users_v1';
 
     function renderCoursesScreen() {
       const container = document.getElementById('courses-container');
-      const courses = (appConfig.freeCourses || []).filter(c => c.published !== false);
+      const courses = (appConfig.freeCourses || []).filter(c => c.published !== false && matchesStudentGrade(c.grade));
 
       if (!courses.length) {
-        container.innerHTML = `<div class="glass-card" style="text-align:center; color: var(--muted);">لا توجد محاضرات مجانية متاحة حاليًا.</div>`;
+        container.innerHTML = `<div class="glass-card" style="text-align:center; color: var(--muted);">لا توجد محاضرات مجانية متاحة لصفك الدراسي حاليًا.</div>`;
         return;
       }
 
@@ -1853,6 +1872,7 @@ const USERS_KEY = 'eduvo_users_v1';
         setActiveScreen('screen-dashboard');
         ensureRemindersInterval();
       renderDashboardScreen();
+      renderSubjects();
       } else {
         setActiveScreen('screen-auth');
       }
