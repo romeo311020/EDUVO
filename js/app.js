@@ -1747,6 +1747,16 @@ const USERS_KEY = 'eduvo_users_v1';
         if (event.key === 'Enter') sendAiMessage();
       });
 
+      document.querySelectorAll('.ai-suggestion').forEach(button => {
+        button.addEventListener('click', () => {
+          const input = document.getElementById('ai-input');
+          if (!input) return;
+
+          input.value = button.dataset.aiPrompt || button.textContent.trim();
+          sendAiMessage();
+        });
+      });
+
       document.getElementById('theme-select').addEventListener('change', (event) => {
         const settings = getSettings();
         settings.theme = event.target.value;
