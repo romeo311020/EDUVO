@@ -1538,7 +1538,8 @@
                 color: color || '#2a2a2a',
                 description: description || '',
                 grade,
-                teachers: []
+                teachers: [],
+                createdAt: new Date().toISOString()
             };
 
             if (!state.data.subjects) state.data.subjects = [];
@@ -1550,7 +1551,7 @@
                     showAlert('✅ تم تعديل المادة بنجاح', 'success');
                 }
             } else {
-                state.data.subjects.push(subjectData);
+                state.data.subjects.unshift(subjectData);
                 showAlert('✅ تمت إضافة المادة بنجاح', 'success');
             }
 
@@ -1592,7 +1593,13 @@
             const tbody = document.getElementById('subjects-tbody');
             if (!tbody) return;
 
-            tbody.innerHTML = (state.data.subjects || []).map(subject => `
+            const subjects = [...(state.data.subjects || [])].sort((a, b) => {
+                const left = new Date(a.createdAt || 0).getTime();
+                const right = new Date(b.createdAt || 0).getTime();
+                return right - left;
+            });
+
+            tbody.innerHTML = subjects.map(subject => `
                 <tr>
                     <td><strong>${subject.icon} ${subject.name}</strong></td>
                     <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">${subject.description || '—'}</td>
@@ -1644,7 +1651,8 @@
                 website: website || '',
                 photo: photo || '',
                 style: style || '',
-                nextLesson: 'الدرس القادم قريباً'
+                nextLesson: 'الدرس القادم قريباً',
+                createdAt: new Date().toISOString()
             };
 
             if (!state.data.teachers) state.data.teachers = [];
@@ -1656,7 +1664,7 @@
                     showAlert('✅ تم تعديل المعلم بنجاح', 'success');
                 }
             } else {
-                state.data.teachers.push(teacherData);
+                state.data.teachers.unshift(teacherData);
                 showAlert('✅ تمت إضافة المعلم بنجاح', 'success');
             }
 
@@ -1699,7 +1707,13 @@
             const tbody = document.getElementById('teachers-tbody');
             if (!tbody) return;
 
-            tbody.innerHTML = (state.data.teachers || []).map(teacher => {
+            const teachers = [...(state.data.teachers || [])].sort((a, b) => {
+                const left = new Date(a.createdAt || 0).getTime();
+                const right = new Date(b.createdAt || 0).getTime();
+                return right - left;
+            });
+
+            tbody.innerHTML = teachers.map(teacher => {
                 const subject = (state.data.subjects || []).find(s => s.id === teacher.subjectId);
                 return `
                     <tr>
@@ -1748,7 +1762,8 @@
                 subjectName: subject ? subject.name : '',
                 url: url || '',
                 description: description || '',
-                grade
+                grade,
+                createdAt: new Date().toISOString()
             };
 
             if (!state.data.books) state.data.books = [];
@@ -1760,7 +1775,7 @@
                     showAlert('✅ تم تعديل الكتاب بنجاح', 'success');
                 }
             } else {
-                state.data.books.push(bookData);
+                state.data.books.unshift(bookData);
                 showAlert('✅ تمت إضافة الكتاب بنجاح', 'success');
             }
 
@@ -1800,7 +1815,13 @@
             const tbody = document.getElementById('books-tbody');
             if (!tbody) return;
 
-            tbody.innerHTML = (state.data.books || []).map(book => `
+            const books = [...(state.data.books || [])].sort((a, b) => {
+                const left = new Date(a.createdAt || 0).getTime();
+                const right = new Date(b.createdAt || 0).getTime();
+                return right - left;
+            });
+
+            tbody.innerHTML = books.map(book => `
                 <tr>
                     <td><strong>${book.title}</strong></td>
                     <td>${book.subjectName || '—'}</td>
@@ -1895,7 +1916,7 @@
                 }
                 showAlert('✅ تم تحديث المحاضرة بنجاح', 'success');
             } else {
-                state.data.freeCourses.push({
+                state.data.freeCourses.unshift({
                     id: 'lecture-' + Math.random().toString(36).substr(2, 9),
                     ...data,
                     createdAt: new Date().toISOString()
@@ -1969,7 +1990,11 @@
             const tbody = document.getElementById('courses-tbody');
             if (!tbody) return;
 
-            const courses = state.data.freeCourses || [];
+            const courses = [...(state.data.freeCourses || [])].sort((a, b) => {
+                const left = new Date(a.createdAt || 0).getTime();
+                const right = new Date(b.createdAt || 0).getTime();
+                return right - left;
+            });
 
             if (!courses.length) {
                 tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted); padding: 20px;">لا توجد محاضرات مضافة بعد</td></tr>`;
