@@ -1474,6 +1474,10 @@
             }
         }
 
+        let editingSubjectId = null;
+        let editingTeacherId = null;
+        let editingBookId = null;
+
         // ===== المواد الدراسية =====
         function populateSubjectSelect() {
             const teacherSelect = document.getElementById('teacher-subject');
@@ -1506,6 +1510,15 @@
             });
         }
 
+        function clearSubjectForm() {
+            document.getElementById('subject-name').value = '';
+            document.getElementById('subject-icon').value = '';
+            document.getElementById('subject-color').value = '#2a2a2a';
+            document.getElementById('subject-description').value = '';
+            document.getElementById('subject-grade').value = '';
+            editingSubjectId = null;
+        }
+
         function addNewSubject() {
             const name = document.getElementById('subject-name')?.value.trim();
             const icon = document.getElementById('subject-icon')?.value.trim();
@@ -1518,8 +1531,8 @@
                 return;
             }
 
-            const newSubject = {
-                id: name.toLowerCase().replace(/\s+/g, '-'),
+            const subjectData = {
+                id: editingSubjectId || name.toLowerCase().replace(/\s+/g, '-'),
                 name,
                 icon,
                 color: color || '#2a2a2a',
@@ -1529,19 +1542,36 @@
             };
 
             if (!state.data.subjects) state.data.subjects = [];
-            state.data.subjects.push(newSubject);
 
-            document.getElementById('subject-name').value = '';
-            document.getElementById('subject-icon').value = '';
-            document.getElementById('subject-color').value = '#2a2a2a';
-            document.getElementById('subject-description').value = '';
-            document.getElementById('subject-grade').value = '';
+            if (editingSubjectId) {
+                const index = state.data.subjects.findIndex(s => s.id === editingSubjectId);
+                if (index > -1) {
+                    state.data.subjects[index] = { ...state.data.subjects[index], ...subjectData };
+                    showAlert('✅ تم تعديل المادة بنجاح', 'success');
+                }
+            } else {
+                state.data.subjects.push(subjectData);
+                showAlert('✅ تمت إضافة المادة بنجاح', 'success');
+            }
 
+            clearSubjectForm();
             saveDataLocally();
             syncEditorFromState();
             renderSubjects();
             populateSubjectSelect();
-            showAlert('✅ تمت إضافة المادة بنجاح', 'success');
+        }
+
+        function editSubject(subjectId) {
+            const subject = (state.data.subjects || []).find(s => s.id === subjectId);
+            if (!subject) return;
+
+            editingSubjectId = subjectId;
+            document.getElementById('subject-name').value = subject.name || '';
+            document.getElementById('subject-icon').value = subject.icon || '';
+            document.getElementById('subject-color').value = subject.color || '#2a2a2a';
+            document.getElementById('subject-description').value = subject.description || '';
+            document.getElementById('subject-grade').value = subject.grade || '';
+            document.getElementById('subject-name').focus();
         }
 
         function deleteSubject(subjectId) {
@@ -1549,6 +1579,7 @@
             const index = (state.data.subjects || []).findIndex(s => s.id === subjectId);
             if (index > -1) {
                 state.data.subjects.splice(index, 1);
+                if (editingSubjectId === subjectId) clearSubjectForm();
                 saveDataLocally();
                 syncEditorFromState();
                 renderSubjects();
@@ -1567,14 +1598,27 @@
                     <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">${subject.description || '—'}</td>
                     <td>${subject.grade ? `<span style="font-size:0.8rem;">${subject.grade}</span>` : '<span style="color: var(--text-muted); font-size:0.8rem;">كل الصفوف</span>'}</td>
                     <td>${(subject.teachers || []).length}</td>
-                    <td>
-                        <button class="btn btn-danger" onclick="deleteSubject('${subject.id}')" title="حذف المادة">🗑️ حذف</button>
+                    <td style="display:flex; gap:6px;">
+                        <button class="btn btn-secondary" onclick="editSubject('${subject.id}')" title="تعديل المادة">✏️</button>
+                        <button class="btn btn-danger" onclick="deleteSubject('${subject.id}')" title="حذف المادة">🗑️</button>
                     </td>
                 </tr>
             `).join('');
         }
 
         // ===== المعلمين =====
+        function clearTeacherForm() {
+            document.getElementById('teacher-name').value = '';
+            document.getElementById('teacher-specialty').value = '';
+            document.getElementById('teacher-subject').value = '';
+            document.getElementById('teacher-rating').value = '4.9';
+            document.getElementById('teacher-students').value = '1000';
+            document.getElementById('teacher-website').value = '';
+            document.getElementById('teacher-photo').value = '';
+            document.getElementById('teacher-style').value = '';
+            editingTeacherId = null;
+        }
+
         function addNewTeacher() {
             const name = document.getElementById('teacher-name')?.value.trim();
             const specialty = document.getElementById('teacher-specialty')?.value.trim();
@@ -1590,8 +1634,8 @@
                 return;
             }
 
-            const newTeacher = {
-                id: Math.random().toString(36).substr(2, 9),
+            const teacherData = {
+                id: editingTeacherId || Math.random().toString(36).substr(2, 9),
                 name,
                 specialty,
                 subjectId,
@@ -1604,21 +1648,38 @@
             };
 
             if (!state.data.teachers) state.data.teachers = [];
-            state.data.teachers.push(newTeacher);
 
-            document.getElementById('teacher-name').value = '';
-            document.getElementById('teacher-specialty').value = '';
-            document.getElementById('teacher-subject').value = '';
-            document.getElementById('teacher-rating').value = '4.9';
-            document.getElementById('teacher-students').value = '1000';
-            document.getElementById('teacher-website').value = '';
-            document.getElementById('teacher-photo').value = '';
-            document.getElementById('teacher-style').value = '';
+            if (editingTeacherId) {
+                const index = state.data.teachers.findIndex(t => t.id === editingTeacherId);
+                if (index > -1) {
+                    state.data.teachers[index] = { ...state.data.teachers[index], ...teacherData };
+                    showAlert('✅ تم تعديل المعلم بنجاح', 'success');
+                }
+            } else {
+                state.data.teachers.push(teacherData);
+                showAlert('✅ تمت إضافة المعلم بنجاح', 'success');
+            }
 
+            clearTeacherForm();
             saveDataLocally();
             syncEditorFromState();
             renderTeachers();
-            showAlert('✅ تمت إضافة المعلم بنجاح', 'success');
+        }
+
+        function editTeacher(teacherId) {
+            const teacher = (state.data.teachers || []).find(t => t.id === teacherId);
+            if (!teacher) return;
+
+            editingTeacherId = teacherId;
+            document.getElementById('teacher-name').value = teacher.name || '';
+            document.getElementById('teacher-specialty').value = teacher.specialty || '';
+            document.getElementById('teacher-subject').value = teacher.subjectId || '';
+            document.getElementById('teacher-rating').value = String(teacher.rating || 4.9);
+            document.getElementById('teacher-students').value = String(teacher.students || 1000);
+            document.getElementById('teacher-website').value = teacher.website || '';
+            document.getElementById('teacher-photo').value = teacher.photo || '';
+            document.getElementById('teacher-style').value = teacher.style || '';
+            document.getElementById('teacher-name').focus();
         }
 
         function deleteTeacher(teacherId) {
@@ -1626,6 +1687,7 @@
             const index = (state.data.teachers || []).findIndex(t => t.id === teacherId);
             if (index > -1) {
                 state.data.teachers.splice(index, 1);
+                if (editingTeacherId === teacherId) clearTeacherForm();
                 saveDataLocally();
                 syncEditorFromState();
                 renderTeachers();
@@ -1646,8 +1708,9 @@
                         <td>${teacher.specialty}</td>
                         <td>⭐ ${teacher.rating.toFixed(1)}</td>
                         <td>${teacher.students}</td>
-                        <td>
-                            <button class="btn btn-danger" onclick="deleteTeacher('${teacher.id}')" title="حذف">🗑️ حذف</button>
+                        <td style="display:flex; gap:6px;">
+                            <button class="btn btn-secondary" onclick="editTeacher('${teacher.id}')" title="تعديل">✏️</button>
+                            <button class="btn btn-danger" onclick="deleteTeacher('${teacher.id}')" title="حذف">🗑️</button>
                         </td>
                     </tr>
                 `;
@@ -1655,6 +1718,15 @@
         }
 
         // ===== الكتب =====
+        function clearBookForm() {
+            document.getElementById('book-title').value = '';
+            document.getElementById('book-subject').value = '';
+            document.getElementById('book-url').value = '';
+            document.getElementById('book-description').value = '';
+            document.getElementById('book-grade').value = '';
+            editingBookId = null;
+        }
+
         function addNewBook() {
             const title = document.getElementById('book-title')?.value.trim();
             const subjectId = document.getElementById('book-subject')?.value.trim();
@@ -1669,8 +1741,8 @@
 
             const subject = (state.data.subjects || []).find(s => s.id === subjectId);
 
-            const newBook = {
-                id: Math.random().toString(36).substr(2, 9),
+            const bookData = {
+                id: editingBookId || Math.random().toString(36).substr(2, 9),
                 title,
                 subjectId: subjectId || '',
                 subjectName: subject ? subject.name : '',
@@ -1680,18 +1752,35 @@
             };
 
             if (!state.data.books) state.data.books = [];
-            state.data.books.push(newBook);
 
-            document.getElementById('book-title').value = '';
-            document.getElementById('book-subject').value = '';
-            document.getElementById('book-url').value = '';
-            document.getElementById('book-description').value = '';
-            document.getElementById('book-grade').value = '';
+            if (editingBookId) {
+                const index = state.data.books.findIndex(b => b.id === editingBookId);
+                if (index > -1) {
+                    state.data.books[index] = { ...state.data.books[index], ...bookData };
+                    showAlert('✅ تم تعديل الكتاب بنجاح', 'success');
+                }
+            } else {
+                state.data.books.push(bookData);
+                showAlert('✅ تمت إضافة الكتاب بنجاح', 'success');
+            }
 
+            clearBookForm();
             saveDataLocally();
             syncEditorFromState();
             renderBooks();
-            showAlert('✅ تمت إضافة الكتاب بنجاح', 'success');
+        }
+
+        function editBook(bookId) {
+            const book = (state.data.books || []).find(b => b.id === bookId);
+            if (!book) return;
+
+            editingBookId = bookId;
+            document.getElementById('book-title').value = book.title || '';
+            document.getElementById('book-subject').value = book.subjectId || '';
+            document.getElementById('book-url').value = book.url || '';
+            document.getElementById('book-description').value = book.description || '';
+            document.getElementById('book-grade').value = book.grade || '';
+            document.getElementById('book-title').focus();
         }
 
         function deleteBook(bookId) {
@@ -1699,6 +1788,7 @@
             const index = (state.data.books || []).findIndex(b => b.id === bookId);
             if (index > -1) {
                 state.data.books.splice(index, 1);
+                if (editingBookId === bookId) clearBookForm();
                 saveDataLocally();
                 syncEditorFromState();
                 renderBooks();
@@ -1716,8 +1806,9 @@
                     <td>${book.subjectName || '—'}</td>
                     <td>${book.grade ? `<span style="font-size:0.8rem;">${book.grade}</span>` : '<span style="color: var(--text-muted); font-size:0.8rem;">كل الصفوف</span>'}</td>
                     <td>${book.url ? `<a href="${book.url}" target="_blank" rel="noopener" style="color: var(--accent-cyan);">فتح الرابط ↗</a>` : '<span style="color: var(--status-suspended);">لا يوجد رابط</span>'}</td>
-                    <td>
-                        <button class="btn btn-danger" onclick="deleteBook('${book.id}')" title="حذف الكتاب">🗑️ حذف</button>
+                    <td style="display:flex; gap:6px;">
+                        <button class="btn btn-secondary" onclick="editBook('${book.id}')" title="تعديل الكتاب">✏️</button>
+                        <button class="btn btn-danger" onclick="deleteBook('${book.id}')" title="حذف الكتاب">🗑️</button>
                     </td>
                 </tr>
             `).join('');
